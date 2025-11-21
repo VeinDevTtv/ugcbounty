@@ -147,54 +147,23 @@ export default function FeedPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header Section */}
-      <section className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      {/* Header + Controls */}
+      <section className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        {/* Left: Title */}
         <div>
           <h1 className="text-3xl font-bold text-zinc-900">Browse Bounties</h1>
           <p className="text-zinc-500 mt-1">Find campaigns that match your vibe.</p>
         </div>
 
-        {/* SEARCH + FILTERS */}
-        <div className="flex gap-2 w-full md:w-auto">
-          <div className="relative flex-1 md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-            <input
-              type="text"
-              placeholder="Search brands..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 w-full rounded-lg border border-zinc-200 pl-9 pr-4 text-sm focus:border-indigo-500 focus:outline-none"
-            />
-          </div>
-
-          <Button variant="outline" className="gap-2">
-            <Filter className="h-4 w-4" />
-            <span className="hidden sm:inline">Filters</span>
-          </Button>
-        </div>
-      </section>
-
-      {/* SORTING BUTTONS */}
-      <section className="flex flex-wrap gap-3">
-        <Button onClick={sortLowToHigh} variant="outline" className="text-sm">
-          Lowest → Highest Budget
-        </Button>
-
-        <Button onClick={sortHighToLow} variant="outline" className="text-sm">
-          Highest → Lowest Budget
-        </Button>
-
-        <Button onClick={sortMostPopular} variant="outline" className="text-sm">
-          Most Popular 🔥
-        </Button>
-      </section>
-
-      {/* Grid */}
-      <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {filteredBounties.map((bounty) => (
-          <BountyCard key={bounty.id} data={bounty} />
-        ))}
-      </section>
-    </div>
-  );
-}
+        {/* Right: Search, Filter, Sort */}
+        <div className="flex flex-col gap-3 w-full md:w-auto">
+          {/* SEARCH + FILTERS (top row) */}
+          <div className="flex gap-2 w-full md:w-auto">
+            <div className="relative flex-1 md:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+              <input
+                type="text"
+                placeholder="Search brands..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-10 w-full rounded-lg border border-zinc-200 pl-9 pr-4 text-sm focus:b
