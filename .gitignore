@@ -1,4 +1,5 @@
 .cursor/rules/kluster-code-verify.mdc
+.cursor/rules/always.mdc
 .kluster
 
 # Dependencies

@@ -1,6 +1,13 @@
 import Link from "next/link";
-import { Bell, Menu, UserCircle } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { Button } from "./ui/Button";
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 
 export default function Navbar() {
     return (
@@ -26,13 +33,26 @@ export default function Navbar() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="sm" className="rounded-full w-10 h-10 p-0">
-                        <Bell className="h-5 w-5" />
-                    </Button>
-                    <div className="flex items-center gap-2">
-                        <span className="hidden md:block text-sm font-medium text-zinc-700">Creator123</span>
-                        <UserCircle className="h-8 w-8 text-zinc-400" />
-                    </div>
+                    <SignedIn>
+                        <Button variant="ghost" size="sm" className="rounded-full w-10 h-10 p-0">
+                            <Bell className="h-5 w-5" />
+                        </Button>
+                    </SignedIn>
+                    <SignedOut>
+                        <SignInButton mode="modal">
+                            <Button variant="ghost" size="sm">
+                                Sign In
+                            </Button>
+                        </SignInButton>
+                        <SignUpButton mode="modal">
+                            <Button size="sm">
+                                Sign Up
+                            </Button>
+                        </SignUpButton>
+                    </SignedOut>
+                    <SignedIn>
+                        <UserButton />
+                    </SignedIn>
                     <Button variant="ghost" className="md:hidden">
                         <Menu className="h-5 w-5" />
                     </Button>
