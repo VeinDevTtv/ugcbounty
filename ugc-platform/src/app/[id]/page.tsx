@@ -26,7 +26,7 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
                     <div className="flex items-start justify-between">
                         <div>
                             <Badge variant="warning">Only 2 days left</Badge>
-                            <h1 className="mt-3 text-3xl font-bold text-zinc-900">Summer Energy Drink Launch</h1>
+                            <h1 className="mt-3 text-3xl font-bold text-zinc-900">Do your Lessons or Else</h1>
                             <div className="mt-2 flex items-center gap-2 text-zinc-500">
                                 <span className="font-medium text-zinc-900">Vitality Brand</span>
                                 <span>•</span>
