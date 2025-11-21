@@ -1,6 +1,6 @@
 'use server'
 
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { supabaseServer } from './supabase-server'
 import type { Database } from '@/types/database.types'
 
@@ -20,52 +20,31 @@ export async function getOrCreateUserProfile(): Promise<{
   try {
     // Get current Clerk user
     const { userId } = await auth()
+    const user = await currentUser()
 
     if (!userId) {
       return { data: null, error: new Error('User not authenticated') }
     }
 
-    // Check if user profile already exists
-    // Note: Clerk user IDs are strings, but we'll store them in the UUID field
-    // PostgreSQL can handle string-to-UUID conversion
-    const { data: existingProfile, error: fetchError } = await supabaseServer
+    // Use upsert to create or update user profile with Clerk data (like og implementation)
+    // This handles both creation and updates in a single operation
+    const { data: profile, error: upsertError } = await supabaseServer
       .from('user_profiles')
-      .select('*')
-      .eq('user_id', userId)
-      .single()
-
-    if (fetchError && fetchError.code !== 'PGRST116') {
-      // PGRST116 is "not found" error, which is expected for new users
-      console.error('Error fetching user profile:', fetchError)
-      return { data: null, error: fetchError as Error }
-    }
-
-    if (existingProfile) {
-      return { data: existingProfile, error: null }
-    }
-
-    // Profile doesn't exist, create it
-    // Get additional user info from Clerk (we'll need to fetch this)
-    // For now, we'll create with minimal data and let it be updated later
-    const profileData: UserProfileInsert = {
-      user_id: userId,
-      email: '', // Will be updated when we have email
-      username: `user_${userId.slice(0, 8)}`, // Generate a temporary username
-      total_earnings: 0,
-    }
-
-    const { data: newProfile, error: createError } = await supabaseServer
-      .from('user_profiles')
-      .insert(profileData)
+      .upsert({
+        user_id: userId,
+        email: user?.emailAddresses[0]?.emailAddress || null,
+        username: user?.username || null,
+        total_earnings: 0,
+      } as UserProfileInsert)
       .select()
       .single()
 
-    if (createError) {
-      console.error('Error creating user profile:', createError)
-      return { data: null, error: createError as Error }
+    if (upsertError) {
+      console.error('Error upserting user profile:', upsertError)
+      return { data: null, error: upsertError as Error }
     }
 
-    return { data: newProfile, error: null }
+    return { data: profile, error: null }
   } catch (error) {
     console.error('Error in getOrCreateUserProfile:', error)
     return {
@@ -77,7 +56,10 @@ export async function getOrCreateUserProfile(): Promise<{
 
 /**
  * Get or create user profile with full Clerk user data.
- * This version fetches email and username from Clerk.
+ * This version fetches email and username from Clerk using currentUser().
+ * 
+ * Note: This function is now equivalent to getOrCreateUserProfile() which also
+ * fetches Clerk user data. This function is kept for backward compatibility.
  * 
  * @returns User profile data or null if user is not authenticated
  */
@@ -85,65 +67,8 @@ export async function getOrCreateUserProfileWithClerkData(): Promise<{
   data: UserProfile | null
   error: Error | null
 }> {
-  try {
-    const { userId } = await auth()
-
-    if (!userId) {
-      return { data: null, error: new Error('User not authenticated') }
-    }
-
-    // Check if profile exists
-    const { data: existingProfile, error: fetchError } = await supabaseServer
-      .from('user_profiles')
-      .select('*')
-      .eq('user_id', userId)
-      .single()
-
-    if (fetchError && fetchError.code !== 'PGRST116') {
-      console.error('Error fetching user profile:', fetchError)
-      return { data: null, error: fetchError as Error }
-    }
-
-    // Get Clerk user data
-    // Note: In a real implementation, you might want to use Clerk's API
-    // or pass user data from the client. For now, we'll use what we have.
-    const { getToken } = await auth()
-    const token = await getToken()
-
-    // If profile exists, return it
-    if (existingProfile) {
-      return { data: existingProfile, error: null }
-    }
-
-    // Create new profile
-    // We'll need email and username - these should come from Clerk
-    // For now, create with placeholder values
-    const profileData: UserProfileInsert = {
-      user_id: userId,
-      email: `user-${userId}@placeholder.com`, // Should be fetched from Clerk
-      username: `user_${userId.slice(0, 8)}`,
-      total_earnings: 0,
-    }
-
-    const { data: newProfile, error: createError } = await supabaseServer
-      .from('user_profiles')
-      .insert(profileData)
-      .select()
-      .single()
-
-    if (createError) {
-      console.error('Error creating user profile:', createError)
-      return { data: null, error: createError as Error }
-    }
-
-    return { data: newProfile, error: null }
-  } catch (error) {
-    console.error('Error in getOrCreateUserProfileWithClerkData:', error)
-    return {
-      data: null,
-      error: error instanceof Error ? error : new Error('Unknown error occurred'),
-    }
-  }
+  // Both functions now do the same thing - use getOrCreateUserProfile for consistency
+  return getOrCreateUserProfile()
 }
 
 /**
