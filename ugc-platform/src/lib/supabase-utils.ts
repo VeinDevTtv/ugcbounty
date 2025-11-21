@@ -135,12 +135,12 @@ export async function deleteBounty(id: string) {
 export async function updateClaimedBounty(id: string, amount: number) {
   try {
     // First get current claimed_bounty
-    const { data: bounty } = await getBountyById(id)
-    if (!bounty || !bounty.data) {
+    const result = await getBountyById(id)
+    if (!result.data) {
       throw new Error('Bounty not found')
     }
 
-    const newClaimedAmount = (bounty.data.claimed_bounty || 0) + amount
+    const newClaimedAmount = (result.data.claimed_bounty || 0) + amount
 
     const { data: updated, error } = await supabaseServer
       .from('bounties')
