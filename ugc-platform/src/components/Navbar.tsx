@@ -29,6 +29,9 @@ export default function Navbar() {
                     <Link href="/dashboard" className="text-sm font-medium text-zinc-600 hover:text-indigo-600">
                         Dashboard
                     </Link>
+                  <Link href="/dashboard" className="text-sm font-medium text-zinc-600 hover:text-indigo-600">
+                        What We do?
+                    </Link>
                 </div>
 
                 {/* Actions */}
