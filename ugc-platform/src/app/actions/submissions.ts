@@ -3,11 +3,7 @@
 /**
  * SUBMISSIONS SERVER ACTIONS
  * 
- * SECURITY WARNING: These actions currently do not include authentication/authorization checks.
- * Authentication integration (e.g., Clerk) must be implemented before production deployment.
- * All mutation operations (create, update, validate) should verify user identity and permissions.
- * 
- * @see TODO comments in each function for authentication integration points
+ * All mutation operations (create, update, validate) verify user identity using Clerk authentication.
  */
 
 import {
@@ -17,6 +13,7 @@ import {
   updateSubmission,
   validateSubmission
 } from '@/lib/supabase-utils'
+import { getOrCreateUserProfile, getCurrentUserId } from '@/lib/clerk-supabase-sync'
 import type { Database } from '@/types/database.types'
 
 type SubmissionInsert = Database['public']['Tables']['submissions']['Insert']
@@ -81,11 +78,11 @@ export async function getSubmissionByIdAction(id: string) {
 export async function createSubmissionAction(data: SubmissionInsert) {
   try {
     // Validate required fields
-    if (!data.bounty_id || !data.user_id || !data.video_url) {
+    if (!data.bounty_id || !data.video_url) {
       return {
         success: false,
         data: null,
-        error: 'Missing required fields: bounty_id, user_id, video_url'
+        error: 'Missing required fields: bounty_id, video_url'
       }
     }
 
@@ -100,12 +97,34 @@ export async function createSubmissionAction(data: SubmissionInsert) {
       }
     }
 
-    // TODO: Add authentication check here
-    // if (!authenticatedUser || authenticatedUser.id !== data.user_id) {
-    //   return { success: false, data: null, error: 'Unauthorized' }
-    // }
+    // Check authentication
+    const userId = await getCurrentUserId()
+    if (!userId) {
+      return { success: false, data: null, error: 'Unauthorized: User not authenticated' }
+    }
 
-    const result = await createSubmission(data)
+    // Sync user profile
+    const profileResult = await getOrCreateUserProfile()
+    if (profileResult.error) {
+      return { success: false, data: null, error: 'Failed to sync user profile' }
+    }
+
+    // Ensure user_id matches authenticated user
+    if (data.user_id && data.user_id !== userId) {
+      return {
+        success: false,
+        data: null,
+        error: 'Unauthorized: user_id must match authenticated user'
+      }
+    }
+
+    // Set user_id to authenticated user
+    const submissionData: SubmissionInsert = {
+      ...data,
+      user_id: userId,
+    }
+
+    const result = await createSubmission(submissionData)
     if (result.error) {
       return { success: false, data: null, error: result.error.message }
     }
@@ -132,14 +151,33 @@ export async function updateSubmissionAction(id: string, data: SubmissionUpdate)
       return { success: false, data: null, error: 'Submission ID is required' }
     }
 
-    // TODO: Add authentication check here
-    // const submission = await getSubmissionById(id)
-    // if (authenticatedUser?.id !== submission.data?.user_id) {
-    //   return { success: false, data: null, error: 'Unauthorized' }
-    // }
-    // if (submission.data?.status !== 'pending') {
-    //   return { success: false, data: null, error: 'Can only update pending submissions' }
-    // }
+    // Check authentication
+    const userId = await getCurrentUserId()
+    if (!userId) {
+      return { success: false, data: null, error: 'Unauthorized: User not authenticated' }
+    }
+
+    // Verify user is the owner and submission is pending
+    const submissionResult = await getSubmissionById(id)
+    if (submissionResult.error || !submissionResult.data) {
+      return { success: false, data: null, error: 'Submission not found' }
+    }
+
+    if (submissionResult.data.user_id !== userId) {
+      return {
+        success: false,
+        data: null,
+        error: 'Unauthorized: Only the owner can update this submission'
+      }
+    }
+
+    if (submissionResult.data.status !== 'pending') {
+      return {
+        success: false,
+        data: null,
+        error: 'Can only update pending submissions'
+      }
+    }
 
     const result = await updateSubmission(id, data)
     if (result.error) {

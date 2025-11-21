@@ -3,11 +3,7 @@
 /**
  * USER PROFILES SERVER ACTIONS
  * 
- * SECURITY WARNING: These actions currently do not include authentication/authorization checks.
- * Authentication integration (e.g., Clerk) must be implemented before production deployment.
- * All mutation operations (create, update) should verify user identity and permissions.
- * 
- * @see TODO comments in each function for authentication integration points
+ * All mutation operations (create, update) verify user identity using Clerk authentication.
  */
 
 import {
@@ -17,6 +13,7 @@ import {
   getLeaderboard,
   getUserStats
 } from '@/lib/supabase-utils'
+import { getOrCreateUserProfile, getCurrentUserId } from '@/lib/clerk-supabase-sync'
 import type { Database } from '@/types/database.types'
 
 type UserProfileInsert = Database['public']['Tables']['user_profiles']['Insert']
@@ -24,16 +21,50 @@ type UserProfileUpdate = Database['public']['Tables']['user_profiles']['Update']
 
 /**
  * Server action to fetch user profile by user_id
- * @param userId User ID
+ * If userId is not provided, returns the current authenticated user's profile
+ * @param userId Optional user ID (defaults to current user)
  * @returns User profile data
  */
-export async function getUserProfileAction(userId: string) {
+export async function getUserProfileAction(userId?: string) {
   try {
-    if (!userId) {
+    const currentUserId = await getCurrentUserId()
+    
+    // If no userId provided, use current user
+    const targetUserId = userId || currentUserId
+    
+    if (!targetUserId) {
       return { success: false, data: null, error: 'User ID is required' }
     }
 
-    const result = await getUserProfile(userId)
+    // If requesting own profile, ensure it exists
+    if (targetUserId === currentUserId) {
+      const syncResult = await getOrCreateUserProfile()
+      if (syncResult.data) {
+        return { success: true, data: syncResult.data, error: null }
+      }
+    }
+
+    const result = await getUserProfile(targetUserId)
+    if (result.error) {
+      return { success: false, data: null, error: result.error.message }
+    }
+    return { success: true, data: result.data, error: null }
+  } catch (error) {
+    return {
+      success: false,
+      data: null,
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
+    }
+  }
+}
+
+/**
+ * Server action to get current authenticated user's profile
+ * @returns Current user's profile data
+ */
+export async function getCurrentUserProfileAction() {
+  try {
+    const result = await getOrCreateUserProfile()
     if (result.error) {
       return { success: false, data: null, error: result.error.message }
     }
@@ -49,11 +80,19 @@ export async function getUserProfileAction(userId: string) {
 
 /**
  * Server action to create a new user profile
+ * Note: User profiles are typically auto-created via getOrCreateUserProfile()
+ * This action is kept for manual creation if needed
  * @param data User profile data (email, username)
  * @returns Created user profile
  */
 export async function createUserProfileAction(data: UserProfileInsert) {
   try {
+    // Check authentication
+    const userId = await getCurrentUserId()
+    if (!userId) {
+      return { success: false, data: null, error: 'Unauthorized: User not authenticated' }
+    }
+
     // Validate required fields
     if (!data.email || !data.username) {
       return {
@@ -83,12 +122,22 @@ export async function createUserProfileAction(data: UserProfileInsert) {
       }
     }
 
-    // TODO: Add authentication check here if needed
-    // if (!authenticatedUser) {
-    //   return { success: false, data: null, error: 'Unauthorized' }
-    // }
+    // Ensure user_id matches authenticated user
+    if (data.user_id && data.user_id !== userId) {
+      return {
+        success: false,
+        data: null,
+        error: 'Unauthorized: user_id must match authenticated user'
+      }
+    }
 
-    const result = await createUserProfile(data)
+    // Set user_id to authenticated user
+    const profileData: UserProfileInsert = {
+      ...data,
+      user_id: userId,
+    }
+
+    const result = await createUserProfile(profileData)
     if (result.error) {
       return { success: false, data: null, error: result.error.message }
     }
@@ -105,14 +154,32 @@ export async function createUserProfileAction(data: UserProfileInsert) {
 /**
  * Server action to update user profile
  * Requires authentication - only owner can update
- * @param userId User ID
+ * If userId is not provided, updates the current authenticated user's profile
+ * @param userId Optional user ID (defaults to current user)
  * @param data Profile update data (email, username, total_earnings)
  * @returns Updated user profile
  */
-export async function updateUserProfileAction(userId: string, data: UserProfileUpdate) {
+export async function updateUserProfileAction(
+  userId: string | undefined,
+  data: UserProfileUpdate
+) {
   try {
-    if (!userId) {
-      return { success: false, data: null, error: 'User ID is required' }
+    // Check authentication
+    const currentUserId = await getCurrentUserId()
+    if (!currentUserId) {
+      return { success: false, data: null, error: 'Unauthorized: User not authenticated' }
+    }
+
+    // Use current user if userId not provided
+    const targetUserId = userId || currentUserId
+
+    // Ensure user can only update their own profile
+    if (targetUserId !== currentUserId) {
+      return {
+        success: false,
+        data: null,
+        error: 'Unauthorized: You can only update your own profile'
+      }
     }
 
     // Validate email format if provided
@@ -139,12 +206,10 @@ export async function updateUserProfileAction(userId: string, data: UserProfileU
       }
     }
 
-    // TODO: Add authentication check here
-    // if (!authenticatedUser || authenticatedUser.id !== userId) {
-    //   return { success: false, data: null, error: 'Unauthorized' }
-    // }
+    // Ensure profile exists
+    await getOrCreateUserProfile()
 
-    const result = await updateUserProfile(userId, data)
+    const result = await updateUserProfile(targetUserId, data)
     if (result.error) {
       return { success: false, data: null, error: result.error.message }
     }
@@ -190,21 +255,27 @@ export async function getLeaderboardAction(limit: number = 10) {
 /**
  * Server action to get user statistics
  * Returns total_earnings and submission counts
- * @param userId User ID
+ * If userId is not provided, returns the current authenticated user's stats
+ * @param userId Optional user ID (defaults to current user)
  * @returns User statistics object
  */
-export async function getUserStatsAction(userId: string) {
+export async function getUserStatsAction(userId?: string) {
   try {
-    if (!userId) {
+    const currentUserId = await getCurrentUserId()
+    const targetUserId = userId || currentUserId
+
+    if (!targetUserId) {
       return { success: false, data: null, error: 'User ID is required' }
     }
 
-    // TODO: Add authentication check here if needed
-    // if (!authenticatedUser || authenticatedUser.id !== userId) {
+    // Users can view their own stats, or we can allow public viewing
+    // For now, allow viewing own stats or any user's stats (public leaderboard data)
+    // If you want to restrict, uncomment the check below:
+    // if (targetUserId !== currentUserId) {
     //   return { success: false, data: null, error: 'Unauthorized' }
     // }
 
-    const result = await getUserStats(userId)
+    const result = await getUserStats(targetUserId)
     if (result.error) {
       return { success: false, data: null, error: result.error.message }
     }

@@ -3,13 +3,10 @@
 /**
  * BOUNTIES SERVER ACTIONS
  * 
- * SECURITY WARNING: These actions currently do not include authentication/authorization checks.
- * Authentication integration (e.g., Clerk) must be implemented before production deployment.
- * All mutation operations (create, update, delete) should verify user identity and permissions.
- * 
- * @see TODO comments in each function for authentication integration points
+ * All mutation operations (create, update, delete) verify user identity using Clerk authentication.
  */
 
+import { auth } from '@clerk/nextjs/server'
 import {
   listBounties,
   getBountyById,
@@ -18,6 +15,7 @@ import {
   deleteBounty,
   updateClaimedBounty
 } from '@/lib/supabase-utils'
+import { getOrCreateUserProfile, getCurrentUserId } from '@/lib/clerk-supabase-sync'
 import type { Database } from '@/types/database.types'
 
 type BountyInsert = Database['public']['Tables']['bounties']['Insert']
@@ -86,13 +84,34 @@ export async function createBountyAction(data: BountyInsert) {
       }
     }
 
-    // SECURITY: Authentication and authorization must be implemented before production use
-    // TODO: Add authentication check here when auth system is integrated
-    // Example: if (!authenticatedUser || authenticatedUser.id !== data.creator_id) {
-    //   return { success: false, data: null, error: 'Unauthorized' }
-    // }
+    // Check authentication
+    const userId = await getCurrentUserId()
+    if (!userId) {
+      return { success: false, data: null, error: 'Unauthorized: User not authenticated' }
+    }
 
-    const result = await createBounty(data)
+    // Sync user profile
+    const profileResult = await getOrCreateUserProfile()
+    if (profileResult.error) {
+      return { success: false, data: null, error: 'Failed to sync user profile' }
+    }
+
+    // Ensure creator_id matches authenticated user
+    if (data.creator_id && data.creator_id !== userId) {
+      return {
+        success: false,
+        data: null,
+        error: 'Unauthorized: creator_id must match authenticated user'
+      }
+    }
+
+    // Set creator_id to authenticated user
+    const bountyData: BountyInsert = {
+      ...data,
+      creator_id: userId,
+    }
+
+    const result = await createBounty(bountyData)
     if (result.error) {
       return { success: false, data: null, error: result.error.message }
     }
@@ -119,11 +138,25 @@ export async function updateBountyAction(id: string, data: BountyUpdate) {
       return { success: false, data: null, error: 'Bounty ID is required' }
     }
 
-    // TODO: Add authentication check here
-    // const bounty = await getBountyById(id)
-    // if (authenticatedUser?.id !== bounty.data?.creator_id) {
-    //   return { success: false, data: null, error: 'Unauthorized' }
-    // }
+    // Check authentication
+    const userId = await getCurrentUserId()
+    if (!userId) {
+      return { success: false, data: null, error: 'Unauthorized: User not authenticated' }
+    }
+
+    // Verify user is the creator
+    const bountyResult = await getBountyById(id)
+    if (bountyResult.error || !bountyResult.data) {
+      return { success: false, data: null, error: 'Bounty not found' }
+    }
+
+    if (bountyResult.data.creator_id !== userId) {
+      return {
+        success: false,
+        data: null,
+        error: 'Unauthorized: Only the creator can update this bounty'
+      }
+    }
 
     const result = await updateBounty(id, data)
     if (result.error) {
@@ -151,11 +184,25 @@ export async function deleteBountyAction(id: string) {
       return { success: false, data: null, error: 'Bounty ID is required' }
     }
 
-    // TODO: Add authentication check here
-    // const bounty = await getBountyById(id)
-    // if (authenticatedUser?.id !== bounty.data?.creator_id) {
-    //   return { success: false, data: null, error: 'Unauthorized' }
-    // }
+    // Check authentication
+    const userId = await getCurrentUserId()
+    if (!userId) {
+      return { success: false, data: null, error: 'Unauthorized: User not authenticated' }
+    }
+
+    // Verify user is the creator
+    const bountyResult = await getBountyById(id)
+    if (bountyResult.error || !bountyResult.data) {
+      return { success: false, data: null, error: 'Bounty not found' }
+    }
+
+    if (bountyResult.data.creator_id !== userId) {
+      return {
+        success: false,
+        data: null,
+        error: 'Unauthorized: Only the creator can delete this bounty'
+      }
+    }
 
     const result = await deleteBounty(id)
     if (result.error) {
