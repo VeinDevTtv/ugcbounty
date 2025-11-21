@@ -1,11 +1,22 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database.types'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+// Lazy initialization to avoid build-time errors
+let _supabase: ReturnType<typeof createClient<Database>> | null = null
+
+function getSupabaseClient() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+
+  if (!_supabase) {
+    _supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+  }
+
+  return _supabase
 }
 
 /**
@@ -15,8 +26,16 @@ if (!supabaseUrl || !supabaseAnonKey) {
  * 
  * For Clerk integration, use createSupabaseClientWithClerk() instead
  * to pass Clerk session tokens.
+ * 
+ * Note: Client is created lazily to avoid build-time errors when env vars are not available.
  */
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+export const supabase = new Proxy({} as ReturnType<typeof createClient<Database>>, {
+  get(_target, prop) {
+    const client = getSupabaseClient()
+    const value = (client as any)[prop]
+    return typeof value === 'function' ? value.bind(client) : value
+  }
+})
 
 /**
  * Create a Supabase client with Clerk session token.
@@ -40,6 +59,11 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
 export function createSupabaseClientWithClerk(
   getToken: () => Promise<string | null>
 ) {
+  // Validate at runtime
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+
   return createClient<Database>(supabaseUrl, supabaseAnonKey, {
     global: {
       fetch: async (url, options = {}) => {
