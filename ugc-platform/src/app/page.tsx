@@ -166,4 +166,39 @@ export default function FeedPage() {
                 placeholder="Search brands..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-10 w-full rounded-lg border border-zinc-200 pl-9 pr-4 text-sm focus:b
+                className="h-10 w-full rounded-lg border border-zinc-200 pl-9 pr-4 text-sm focus:border-indigo-500 focus:outline-none"
+              />
+            </div>
+
+            <Button variant="outline" className="gap-2">
+              <Filter className="h-4 w-4" />
+              <span className="hidden sm:inline">Filters</span>
+            </Button>
+          </div>
+
+          {/* SORTING BUTTONS (second row, under filter) */}
+          <div className="flex flex-wrap gap-2 justify-start md:justify-end">
+            <Button onClick={sortLowToHigh} variant="outline" className="text-sm">
+              Lowest → Highest Budget
+            </Button>
+
+            <Button onClick={sortHighToLow} variant="outline" className="text-sm">
+              Highest → Lowest Budget
+            </Button>
+
+            <Button onClick={sortMostPopular} variant="outline" className="text-sm">
+              Most Popular 🔥
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Grid */}
+      <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {filteredBounties.map((bounty) => (
+          <BountyCard key={bounty.id} data={bounty} />
+        ))}
+      </section>
+    </div>
+  );
+}
