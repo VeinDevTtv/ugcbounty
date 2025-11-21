@@ -8,44 +8,115 @@ import { Filter, Search } from "lucide-react";
 const BOUNTIES = [
   { 
     id: "1", 
-    title: "Do Your Lessons or Else...", 
+    title: "Duolingo Language Chaos Challenge", 
     brand: "Duolingo", 
     payout: "15", 
     platforms: ["tiktok", "instagram"] as any, 
     budget: "$50,000", 
     deadline: "2d left",
-    filled: 45 // 45% full (Green bar)
+    filled: 45
   },
+
   { 
     id: "2", 
-    title: "Aesthetic 2025 Setup", 
+    title: "Aesthetic 2025 Desk Setup", 
     brand: "Notion", 
     payout: "25", 
     platforms: ["youtube"] as any, 
     budget: "$20,000", 
     deadline: "5d left",
-    filled: 72 // 72% full (Blue/Yellow bar)
+    filled: 72
   },
+
   { 
     id: "3", 
-    title: "Coding Superpowers", 
+    title: "Coding Superpowers Challenge", 
     brand: "Cursor", 
     payout: "40", 
     platforms: ["twitter"] as any, 
     budget: "$10,000", 
     deadline: "12h left",
-    filled: 100 // 🚨 100% FULL (Red bar, closed)
+    filled: 100
   },
+
   { 
     id: "4", 
-    title: "Murder Your Thirst", 
+    title: "Hydrate Like a Villain", 
     brand: "Liquid Death", 
     payout: "18", 
     platforms: ["instagram", "tiktok"] as any, 
     budget: "$35,000", 
     deadline: "1w left",
-    filled: 100 // 🚨 100% FULL (Red bar, closed)
+    filled: 100
   },
+
+  // ⭐ NEW + UNIQUE BOUNTIES BELOW
+
+  { 
+    id: "5", 
+    title: "Latte Art at Home", 
+    brand: "Starbucks", 
+    payout: "30", 
+    platforms: ["instagram", "tiktok"] as any, 
+    budget: "$75,000", 
+    deadline: "4d left",
+    filled: 58
+  },
+
+  { 
+    id: "6", 
+    title: "Glow Up Morning Routine", 
+    brand: "Fenty Beauty", 
+    payout: "45", 
+    platforms: ["tiktok", "instagram"] as any, 
+    budget: "$120,000", 
+    deadline: "6d left",
+    filled: 80
+  },
+
+  { 
+    id: "7", 
+    title: "Show Your Spotify Wrapped Reaction", 
+    brand: "Spotify", 
+    payout: "25", 
+    platforms: ["tiktok", "youtube"] as any, 
+    budget: "$90,000", 
+    deadline: "8d left",
+    filled: 20
+  },
+
+  { 
+    id: "8", 
+    title: "Before & After Writing Transformation", 
+    brand: "Grammarly", 
+    payout: "18", 
+    platforms: ["instagram", "youtube"] as any, 
+    budget: "$40,000", 
+    deadline: "10d left",
+    filled: 67
+  },
+
+  { 
+    id: "9", 
+    title: "My Weekend Airbnb Stay", 
+    brand: "Airbnb", 
+    payout: "55", 
+    platforms: ["tiktok", "instagram"] as any, 
+    budget: "$150,000", 
+    deadline: "1w left",
+    filled: 49
+  },
+
+  { 
+    id: "10", 
+    title: "Train Like an Athlete", 
+    brand: "Nike", 
+    payout: "50", 
+    platforms: ["youtube", "tiktok"] as any, 
+    budget: "$200,000", 
+    deadline: "3w left",
+    filled: 28
+  }
 ];
 
 export default function FeedPage() {
