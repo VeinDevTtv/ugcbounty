@@ -122,7 +122,9 @@ export async function POST(req: NextRequest) {
       // Extract user data from Clerk webhook payload
       const userId = user.id
       const email = user.email_addresses?.[0]?.email_address || null
-      const username = user.username || null
+      // Use Clerk username if available, otherwise generate a default one
+      // Default format: user_<first8charsOfUserId> for better UX
+      const username = user.username || (userId ? `user_${userId.slice(0, 8)}` : null)
 
       if (!userId) {
         console.error('No user ID in webhook payload')
@@ -168,7 +170,8 @@ export async function POST(req: NextRequest) {
       const user = evt.data
       const userId = user.id
       const email = user.email_addresses?.[0]?.email_address || null
-      const username = user.username || null
+      // Use Clerk username if available, otherwise keep existing or generate default
+      const username = user.username || (userId ? `user_${userId.slice(0, 8)}` : null)
 
       if (!userId) {
         return NextResponse.json(

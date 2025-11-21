@@ -28,12 +28,16 @@ export async function getOrCreateUserProfile(): Promise<{
 
     // Use upsert to create or update user profile with Clerk data (like og implementation)
     // This handles both creation and updates in a single operation
+    // Generate default username if Clerk doesn't provide one for better UX
+    const email = user?.emailAddresses[0]?.emailAddress || null
+    const username = user?.username || `user_${userId.slice(0, 8)}`
+
     const { data: profile, error: upsertError } = await supabaseServer
       .from('user_profiles')
       .upsert({
         user_id: userId,
-        email: user?.emailAddresses[0]?.emailAddress || null,
-        username: user?.username || null,
+        email: email,
+        username: username,
         total_earnings: 0,
       } as UserProfileInsert)
       .select()
