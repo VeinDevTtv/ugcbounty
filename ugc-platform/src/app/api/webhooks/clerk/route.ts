@@ -1,9 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Webhook } from 'svix'
-import { supabaseServer } from '@/lib/supabase-server'
+import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database.types'
 
 type UserProfileInsert = Database['public']['Tables']['user_profiles']['Insert']
+
+/**
+ * Create Supabase client for webhook handler.
+ * Uses service role key to bypass RLS for webhook operations.
+ */
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Missing Supabase environment variables. Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY')
+  }
+
+  return createClient<Database>(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  })
+}
 
 /**
  * Clerk webhook handler for user.created events.
@@ -21,13 +41,24 @@ type UserProfileInsert = Database['public']['Tables']['user_profiles']['Insert']
  */
 export async function POST(req: NextRequest) {
   try {
-    // Get the webhook secret from environment variables
+    // Check all required environment variables upfront for better error messages
     const webhookSecret = process.env.CLERK_WEBHOOK_SECRET
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-    if (!webhookSecret) {
-      console.error('CLERK_WEBHOOK_SECRET is not set')
+    const missingEnvVars: string[] = []
+    if (!webhookSecret) missingEnvVars.push('CLERK_WEBHOOK_SECRET')
+    if (!supabaseUrl) missingEnvVars.push('NEXT_PUBLIC_SUPABASE_URL')
+    if (!supabaseServiceKey) missingEnvVars.push('SUPABASE_SERVICE_ROLE_KEY')
+
+    if (missingEnvVars.length > 0) {
+      console.error(`Missing environment variables: ${missingEnvVars.join(', ')}`)
       return NextResponse.json(
-        { error: 'Webhook secret not configured' },
+        { 
+          error: 'Missing required environment variables',
+          missing: missingEnvVars,
+          message: `Please set the following environment variables: ${missingEnvVars.join(', ')}`
+        },
         { status: 500 }
       )
     }
@@ -87,9 +118,12 @@ export async function POST(req: NextRequest) {
         )
       }
 
+      // Create Supabase client for webhook operations
+      const supabase = getSupabaseClient()
+
       // Create or update user profile in Supabase using upsert
       // This ensures idempotency if the webhook is called multiple times
-      const { data: profile, error: upsertError } = await supabaseServer
+      const { data: profile, error: upsertError } = await supabase
         .from('user_profiles')
         .upsert({
           user_id: userId,
@@ -129,8 +163,11 @@ export async function POST(req: NextRequest) {
         )
       }
 
+      // Create Supabase client for webhook operations
+      const supabase = getSupabaseClient()
+
       // Update user profile in Supabase
-      const { data: profile, error: updateError } = await supabaseServer
+      const { data: profile, error: updateError } = await supabase
         .from('user_profiles')
         .upsert({
           user_id: userId,
