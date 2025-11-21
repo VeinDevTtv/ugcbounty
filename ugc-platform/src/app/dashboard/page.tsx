@@ -146,7 +146,7 @@ export default function Dashboard() {
                                             <div className="flex flex-col items-center justify-center gap-2">
                                                 <Briefcase className="h-8 w-8 text-zinc-300" />
                                                 <p>You haven't created any campaigns.</p>
-                                                <Button size="sm" variant="default" className="mt-2">Create Campaign</Button>
+                                                <Button size="sm" variant="primary" className="mt-2">Create Campaign</Button>
                                             </div>
                                         </td>
                                     </tr>
