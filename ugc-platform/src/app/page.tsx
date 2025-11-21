@@ -129,7 +129,7 @@ export default function FeedPage() {
           <p className="text-zinc-500 mt-1">Find campaigns that match your vibe.</p>
         </div>
 
-        {/* Search & Filter Toolbar */}
+                {/* SEARCH + FILTERS */}
         <div className="flex gap-2 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
@@ -139,11 +139,27 @@ export default function FeedPage() {
               className="h-10 w-full rounded-lg border border-zinc-200 pl-9 pr-4 text-sm focus:border-indigo-500 focus:outline-none"
             />
           </div>
+
           <Button variant="outline" className="gap-2">
             <Filter className="h-4 w-4" />
             <span className="hidden sm:inline">Filters</span>
           </Button>
         </div>
+      </section>
+
+      {/* SORTING BUTTONS */}
+      <section className="flex flex-wrap gap-3">
+        <Button onClick={sortLowToHigh} variant="outline" className="text-sm">
+          Lowest → Highest Budget
+        </Button>
+
+        <Button onClick={sortHighToLow} variant="outline" className="text-sm">
+          Highest → Lowest Budget
+        </Button>
+
+        <Button onClick={sortMostPopular} variant="outline" className="text-sm">
+          Most Popular 🔥
+        </Button>
       </section>
 
       {/* Grid */}
