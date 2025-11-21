@@ -38,7 +38,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                     </div>
                 </div>
                 {/* Change Badge color if Sold Out */}
-                <Badge variant={isFull ? "destructive" : "success"}>
+                <Badge variant={isFull ? "error" : "success"}>
                     {isFull ? "SOLD OUT" : `$${data.payout} / 1k views`}
                 </Badge>
             </div>
