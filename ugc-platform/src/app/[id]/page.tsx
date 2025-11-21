@@ -1,4 +1,3 @@
-@@ -0,0 +1,160 @@
 "use client"; // Client component for interactivity (Modal)
 
 import { useState } from "react";
