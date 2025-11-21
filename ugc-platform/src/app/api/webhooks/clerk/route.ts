@@ -63,6 +63,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // At this point, TypeScript knows these are defined due to the check above
+    // Use non-null assertions since we've already validated them
+    const webhookSecretValue = webhookSecret as string
+
     // Get the headers from the request
     // In Next.js App Router, we can access headers directly from the request
     const svixId = req.headers.get('svix-id')
@@ -81,16 +85,26 @@ export async function POST(req: NextRequest) {
     const body = await req.text()
 
     // Verify the webhook signature
-    const wh = new Webhook(webhookSecret)
+    const wh = new Webhook(webhookSecretValue)
 
-    let evt: any
+    // Define webhook event type based on Clerk's webhook payload structure
+    type ClerkWebhookEvent = {
+      type: string
+      data: {
+        id: string
+        email_addresses?: Array<{ email_address: string }>
+        username?: string | null
+      }
+    }
+
+    let evt: ClerkWebhookEvent
 
     try {
       evt = wh.verify(body, {
         'svix-id': svixId,
         'svix-timestamp': svixTimestamp,
         'svix-signature': svixSignature,
-      }) as any
+      }) as ClerkWebhookEvent
     } catch (err) {
       console.error('Error verifying webhook:', err)
       return NextResponse.json(
