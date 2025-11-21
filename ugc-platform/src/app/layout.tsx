@@ -16,8 +16,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+  if (!publishableKey) {
+    throw new Error(
+      'Missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY. Please set it in your environment variables. ' +
+      'Get your key at https://dashboard.clerk.com/last-active?path=api-keys'
+    );
+  }
+
   return (
-    <ClerkProvider>
+    <ClerkProvider publishableKey={publishableKey}>
       <html lang="en">
         <body className={`${inter.className} bg-zinc-50 min-h-screen`}>
           <Navbar />
