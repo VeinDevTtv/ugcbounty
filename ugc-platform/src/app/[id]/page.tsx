@@ -11,7 +11,7 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
     const [isModalOpen, setModalOpen] = useState(false);
     const [showToast, setShowToast] = useState(false);
 
-    // --- NEW DUOLINGO CAMPAIGN DATA ---
+    // --- DUOLINGO CAMPAIGN DATA (UNCHANGED from previous response) ---
     const campaign = {
         title: "Do your lesson or else...",
         brand: "Duolingo",
@@ -27,7 +27,7 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
         deadline: "Nov 30, 2025",
         format: "9:16 Vertical Video (Instructional)"
     };
-    // ----------------------------------
+    // -----------------------------------------------------------------
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,17 +36,18 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
     };
 
     return (
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-
+        // Setting a brighter background for the whole page (e.g., light gray)
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 bg-gray-100 p-8 min-h-screen"> 
             {/* Left Col: Content */}
             <div className="lg:col-span-2 space-y-8">
-                <div className="rounded-2xl border border-zinc-200 bg-white p-8">
+                <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm"> {/* Brighter background & shadow */}
                     <div className="flex items-start justify-between">
                         <div>
-                            <Badge variant="warning">Only 2 days left</Badge>
-                            <h1 className="mt-3 text-3xl font-bold text-zinc-900">{campaign.title}</h1> {/* TITLE CHANGE */}
-                            <div className="mt-2 flex items-center gap-2 text-zinc-500">
-                                <span className="font-medium text-zinc-900">{campaign.brand}</span> {/* BRAND CHANGE */}
+                            {/* Bright badge color */}
+                            <Badge className="bg-orange-500 text-white">Only 2 days left</Badge> 
+                            <h1 className="mt-3 text-3xl font-bold text-zinc-900">{campaign.title}</h1>
+                            <div className="mt-2 flex items-center gap-2 text-zinc-600"> {/* Darker text for readability */}
+                                <span className="font-medium text-zinc-900">{campaign.brand}</span>
                                 <span>•</span>
                                 <span>Posted 3 days ago</span>
                             </div>
@@ -60,18 +61,17 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
 
                     <section className="space-y-4">
                         <h3 className="text-lg font-semibold text-zinc-900">Campaign Brief</h3>
-                        <p className="text-zinc-600 leading-relaxed">
-                            {campaign.brief} {/* BRIEF CHANGE */}
+                        <p className="text-zinc-700 leading-relaxed"> {/* Darker text */}
+                            {campaign.brief}
                         </p>
                     </section>
 
                     <section className="mt-8 space-y-4">
                         <h3 className="text-lg font-semibold text-zinc-900">Requirements</h3>
                         <ul className="space-y-2">
-                            {/* REQUIREMENTS LOOP CHANGE */}
                             {campaign.requirements.map((req, i) => (
-                                <li key={i} className="flex items-start gap-3 text-zinc-600">
-                                    <CheckCircle className="h-5 w-5 shrink-0 text-indigo-600" />
+                                <li key={i} className="flex items-start gap-3 text-zinc-700"> {/* Darker text */}
+                                    <CheckCircle className="h-5 w-5 shrink-0 text-emerald-500" /> {/* Brighter checkmark */}
                                     <span>{req}</span>
                                 </li>
                             ))}
@@ -82,44 +82,45 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
 
             {/* Right Col: Action Sidebar */}
             <div className="space-y-6">
-                <div className="rounded-2xl border border-zinc-200 bg-white p-6 sticky top-24">
+                <div className="rounded-2xl border border-zinc-200 bg-white p-6 sticky top-24 shadow-sm"> {/* Brighter background & shadow */}
                     <div className="mb-6 text-center">
-                        <p className="text-sm text-zinc-500">Payout Rate</p>
-                        <div className="text-4xl font-bold text-zinc-900">{campaign.payoutRate}</div> {/* PAYOUT RATE CHANGE */}
-                        <p className="text-xs font-medium text-zinc-400">per 1,000 qualified views</p>
+                        <p className="text-sm text-zinc-600">Payout Rate</p>
+                        <div className="text-4xl font-bold text-zinc-900">{campaign.payoutRate}</div>
+                        <p className="text-xs font-medium text-zinc-500">per 1,000 qualified views</p>
                     </div>
 
                     <div className="space-y-4 mb-6">
                         <div className="flex justify-between text-sm">
-                            <span className="flex items-center gap-2 text-zinc-600">
-                                <DollarSign className="h-4 w-4" /> Total Budget
+                            <span className="flex items-center gap-2 text-zinc-700"> {/* Darker text */}
+                                <DollarSign className="h-4 w-4 text-gray-500" /> Total Budget
                             </span>
-                            <span className="font-medium">{campaign.totalBudget}</span> {/* BUDGET CHANGE */}
+                            <span className="font-medium text-zinc-800">{campaign.totalBudget}</span> {/* Darker text */}
                         </div>
                         <div className="flex justify-between text-sm">
-                            <span className="flex items-center gap-2 text-zinc-600">
-                                <Clock className="h-4 w-4" /> Deadline
+                            <span className="flex items-center gap-2 text-zinc-700"> {/* Darker text */}
+                                <Clock className="h-4 w-4 text-gray-500" /> Deadline
                             </span>
-                            <span className="font-medium">{campaign.deadline}</span> {/* DEADLINE CHANGE */}
+                            <span className="font-medium text-zinc-800">{campaign.deadline}</span> {/* Darker text */}
                         </div>
                         <div className="flex justify-between text-sm">
-                            <span className="flex items-center gap-2 text-zinc-600">
-                                <FileText className="h-4 w-4" /> Format
+                            <span className="flex items-center gap-2 text-zinc-700"> {/* Darker text */}
+                                <FileText className="h-4 w-4 text-gray-500" /> Format
                             </span>
-                            <span className="font-medium">{campaign.format}</span> {/* FORMAT CHANGE */}
+                            <span className="font-medium text-zinc-800">{campaign.format}</span> {/* Darker text */}
                         </div>
                     </div>
 
-                    <Button className="w-full" size="lg" onClick={() => setModalOpen(true)}>
+                    {/* Bright primary button */}
+                    <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white" size="lg" onClick={() => setModalOpen(true)}>
                         Submit Content
                     </Button>
-                    <Button variant="ghost" className="w-full mt-2 gap-2">
+                    <Button variant="ghost" className="w-full mt-2 gap-2 text-indigo-600 hover:bg-indigo-50"> {/* Subtle hover for ghost button */}
                         <Share2 className="h-4 w-4" /> Share Campaign
                     </Button>
                 </div>
             </div>
 
-            {/* Submission Modal & Toast (unchanged) */}
+            {/* Submission Modal */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={() => setModalOpen(false)}
@@ -155,7 +156,7 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
                     </div>
 
                     <div className="pt-2">
-                        <Button type="submit" className="w-full gap-2">
+                        <Button type="submit" className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700 text-white">
                             <UploadCloud className="h-4 w-4" /> Submit for Review
                         </Button>
                     </div>
