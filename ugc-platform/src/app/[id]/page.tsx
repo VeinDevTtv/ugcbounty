@@ -11,7 +11,7 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
     const [isModalOpen, setModalOpen] = useState(false);
     const [showToast, setShowToast] = useState(false);
 
-    // --- DUOLINGO CAMPAIGN DATA (UNCHANGED from previous response) ---
+    // --- DUOLINGO CAMPAIGN DATA ---
     const campaign = {
         title: "Do your lesson or else...",
         brand: "Duolingo",
@@ -36,15 +36,15 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
     };
 
     return (
-        // Setting a brighter background for the whole page (e.g., light gray)
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 bg-gray-100 p-8 min-h-screen"> 
+        // Bright background for the whole page
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 bg-gray-100 p-8 min-h-screen"> 
             {/* Left Col: Content */}
             <div className="lg:col-span-2 space-y-8">
-                <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm"> {/* Brighter background & shadow */}
+                <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-md"> {/* Brighter background & shadow */}
                     <div className="flex items-start justify-between">
                         <div>
-                            {/* Bright badge color */}
-                            <Badge className="bg-orange-500 text-white">Only 2 days left</Badge> 
+                            {/* FIX: Reverted to using supported 'variant' prop for the Badge */}
+                            <Badge variant="warning">Only 2 days left</Badge> 
                             <h1 className="mt-3 text-3xl font-bold text-zinc-900">{campaign.title}</h1>
                             <div className="mt-2 flex items-center gap-2 text-zinc-600"> {/* Darker text for readability */}
                                 <span className="font-medium text-zinc-900">{campaign.brand}</span>
@@ -71,7 +71,7 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
                         <ul className="space-y-2">
                             {campaign.requirements.map((req, i) => (
                                 <li key={i} className="flex items-start gap-3 text-zinc-700"> {/* Darker text */}
-                                    <CheckCircle className="h-5 w-5 shrink-0 text-emerald-500" /> {/* Brighter checkmark */}
+                                    <CheckCircle className="h-5 w-5 shrink-0 text-emerald-500" /> {/* Bright checkmark */}
                                     <span>{req}</span>
                                 </li>
                             ))}
@@ -82,7 +82,7 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
 
             {/* Right Col: Action Sidebar */}
             <div className="space-y-6">
-                <div className="rounded-2xl border border-zinc-200 bg-white p-6 sticky top-24 shadow-sm"> {/* Brighter background & shadow */}
+                <div className="rounded-2xl border border-zinc-200 bg-white p-6 sticky top-24 shadow-md"> {/* Brighter background & shadow */}
                     <div className="mb-6 text-center">
                         <p className="text-sm text-zinc-600">Payout Rate</p>
                         <div className="text-4xl font-bold text-zinc-900">{campaign.payoutRate}</div>
