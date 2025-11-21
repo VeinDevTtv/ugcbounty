@@ -1,13 +1,51 @@
-import BountyCard from "@/components/BountyCard";
+"use client";
+
+import BountyCard from "@/components/BountyCard"; // Make sure this path matches your folder
 import { Button } from "@/components/ui/Button";
 import { Filter, Search } from "lucide-react";
 
-// Temporary placeholder data for UI visualization
+// Updated Data with "Filled" percentages
 const BOUNTIES = [
-  { id: "1", title: "Summer Energy Drink Launch", brand: "Vitality", payout: "25", platforms: ["tiktok", "instagram"] as any, budget: "$5,000", deadline: "2d left" },
-  { id: "2", title: "Tech Gadget Review", brand: "GizmoLab", payout: "40", platforms: ["youtube"] as any, budget: "$12,000", deadline: "5d left" },
-  { id: "3", title: "Skincare Routine AM/PM", brand: "GlowUp", payout: "30", platforms: ["tiktok"] as any, budget: "$8,500", deadline: "1w left" },
-  { id: "4", title: "Fitness App Challenge", brand: "MoveIt", payout: "20", platforms: ["instagram"] as any, budget: "$2,000", deadline: "12h left" },
+  { 
+    id: "1", 
+    title: "Do Your Lessons or Else...", 
+    brand: "Duolingo", 
+    payout: "15", 
+    platforms: ["tiktok", "instagram"] as any, 
+    budget: "$50,000", 
+    deadline: "2d left",
+    filled: 45 // 45% full (Green bar)
+  },
+  { 
+    id: "2", 
+    title: "Aesthetic 2025 Setup", 
+    brand: "Notion", 
+    payout: "25", 
+    platforms: ["youtube"] as any, 
+    budget: "$20,000", 
+    deadline: "5d left",
+    filled: 72 // 72% full (Blue/Yellow bar)
+  },
+  { 
+    id: "3", 
+    title: "Coding Superpowers", 
+    brand: "Cursor", 
+    payout: "40", 
+    platforms: ["twitter"] as any, 
+    budget: "$10,000", 
+    deadline: "12h left",
+    filled: 100 // 🚨 100% FULL (Red bar, closed)
+  },
+  { 
+    id: "4", 
+    title: "Murder Your Thirst", 
+    brand: "Liquid Death", 
+    payout: "18", 
+    platforms: ["instagram", "tiktok"] as any, 
+    budget: "$35,000", 
+    deadline: "1w left",
+    filled: 100 // 🚨 100% FULL (Red bar, closed)
+  },
 ];
 
 export default function FeedPage() {
