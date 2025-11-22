@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
 
 type Bounty = {
@@ -65,6 +64,74 @@ export default function ClaimBountyDialog({
     }
   }, [open]);
 
+  // Helper functions
+  const isValidUrl = (urlString: string): boolean => {
+    try {
+      new URL(urlString);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const getPlatformFromUrl = (urlString: string): 'youtube' | 'tiktok' | 'instagram' | 'other' => {
+    try {
+      const hostname = new URL(urlString).hostname.toLowerCase();
+      if (hostname.includes('youtube.com') || hostname.includes('youtu.be')) {
+        return 'youtube';
+      }
+      if (hostname.includes('tiktok.com')) {
+        return 'tiktok';
+      }
+      if (hostname.includes('instagram.com')) {
+        return 'instagram';
+      }
+      return 'other';
+    } catch {
+      return 'other';
+    }
+  };
+
+  const isValidSupportedUrl = (urlString: string): boolean => {
+    return getPlatformFromUrl(urlString) !== 'other';
+  };
+
+  const fetchPreviewData = useCallback(async (urlString: string) => {
+    // Check if supported platform (inline check to avoid dependency)
+    const platform = getPlatformFromUrl(urlString);
+    if (platform === 'other') {
+      return;
+    }
+
+    setIsLoadingPreview(true);
+    setPreviewError(null);
+
+    try {
+      const response = await fetch('/api/link-preview', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: urlString }),
+      });
+
+      if (response.ok) {
+        const data: LinkPreviewData = await response.json();
+        setPreviewData(data);
+      } else {
+        const error = await response.json();
+        setPreviewError(error.error || 'Failed to load preview');
+        setPreviewData(null);
+      }
+    } catch (error) {
+      console.error('Error fetching preview:', error);
+      setPreviewError('Failed to load preview');
+      setPreviewData(null);
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  }, []);
+
   // Debounced preview fetching
   useEffect(() => {
     if (!open || !url.trim()) {
@@ -97,72 +164,7 @@ export default function ClaimBountyDialog({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [url, open]);
-
-  const isValidUrl = (urlString: string): boolean => {
-    try {
-      new URL(urlString);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const getPlatformFromUrl = (urlString: string): 'youtube' | 'tiktok' | 'instagram' | 'other' => {
-    try {
-      const hostname = new URL(urlString).hostname.toLowerCase();
-      if (hostname.includes('youtube.com') || hostname.includes('youtu.be')) {
-        return 'youtube';
-      }
-      if (hostname.includes('tiktok.com')) {
-        return 'tiktok';
-      }
-      if (hostname.includes('instagram.com')) {
-        return 'instagram';
-      }
-      return 'other';
-    } catch {
-      return 'other';
-    }
-  };
-
-  const isValidSupportedUrl = (urlString: string): boolean => {
-    return getPlatformFromUrl(urlString) !== 'other';
-  };
-
-  const fetchPreviewData = async (urlString: string) => {
-    if (!isValidSupportedUrl(urlString)) {
-      return;
-    }
-
-    setIsLoadingPreview(true);
-    setPreviewError(null);
-
-    try {
-      const response = await fetch('/api/link-preview', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: urlString }),
-      });
-
-      if (response.ok) {
-        const data: LinkPreviewData = await response.json();
-        setPreviewData(data);
-      } else {
-        const error = await response.json();
-        setPreviewError(error.error || 'Failed to load preview');
-        setPreviewData(null);
-      }
-    } catch (error) {
-      console.error('Error fetching preview:', error);
-      setPreviewError('Failed to load preview');
-      setPreviewData(null);
-    } finally {
-      setIsLoadingPreview(false);
-    }
-  };
+  }, [url, open, fetchPreviewData]);
 
   const handleUrlChange = (newUrl: string) => {
     setUrl(newUrl);
@@ -172,7 +174,7 @@ export default function ClaimBountyDialog({
     setSubmitSuccess(false);
   };
 
-  const validateYouTubeVideo = async (urlString: string): Promise<ValidationResult | null> => {
+  const validateYouTubeVideo = async (urlString: string): Promise<ValidationResult> => {
     try {
       const response = await fetch('/api/validate-bounty', {
         method: 'POST',
@@ -194,7 +196,11 @@ export default function ClaimBountyDialog({
       }
     } catch (error) {
       console.error('Error validating YouTube video:', error);
-      return null;
+      // Return error result instead of null (matching og pattern)
+      return {
+        valid: false,
+        explanation: error instanceof Error ? error.message : 'Failed to validate video. Please try again.',
+      };
     }
   };
 
@@ -228,47 +234,70 @@ export default function ClaimBountyDialog({
       return;
     }
 
-    setIsSubmitting(true);
-    setSubmitError(null);
-    setSubmitSuccess(false);
+    const detectedPlatform = getPlatformFromUrl(url);
 
-    try {
-      // For YouTube: validate first
-      if (platform === 'youtube') {
-        setIsValidating(true);
+    if (detectedPlatform === 'youtube') {
+      // For YouTube: validate first, then submit if valid (matching og pattern)
+      setIsValidating(true);
+      setValidationResult(null);
+      setSubmitError(null);
+
+      try {
+        // First validate the video
         const validation = await validateYouTubeVideo(url);
-        setIsValidating(false);
-
-        if (!validation) {
-          setSubmitError('Failed to validate video. Please try again.');
-          setIsSubmitting(false);
-          return;
-        }
-
-        if (!validation.valid) {
-          setValidationResult(validation);
-          setIsSubmitting(false);
-          return;
-        }
-
         setValidationResult(validation);
+
+        // If validation is successful, submit the bounty item immediately
+        if (validation.valid) {
+          await submitBountyItem(url);
+          setSubmitSuccess(true);
+          
+          // Close dialog after 2 seconds
+          setTimeout(() => {
+            onOpenChange(false);
+            // Refresh page to show new submission
+            window.location.reload();
+          }, 2000);
+        }
+      } catch (error) {
+        setValidationResult({
+          valid: false,
+          explanation: error instanceof Error ? error.message : 'Failed to validate video. Please try again.',
+        });
+      } finally {
+        setIsValidating(false);
       }
+    } else {
+      // For non-YouTube platforms, submit directly without validation (matching og pattern)
+      setIsSubmitting(true);
+      setSubmitError(null);
+      setSubmitSuccess(false);
 
-      // Submit the bounty item
-      await submitBountyItem(url);
-      setSubmitSuccess(true);
+      try {
+        setIsValidating(true);
+        await submitBountyItem(url);
+        setValidationResult({
+          valid: true,
+          explanation: `Successfully submitted your ${detectedPlatform} content to the bounty!`,
+        });
+        setSubmitSuccess(true);
 
-      // Close dialog after 2 seconds
-      setTimeout(() => {
-        onOpenChange(false);
-        // Refresh page to show new submission
-        window.location.reload();
-      }, 2000);
-    } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : 'Failed to submit. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-      setIsValidating(false);
+        // Close dialog after 2 seconds
+        setTimeout(() => {
+          onOpenChange(false);
+          // Refresh page to show new submission
+          window.location.reload();
+        }, 2000);
+      } catch (error) {
+        setValidationResult({
+          valid: false,
+          explanation: error instanceof Error ? error.message : 'Failed to submit. Please try again.',
+        });
+        setSubmitError(error instanceof Error ? error.message : 'Failed to submit. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+        setIsValidating(false);
+      }
     }
   };
 
@@ -284,7 +313,7 @@ export default function ClaimBountyDialog({
         <div className="flex justify-between items-start mb-4">
           <div>
             <h2 className="text-lg font-semibold text-[#F7F1E8]">
-              Claim "{bounty.title}"
+              Claim &quot;{bounty.title}&quot;
             </h2>
             <p className="mt-1 text-sm text-[#CBB8A4]">
               Brand: {bounty.brand} · Payout: ${bounty.payout}
