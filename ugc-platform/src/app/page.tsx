@@ -129,6 +129,7 @@ export default function Home() {
                 budget: `$${bounty.totalBounty.toLocaleString()}`,
                 deadline: "Ongoing", // Can be calculated from created_at if needed
                 filled: Math.round(bounty.progressPercentage),
+                logoUrl: bounty.logoUrl,
               };
               
               return (
