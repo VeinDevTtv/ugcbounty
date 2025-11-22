@@ -54,4 +54,44 @@ body {
   color: var(--color-text);
   font-family: Arial, Helvetica, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: none; /* Hide default cursor for custom cursor */
+}
+
+/* Ensure custom cursor works on all interactive elements */
+button,
+a,
+[role="button"],
+input,
+textarea,
+select,
+[href] {
+  cursor: none;
+}
+
+/* Disable custom cursor on mobile/touch devices */
+@media (hover: none) and (pointer: coarse) {
+  body,
+  button,
+  a,
+  [role="button"],
+  input,
+  textarea,
+  select,
+  [href] {
+    cursor: auto;
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  body,
+  button,
+  a,
+  [role="button"],
+  input,
+  textarea,
+  select,
+  [href] {
+    cursor: auto;
+  }
 }
