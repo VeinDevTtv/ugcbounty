@@ -281,10 +281,12 @@ select,
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   line-height: 1.2;
+  color: inherit;
   text-shadow: 
     1px 1px 0 rgba(0, 0, 0, 0.1),
     -1px -1px 0 rgba(0, 0, 0, 0.1),
     0 0 3px currentColor;
+  visibility: hidden;
 }
 
 .sharpie-text::before {
@@ -299,6 +301,8 @@ select,
   animation: draw-sharpie 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   animation-delay: 0.6s;
   white-space: nowrap;
+  z-index: 1;
+  visibility: visible;
 }
 
 .sharpie-text::after {
@@ -321,7 +325,6 @@ select,
   animation: sharpie-wiggle 4s ease-in-out infinite, sharpie-bleed 3s ease-in-out infinite;
   animation-delay: 2.1s, 2.1s;
   transform-origin: left center;
-  opacity: 0;
   animation-fill-mode: forwards;
 }
 

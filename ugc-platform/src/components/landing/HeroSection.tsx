@@ -62,7 +62,7 @@ export function HeroSection() {
           style={{ lineHeight: "1.1", ...textShadow }}
         >
           Bountea <br />
-          <span className="inline-block">
+          <span className="inline-block whitespace-nowrap">
             <span 
               className={`inline-block text-transparent bg-clip-text ${
                 theme === "light"
@@ -75,7 +75,7 @@ export function HeroSection() {
             >
               User Generated Content
             </span>{" "}
-            Platform
+            <span className="inline-block">Platform</span>
           </span>
         </h1>
 
