@@ -11,31 +11,34 @@ export function useClerkModalDetection() {
   const [isClerkModalOpen, setIsClerkModalOpen] = useState(false);
 
   useEffect(() => {
-    // Clerk modals typically have these selectors
-    const clerkModalSelectors = [
-      '[data-clerk-modal]',
-      '[id^="clerk-"]',
-      '.cl-modal',
-      '[class*="clerk"]',
-      // Clerk's actual modal container classes
-      '[class*="cl-rootBox"]',
-      '[class*="cl-modalContent"]',
-    ];
-
     const checkForClerkModal = (): boolean => {
-      return clerkModalSelectors.some((selector) => {
-        try {
-          const element = document.querySelector(selector);
-          if (element) {
-            // Check if modal is visible
-            const style = window.getComputedStyle(element);
-            return style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0";
-          }
-        } catch {
-          // Ignore invalid selectors
+      // More specific check - look for Clerk modal portal/overlay that's actually visible
+      // Clerk modals are typically rendered in a portal with specific structure
+      const possibleModals = document.querySelectorAll('[class*="cl-rootBox"], [class*="cl-modalContent"], [data-clerk-modal]');
+      
+      for (const element of possibleModals) {
+        const style = window.getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        
+        // Check if element is actually visible and has significant size (modal-like)
+        const isVisible = 
+          style.display !== "none" && 
+          style.visibility !== "hidden" && 
+          parseFloat(style.opacity) > 0 &&
+          rect.width > 100 && // Modals should be at least 100px wide
+          rect.height > 100;  // Modals should be at least 100px tall
+        
+        // Also check if it's positioned as a modal (fixed or absolute, covering significant area)
+        const isPositionedAsModal = 
+          (style.position === "fixed" || style.position === "absolute") &&
+          (rect.width > window.innerWidth * 0.3 || rect.height > window.innerHeight * 0.3);
+        
+        if (isVisible && isPositionedAsModal) {
+          return true;
         }
-        return false;
-      });
+      }
+      
+      return false;
     };
 
     // Initial check - use setTimeout to avoid synchronous setState
