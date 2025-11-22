@@ -488,7 +488,7 @@ export default function BountyDetailPage({
                       size="lg"
                       onClick={() => setIsDialogOpen(true)}
                     >
-                      Submit for this Bounty
+                      SUBMIT CONTENT
                     </Button>
                   )}
                 </div>
