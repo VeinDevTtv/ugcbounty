@@ -11,11 +11,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Button } from "./ui/Button";
-import { X, Upload } from "lucide-react";
+import { X } from "lucide-react";
 import Image from "next/image";
 
 export default function Header() {
-  const { user, isLoaded } = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const pathname = usePathname();
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -97,6 +97,7 @@ export default function Header() {
                 Create Bounty
               </Button>
             </SignedIn>
+
 
 
             <SignedOut>
