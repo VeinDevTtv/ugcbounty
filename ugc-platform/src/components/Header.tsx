@@ -204,10 +204,27 @@ export default function Header() {
     fetchBounties();
   }, []);
 
-  const navItems = [
+  // Base navigation items (shown to all authenticated users)
+  const baseNavItems = [
     { href: "/feed", label: "Feed" },
     { href: "/dashboard", label: "Dashboard" },
     { href: "/profile", label: "My Profile" },
+  ];
+
+  // Role-specific navigation items
+  const creatorNavItems = [
+    { href: "/creator/payout", label: "Payouts" },
+  ];
+
+  const businessNavItems = [
+    { href: "/business/add-funds", label: "Billing" },
+  ];
+
+  // Combine nav items based on user role
+  const navItems = [
+    ...baseNavItems,
+    ...(userRole === 'creator' ? creatorNavItems : []),
+    ...(userRole === 'business' ? businessNavItems : []),
   ];
 
   return (
