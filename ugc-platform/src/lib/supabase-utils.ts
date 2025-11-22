@@ -263,6 +263,112 @@ export async function updateSubmission(id: string, data: SubmissionUpdate) {
 }
 
 /**
+ * Get all submissions for a specific bounty
+ * @param bountyId Bounty ID (UUID string)
+ * @returns Array of submissions
+ */
+export async function getSubmissionsByBounty(bountyId: string) {
+  try {
+    const { data, error } = await supabaseServer
+      .from('submissions')
+      .select('*')
+      .eq('bounty_id', bountyId)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return { data: data || [], error: null }
+  } catch (error) {
+    console.error('Error getting submissions by bounty:', error)
+    return { data: null, error: error as Error }
+  }
+}
+
+/**
+ * Get all submissions for a specific user
+ * @param userId User ID (UUID string)
+ * @returns Array of submissions with bounty data
+ */
+export async function getSubmissionsByUser(userId: string) {
+  try {
+    const { data, error } = await supabaseServer
+      .from('submissions')
+      .select(`
+        *,
+        bounties (*)
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return { data: data || [], error: null }
+  } catch (error) {
+    console.error('Error getting submissions by user:', error)
+    return { data: null, error: error as Error }
+  }
+}
+
+/**
+ * Update submission status and validation result (matching og/ pattern)
+ * @param submissionId Submission ID (UUID string)
+ * @param status New status ('pending', 'approved', 'rejected')
+ * @param validationExplanation Validation explanation
+ * @param viewCount Optional view count to update
+ * @returns Updated submission
+ */
+export async function updateSubmissionStatus(
+  submissionId: string,
+  status: 'pending' | 'approved' | 'rejected',
+  validationExplanation: string,
+  viewCount?: number
+) {
+  try {
+    const updateData: {
+      status: 'pending' | 'approved' | 'rejected'
+      validation_explanation: string
+      view_count?: number
+      earned_amount?: number
+    } = {
+      status,
+      validation_explanation: validationExplanation
+    }
+
+    if (viewCount !== undefined) {
+      updateData.view_count = viewCount
+      
+      // If approved, calculate earned amount
+      if (status === 'approved') {
+        const { data: submission } = await supabaseServer
+          .from('submissions')
+          .select('bounty_id')
+          .eq('id', submissionId)
+          .single()
+
+        if (submission) {
+          const bountyResult = await getBountyById(submission.bounty_id)
+          if (bountyResult.data) {
+            const earnedAmount = (viewCount / 1000) * bountyResult.data.rate_per_1k_views
+            updateData.earned_amount = earnedAmount
+          }
+        }
+      }
+    }
+
+    const { data, error } = await supabaseServer
+      .from('submissions')
+      .update(updateData)
+      .eq('id', submissionId)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error) {
+    console.error('Error updating submission status:', error)
+    return { data: null, error: error as Error }
+  }
+}
+
+/**
  * Validate a submission (admin function - server-side only)
  * Updates status and validation_explanation
  * @param id Submission ID
@@ -359,6 +465,84 @@ export async function getUserProfile(userId: string) {
     return { data, error: null }
   } catch (error) {
     console.error('Error getting user profile:', error)
+    return { data: null, error: error as Error }
+  }
+}
+
+/**
+ * Get or create user profile (upsert pattern from og/)
+ * @param userId User ID
+ * @param email Optional email
+ * @param username Optional username
+ * @returns User profile
+ */
+export async function getOrCreateUserProfile(
+  userId: string,
+  email?: string,
+  username?: string
+) {
+  try {
+    // Try to get existing profile
+    const { data: existingProfile } = await supabaseServer
+      .from('user_profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .single()
+
+    if (existingProfile) {
+      return { data: existingProfile, error: null }
+    }
+
+    // Create new profile if doesn't exist
+    const { data, error } = await supabaseServer
+      .from('user_profiles')
+      .insert({
+        user_id: userId,
+        email: email || null,
+        username: username || null,
+        total_earnings: 0
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error) {
+    console.error('Error getting or creating user profile:', error)
+    return { data: null, error: error as Error }
+  }
+}
+
+/**
+ * Update user total earnings
+ * @param userId User ID
+ * @param amount Amount to add to total earnings
+ * @returns Updated user profile
+ */
+export async function updateUserEarnings(userId: string, amount: number) {
+  try {
+    const { data: profile, error: fetchError } = await supabaseServer
+      .from('user_profiles')
+      .select('total_earnings')
+      .eq('user_id', userId)
+      .single()
+
+    if (fetchError) throw fetchError
+    if (!profile) throw new Error('User profile not found')
+
+    const newTotalEarnings = (profile.total_earnings || 0) + amount
+
+    const { data, error } = await supabaseServer
+      .from('user_profiles')
+      .update({ total_earnings: newTotalEarnings })
+      .eq('user_id', userId)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error) {
+    console.error('Error updating user earnings:', error)
     return { data: null, error: error as Error }
   }
 }
