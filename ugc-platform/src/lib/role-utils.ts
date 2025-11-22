@@ -17,9 +17,15 @@ export async function getUserRole(userId: string): Promise<UserRole> {
       .from('user_profiles')
       .select('role')
       .eq('user_id', userId)
-      .single()
+      .maybeSingle()
 
+    // Handle case where user profile doesn't exist yet (PGRST116)
     if (error) {
+      // PGRST116 means "Cannot coerce the result to a single JSON object" (0 rows)
+      // This is expected for new users who haven't completed onboarding
+      if (error.code === 'PGRST116') {
+        return null
+      }
       console.error('Error fetching user role:', error)
       return null
     }
@@ -66,9 +72,15 @@ export async function getCurrentUserProfile(): Promise<{
       .from('user_profiles')
       .select('*')
       .eq('user_id', userId)
-      .single()
+      .maybeSingle()
 
+    // Handle case where user profile doesn't exist yet (PGRST116)
     if (error) {
+      // PGRST116 means "Cannot coerce the result to a single JSON object" (0 rows)
+      // This is expected for new users who haven't completed onboarding
+      if (error.code === 'PGRST116') {
+        return { data: null, error: null }
+      }
       console.error('Error fetching user profile:', error)
       return { data: null, error: error as Error }
     }

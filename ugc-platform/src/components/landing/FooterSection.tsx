@@ -45,7 +45,7 @@ export function FooterSection() {
             className={`font-serif italic text-6xl md:text-8xl lg:text-[8rem] leading-[1.1] ${headingColor} pb-4`}
             style={{ lineHeight: "1.1" }}
           >
-            Hunt for <br className="hidden md:block" /> bounties
+            Continue the <br className="hidden md:block" /> hunting
           </h2>
           <Link href="/feed">
             <button

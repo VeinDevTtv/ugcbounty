@@ -35,11 +35,19 @@ export async function POST(request: NextRequest) {
 
     // Ensure user profile exists first (in case webhook hasn't fired yet)
     const user = await currentUser()
-    const email = user?.emailAddresses[0]?.emailAddress || null
+    // Clerk typically requires email, but provide fallback to prevent database errors
+    const email = user?.emailAddresses[0]?.emailAddress || `user_${userId}@placeholder.local`
     const username = user?.username || `user_${userId.slice(0, 8)}`
 
+    // First, check if profile already exists to preserve existing data (like total_earnings)
+    const { data: existingProfile } = await supabaseServer
+      .from('user_profiles')
+      .select('total_earnings')
+      .eq('user_id', userId)
+      .maybeSingle()
+
     // Use upsert to ensure profile exists, then update role
-    // Supabase automatically uses the primary key (user_id) for conflict resolution
+    // Preserve existing total_earnings if profile exists, otherwise set to 0
     const { data, error } = await supabaseServer
       .from('user_profiles')
       .upsert({
@@ -47,7 +55,9 @@ export async function POST(request: NextRequest) {
         email: email,
         username: username,
         role: role,
-        total_earnings: 0,
+        // Only set total_earnings to 0 if profile doesn't exist yet
+        // Otherwise preserve existing earnings
+        total_earnings: existingProfile?.total_earnings ?? 0,
       } as UserProfileInsert)
       .select()
       .single()
