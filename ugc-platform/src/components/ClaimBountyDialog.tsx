@@ -1,6 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
 
 type Bounty = {
   id: string;
@@ -8,7 +11,6 @@ type Bounty = {
   brand: string;
   payout: string;
   deadline: string;
-  // add whatever else you need
 };
 
 type ClaimBountyDialogProps = {
@@ -18,53 +20,410 @@ type ClaimBountyDialogProps = {
   isCompleted: boolean;
 };
 
+interface LinkPreviewData {
+  title: string;
+  description: string;
+  image: string;
+  url: string;
+}
+
+interface ValidationResult {
+  valid: boolean;
+  explanation: string;
+}
+
 export default function ClaimBountyDialog({
   open,
   onOpenChange,
   bounty,
   isCompleted,
 }: ClaimBountyDialogProps) {
+  const [url, setUrl] = useState("");
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+  const [urlError, setUrlError] = useState<string | null>(null);
+  const [previewData, setPreviewData] = useState<LinkPreviewData | null>(null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [platform, setPlatform] = useState<'youtube' | 'tiktok' | 'instagram' | 'other' | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  // Reset state when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setUrl("");
+      setUrlError(null);
+      setPreviewData(null);
+      setPreviewError(null);
+      setValidationResult(null);
+      setPlatform(null);
+      setSubmitError(null);
+      setSubmitSuccess(false);
+    }
+  }, [open]);
+
+  // Debounced preview fetching
+  useEffect(() => {
+    if (!open || !url.trim()) {
+      setPreviewData(null);
+      setPreviewError(null);
+      return;
+    }
+
+    // Validate URL format first
+    if (!isValidUrl(url)) {
+      setUrlError("Please enter a valid URL");
+      setPreviewData(null);
+      return;
+    }
+
+    // Check if supported platform
+    const detectedPlatform = getPlatformFromUrl(url);
+    if (detectedPlatform === 'other') {
+      setUrlError("Please enter a URL from YouTube, TikTok, or Instagram");
+      setPreviewData(null);
+      return;
+    }
+
+    setUrlError(null);
+    setPlatform(detectedPlatform);
+
+    // Debounce preview fetch
+    const timer = setTimeout(() => {
+      fetchPreviewData(url);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [url, open]);
+
+  const isValidUrl = (urlString: string): boolean => {
+    try {
+      new URL(urlString);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const getPlatformFromUrl = (urlString: string): 'youtube' | 'tiktok' | 'instagram' | 'other' => {
+    try {
+      const hostname = new URL(urlString).hostname.toLowerCase();
+      if (hostname.includes('youtube.com') || hostname.includes('youtu.be')) {
+        return 'youtube';
+      }
+      if (hostname.includes('tiktok.com')) {
+        return 'tiktok';
+      }
+      if (hostname.includes('instagram.com')) {
+        return 'instagram';
+      }
+      return 'other';
+    } catch {
+      return 'other';
+    }
+  };
+
+  const isValidSupportedUrl = (urlString: string): boolean => {
+    return getPlatformFromUrl(urlString) !== 'other';
+  };
+
+  const fetchPreviewData = async (urlString: string) => {
+    if (!isValidSupportedUrl(urlString)) {
+      return;
+    }
+
+    setIsLoadingPreview(true);
+    setPreviewError(null);
+
+    try {
+      const response = await fetch('/api/link-preview', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: urlString }),
+      });
+
+      if (response.ok) {
+        const data: LinkPreviewData = await response.json();
+        setPreviewData(data);
+      } else {
+        const error = await response.json();
+        setPreviewError(error.error || 'Failed to load preview');
+        setPreviewData(null);
+      }
+    } catch (error) {
+      console.error('Error fetching preview:', error);
+      setPreviewError('Failed to load preview');
+      setPreviewData(null);
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  };
+
+  const handleUrlChange = (newUrl: string) => {
+    setUrl(newUrl);
+    setUrlError(null);
+    setValidationResult(null);
+    setSubmitError(null);
+    setSubmitSuccess(false);
+  };
+
+  const validateYouTubeVideo = async (urlString: string): Promise<ValidationResult | null> => {
+    try {
+      const response = await fetch('/api/validate-bounty', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: urlString,
+          requirements: bounty.title, // Using title as requirements placeholder
+        }),
+      });
+
+      if (response.ok) {
+        const result: ValidationResult = await response.json();
+        return result;
+      } else {
+        const error = await response.json();
+        throw new Error(error.error || 'Validation failed');
+      }
+    } catch (error) {
+      console.error('Error validating YouTube video:', error);
+      return null;
+    }
+  };
+
+  const submitBountyItem = async (urlString: string) => {
+    try {
+      const response = await fetch('/api/submit-bounty-item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: urlString,
+          bountyId: bounty.id,
+        }),
+      });
+
+      if (response.ok) {
+        return true;
+      } else {
+        const error = await response.json();
+        throw new Error(error.error || 'Submission failed');
+      }
+    } catch (error) {
+      console.error('Error submitting bounty item:', error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (isCompleted || !url.trim() || !isValidSupportedUrl(url)) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+    setSubmitSuccess(false);
+
+    try {
+      // For YouTube: validate first
+      if (platform === 'youtube') {
+        setIsValidating(true);
+        const validation = await validateYouTubeVideo(url);
+        setIsValidating(false);
+
+        if (!validation) {
+          setSubmitError('Failed to validate video. Please try again.');
+          setIsSubmitting(false);
+          return;
+        }
+
+        if (!validation.valid) {
+          setValidationResult(validation);
+          setIsSubmitting(false);
+          return;
+        }
+
+        setValidationResult(validation);
+      }
+
+      // Submit the bounty item
+      await submitBountyItem(url);
+      setSubmitSuccess(true);
+
+      // Close dialog after 2 seconds
+      setTimeout(() => {
+        onOpenChange(false);
+        // Refresh page to show new submission
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Failed to submit. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+      setIsValidating(false);
+    }
+  };
+
   if (!open) return null;
 
   const handleClose = () => onOpenChange(false);
 
-  const handleSubmit = () => {
-    if (isCompleted) return;
-    // TODO: call your claim API / submit form here
-    onOpenChange(false);
-  };
+  const canSubmit = url.trim() && isValidSupportedUrl(url) && !isCompleted && !isSubmitting && !isValidating;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-        <h2 className="text-lg font-semibold">
-          Claim “{bounty.title}”
-        </h2>
-        <p className="mt-1 text-sm text-zinc-500">
-          Brand: {bounty.brand} · Payout: ${bounty.payout}
-        </p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg border border-zinc-200">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h2 className="text-lg font-semibold text-zinc-900">
+              Claim "{bounty.title}"
+            </h2>
+            <p className="mt-1 text-sm text-zinc-500">
+              Brand: {bounty.brand} · Payout: ${bounty.payout}
+            </p>
+          </div>
+          <button
+            onClick={handleClose}
+            className="text-zinc-500 hover:text-zinc-700 transition-colors"
+          >
+            <XCircle className="h-5 w-5" />
+          </button>
+        </div>
 
         {isCompleted && (
-          <p className="mt-3 rounded-md bg-zinc-100 px-3 py-2 text-xs text-zinc-600">
+          <div className="mt-3 rounded-md bg-zinc-100 px-3 py-2 text-xs text-zinc-600">
             This bounty has been marked as completed. New submissions are disabled.
-          </p>
+          </div>
         )}
 
-        {/* Replace this with your actual claim form/fields */}
-        <div className="mt-4 space-y-2 text-sm text-zinc-600">
-          <p>Drop your submission link or details here (TODO).</p>
+        {submitSuccess && (
+          <div className="mt-3 rounded-md bg-green-100 px-3 py-2 text-xs text-green-700 flex items-center gap-2">
+            <CheckCircle className="h-4 w-4" />
+            Submission successful! Redirecting...
+          </div>
+        )}
+
+        {submitError && (
+          <div className="mt-3 rounded-md bg-red-100 px-3 py-2 text-xs text-red-700">
+            {submitError}
+          </div>
+        )}
+
+        <div className="mt-4 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-zinc-900 mb-2">
+              Content URL (YouTube, Instagram, or TikTok)
+            </label>
+            <input
+              type="url"
+              value={url}
+              onChange={(e) => handleUrlChange(e.target.value)}
+              placeholder="https://youtube.com/watch?v=... or https://tiktok.com/@user/video/..."
+              className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-zinc-100 disabled:cursor-not-allowed"
+              disabled={isCompleted || isSubmitting}
+            />
+            {urlError && (
+              <p className="mt-1 text-xs text-red-600">{urlError}</p>
+            )}
+            {platform && platform !== 'other' && !urlError && (
+              <p className="mt-1 text-xs text-green-600 flex items-center gap-1">
+                <CheckCircle className="h-3 w-3" />
+                {platform.charAt(0).toUpperCase() + platform.slice(1)} URL detected
+              </p>
+            )}
+          </div>
+
+          {/* Preview Loading */}
+          {isLoadingPreview && (
+            <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Loading preview...
+            </div>
+          )}
+
+          {/* Preview Error */}
+          {previewError && (
+            <div className="rounded-md bg-yellow-50 px-3 py-2 text-xs text-yellow-700">
+              {previewError}
+            </div>
+          )}
+
+          {/* Preview Card */}
+          {previewData && !previewError && (
+            <div className="border border-zinc-200 rounded-lg p-4 bg-zinc-50">
+              {previewData.image && (
+                <img
+                  src={previewData.image}
+                  alt="Preview"
+                  className="w-full h-32 object-cover rounded mb-3"
+                />
+              )}
+              <h4 className="font-semibold text-sm text-zinc-900 mb-1 line-clamp-2">
+                {previewData.title}
+              </h4>
+              {previewData.description && (
+                <p className="text-xs text-zinc-600 line-clamp-2 mb-2">
+                  {previewData.description}
+                </p>
+              )}
+              <a
+                href={previewData.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1"
+              >
+                {previewData.url}
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
+          )}
+
+          {/* Validation Result */}
+          {validationResult && (
+            <div className={`rounded-md px-3 py-2 text-xs ${
+              validationResult.valid
+                ? 'bg-green-100 text-green-700'
+                : 'bg-red-100 text-red-700'
+            }`}>
+              <div className="font-semibold mb-1">
+                {validationResult.valid ? '✓ Validation Passed' : '✗ Validation Failed'}
+              </div>
+              <p>{validationResult.explanation}</p>
+            </div>
+          )}
         </div>
 
         <div className="mt-6 flex items-center justify-end gap-2">
-          <Button variant="outline" type="button" onClick={handleClose}>
+          <Button variant="outline" type="button" onClick={handleClose} disabled={isSubmitting}>
             Cancel
           </Button>
           <Button
             type="button"
             onClick={handleSubmit}
-            disabled={isCompleted}
+            disabled={!canSubmit}
           >
-            {isCompleted ? "Completed" : "Submit Claim"}
+            {isValidating ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Validating...
+              </>
+            ) : isSubmitting ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Submitting...
+              </>
+            ) : isCompleted ? (
+              "Completed"
+            ) : (
+              "Submit Claim"
+            )}
           </Button>
         </div>
       </div>

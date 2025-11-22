@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import BountyCard from "@/components/BountyCard";
+import ClaimBountyDialog from "@/components/ClaimBountyDialog";
 import { useUser } from "@clerk/nextjs";
 
 interface BountyWithCreator {
@@ -42,6 +43,7 @@ export default function Home() {
   const [bounties, setBounties] = useState<Bounty[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [bountiesWithCreatorId, setBountiesWithCreatorId] = useState<BountyWithCreator[]>([]);
+  const [selectedBounty, setSelectedBounty] = useState<string | null>(null);
 
   // Fetch bounties from database on mount
   useEffect(() => {
@@ -85,6 +87,10 @@ export default function Home() {
     }
   };
 
+  const handleClaimBounty = (bountyId: string) => {
+    setSelectedBounty(bountyId);
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F1E8]">
       {/* Main Content */}
@@ -119,15 +125,40 @@ export default function Home() {
               
               return (
                 <div key={bounty.id} className="hover:z-10">
-                  <Link href={`/bounty/${bounty.id}`} className="block">
-                    <BountyCard data={bountyCardData} />
-                  </Link>
+                  <BountyCard
+                    data={{
+                      ...bountyCardData,
+                      isOwner,
+                      isCompleted: bounty.isCompleted,
+                      onClaim: (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleClaimBounty(bounty.id);
+                      },
+                    }}
+                  />
                 </div>
               );
             })}
           </div>
         )}
       </main>
+
+      {/* Claim Bounty Dialog */}
+      {selectedBounty && (
+        <ClaimBountyDialog
+          open={!!selectedBounty}
+          onOpenChange={(open) => !open && setSelectedBounty(null)}
+          bounty={{
+            id: selectedBounty,
+            title: bounties.find((b) => b.id === selectedBounty)?.name || "Unknown Bounty",
+            brand: bounties.find((b) => b.id === selectedBounty)?.companyName || "Unknown",
+            payout: bounties.find((b) => b.id === selectedBounty)?.ratePer1kViews.toFixed(2) || "0.00",
+            deadline: "Ongoing",
+          }}
+          isCompleted={bounties.find((b) => b.id === selectedBounty)?.isCompleted || false}
+        />
+      )}
     </div>
   );
 }
