@@ -1,185 +1,133 @@
-import { useState } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import BountyCard from "@/components/BountyCard";
-import { Button } from "@/components/ui/Button";
-import { Filter, Search } from "lucide-react";
-import { Filter, Search, Check } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
-// Updated Data with "Filled" percentages
-const BOUNTIES = [
-@@ -112,27 +112,35 @@ const BOUNTIES = [
-// Helper: "$50,000" -> 50000
-const parseBudget = (str: string) => Number(str.replace(/\$|,/g, ""));
+interface BountyWithCreator {
+  id: string;
+  name: string;
+  description: string;
+  total_bounty: number;
+  rate_per_1k_views: number;
+  claimed_bounty: number;
+  creator_id: string | null;
+  logo_url?: string | null;
+  company_name?: string | null;
+  calculated_claimed_bounty: number;
+  progress_percentage: number;
+  total_submission_views: number;
+  is_completed: boolean;
+  created_at: string;
+}
 
-type SortMode = "none" | "low-high" | "high-low" | "popular";
+interface Bounty {
+  id: string;
+  name: string;
+  description: string;
+  totalBounty: number;
+  ratePer1kViews: number;
+  claimedBounty: number;
+  logoUrl?: string | null;
+  companyName?: string | null;
+  progressPercentage: number;
+  totalSubmissionViews: number;
+  isCompleted: boolean;
+  createdAt: string;
+}
 
-export default function FeedPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortedBounties, setSortedBounties] = useState(BOUNTIES);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [sortMode, setSortMode] = useState<SortMode>("none");
+export default function Home() {
+  const { user } = useUser();
+  const [bounties, setBounties] = useState<Bounty[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [bountiesWithCreatorId, setBountiesWithCreatorId] = useState<BountyWithCreator[]>([]);
 
-  // ------- SORT HANDLERS -------
-  const sortLowToHigh = () => {
-    setSortedBounties(prev =>
-      [...prev].sort((a, b) => parseBudget(a.budget) - parseBudget(b.budget))
-    );
-  };
+  // Fetch bounties from database on mount
+  useEffect(() => {
+    fetchBounties();
+  }, []);
 
-  const sortHighToLow = () => {
-    setSortedBounties(prev =>
-      [...prev].sort((a, b) => parseBudget(b.budget) - parseBudget(a.budget))
-    );
-  };
-  const applySort = (mode: SortMode) => {
-    setSortMode(mode);
-    setIsFilterOpen(false);
-
-  const sortMostPopular = () => {
-    setSortedBounties(prev =>
-      [...prev].sort((a, b) => b.filled - a.filled)
-    );
-    if (mode === "low-high") {
-      setSortedBounties(prev =>
-        [...prev].sort((a, b) => parseBudget(a.budget) - parseBudget(b.budget))
-      );
-    } else if (mode === "high-low") {
-      setSortedBounties(prev =>
-        [...prev].sort((a, b) => parseBudget(b.budget) - parseBudget(a.budget))
-      );
-    } else if (mode === "popular") {
-      setSortedBounties(prev =>
-        [...prev].sort((a, b) => b.filled - a.filled)
-      );
-    } else {
-      // none → reset to original order
-      setSortedBounties(BOUNTIES);
+  const fetchBounties = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/bounties");
+      if (response.ok) {
+        const data = await response.json();
+        // Store raw data with creator_id
+        setBountiesWithCreatorId(data);
+        
+        // Map database fields to frontend format
+        const mappedBounties: Bounty[] = data.map(
+          (bounty: BountyWithCreator) => ({
+            id: bounty.id,
+            name: bounty.name,
+            description: bounty.description,
+            totalBounty: Number(bounty.total_bounty),
+            ratePer1kViews: Number(bounty.rate_per_1k_views),
+            claimedBounty: Number(bounty.calculated_claimed_bounty), // Use calculated bounty instead of static claimed_bounty
+            logoUrl: bounty.logo_url,
+            companyName: bounty.company_name,
+            progressPercentage: Number(bounty.progress_percentage),
+            totalSubmissionViews: Number(bounty.total_submission_views),
+            isCompleted: bounty.is_completed,
+            createdAt: bounty.created_at,
+          })
+        );
+        setBounties(mappedBounties);
+      } else {
+        console.error("Failed to fetch bounties");
+      }
+    } catch (error) {
+      console.error("Error fetching bounties:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // ------- SEARCH FILTER -------
-@@ -145,6 +153,10 @@ export default function FeedPage() {
-    );
-  });
-
-  // helper to style selected sort item
-  const isActive = (mode: SortMode) =>
-    sortMode === mode ? "bg-zinc-100 text-zinc-900" : "hover:bg-zinc-50";
-
   return (
-    <div className="space-y-8">
-      {/* Header + Controls */}
-@@ -155,9 +167,9 @@ export default function FeedPage() {
-          <p className="text-zinc-500 mt-1">Find campaigns that match your vibe.</p>
-        </div>
-
-        {/* Right: Search, Filter, Sort */}
-        {/* Right: Search, Filter (with dropdown) */}
-        <div className="flex flex-col gap-3 w-full md:w-auto">
-          {/* SEARCH + FILTERS (top row) */}
-          {/* SEARCH + FILTER BUTTON */}
-          <div className="flex gap-2 w-full md:w-auto">
-            <div className="relative flex-1 md:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-@@ -170,25 +182,86 @@ export default function FeedPage() {
-              />
-            </div>
-
-            <Button variant="outline" className="gap-2">
-              <Filter className="h-4 w-4" />
-              <span className="hidden sm:inline">Filters</span>
-            </Button>
+    <div className="min-h-screen bg-[#F5F1E8]">
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
           </div>
-            {/* Filter button + dropdown */}
-            <div className="relative">
-              <Button
-                variant="outline"
-                className="gap-2"
-                type="button"
-                onClick={() => setIsFilterOpen((prev) => !prev)}
-              >
-                <Filter className="h-4 w-4" />
-                <span className="hidden sm:inline">
-                  {sortMode === "none" ? "Filters" : "Sort: " + (
-                    sortMode === "low-high"
-                      ? "Lowest → Highest"
-                      : sortMode === "high-low"
-                      ? "Highest → Lowest"
-                      : "Most Popular"
-                  )}
-                </span>
-              </Button>
-
-          {/* SORTING BUTTONS (second row, under filter) */}
-          <div className="flex flex-wrap gap-2 justify-start md:justify-end">
-            <Button onClick={sortLowToHigh} variant="outline" className="text-sm">
-              Lowest → Highest Budget
-            </Button>
-              {isFilterOpen && (
-                <div className="absolute right-0 mt-2 w-64 rounded-lg border border-zinc-200 bg-white shadow-lg z-20 text-sm">
-                  <div className="px-3 py-2 border-b text-xs font-semibold text-zinc-500 uppercase">
-                    Sort by budget / popularity
-                  </div>
-
-            <Button onClick={sortHighToLow} variant="outline" className="text-sm">
-              Highest → Lowest Budget
-            </Button>
-                  <button
-                    type="button"
-                    onClick={() => applySort("low-high")}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-left text-zinc-700 ${isActive(
-                      "low-high"
-                    )}`}
-                  >
-                    <span>Lowest → Highest Budget</span>
-                    {sortMode === "low-high" && (
-                      <Check className="h-4 w-4 text-indigo-500" />
-                    )}
-                  </button>
-
-            <Button onClick={sortMostPopular} variant="outline" className="text-sm">
-              Most Popular 🔥
-            </Button>
-                  <button
-                    type="button"
-                    onClick={() => applySort("high-low")}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-left text-zinc-700 ${isActive(
-                      "high-low"
-                    )}`}
-                  >
-                    <span>Highest → Lowest Budget</span>
-                    {sortMode === "high-low" && (
-                      <Check className="h-4 w-4 text-indigo-500" />
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => applySort("popular")}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-left text-zinc-700 ${isActive(
-                      "popular"
-                    )}`}
-                  >
-                    <span>Most Popular 🔥</span>
-                    {sortMode === "popular" && (
-                      <Check className="h-4 w-4 text-indigo-500" />
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => applySort("none")}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-left text-zinc-700 border-t ${isActive(
-                      "none"
-                    )}`}
-                  >
-                    <span>Clear sort</span>
-                    {sortMode === "none" && (
-                      <Check className="h-4 w-4 text-indigo-500" />
-                    )}
-                  </button>
+        ) : bounties.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-gray-600 text-lg">
+              No bounties available yet. Create one to get started!
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {bounties.map((bounty) => {
+              const rawBounty = bountiesWithCreatorId.find(b => b.id === bounty.id);
+              const isOwner: boolean = Boolean(user && rawBounty?.creator_id === user.id);
+              
+              // Map to BountyCard's expected format
+              const bountyCardData = {
+                id: bounty.id,
+                title: bounty.name,
+                brand: bounty.companyName || "Unknown",
+                payout: bounty.ratePer1kViews.toFixed(2),
+                platforms: [] as ("instagram" | "tiktok" | "youtube" | "twitter")[], // Will be populated from submissions if needed
+                budget: `$${bounty.totalBounty.toLocaleString()}`,
+                deadline: "Ongoing", // Can be calculated from created_at if needed
+                filled: Math.round(bounty.progressPercentage),
+              };
+              
+              return (
+                <div key={bounty.id} className="hover:z-10">
+                  <Link href={`/bounty/${bounty.id}`} className="block">
+                    <BountyCard data={bountyCardData} />
+                  </Link>
                 </div>
-              )}
-            </div>
+              );
+            })}
           </div>
-        </div>
-      </section>
+        )}
+      </main>
+    </div>
+  );
+}
