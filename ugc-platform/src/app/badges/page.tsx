@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import { useTheme } from "@/contexts/ThemeContext";
 import { 
   Trophy, 
@@ -225,7 +224,6 @@ function calculateProgress(stats: UserStats, currentLevel: Level, nextLevel: Lev
 
 export default function BadgesPage() {
   const { user, isLoaded } = useUser();
-  const router = useRouter();
   const { theme } = useTheme();
   const [stats, setStats] = useState<UserStats>({
     totalEarnings: 0,
@@ -235,12 +233,6 @@ export default function BadgesPage() {
     totalBounties: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (isLoaded && !user) {
-      router.push("/");
-    }
-  }, [isLoaded, user, router]);
 
   useEffect(() => {
     if (user && isLoaded) {

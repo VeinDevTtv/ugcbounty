@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { GoogleGenerativeAI, SchemaType, Schema } from '@google/generative-ai'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
@@ -54,6 +55,15 @@ function isValidYouTubeUrl(url: string): boolean {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Require authentication
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
     console.log('Validate bounty API called')
     const body: ValidationRequest = await request.json()
     const { url, requirements } = body

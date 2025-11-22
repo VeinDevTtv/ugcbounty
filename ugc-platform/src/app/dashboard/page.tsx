@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -66,7 +65,6 @@ interface Bounty {
 
 export default function Dashboard() {
     const { user, isLoaded } = useUser();
-    const router = useRouter();
     const { theme } = useTheme();
     const [activeTab, setActiveTab] = useState<"submissions" | "bounties">("submissions");
     const [isLoading, setIsLoading] = useState(true);
@@ -74,13 +72,6 @@ export default function Dashboard() {
     // STATE: Real data from API
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [bounties, setBounties] = useState<Bounty[]>([]);
-
-    // Redirect if not logged in
-    useEffect(() => {
-        if (isLoaded && !user) {
-            router.push("/");
-        }
-    }, [isLoaded, user, router]);
 
     // Fetch data when user is loaded
     useEffect(() => {

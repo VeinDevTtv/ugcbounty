@@ -57,14 +57,14 @@ function detectPlatform(url: string): 'youtube' | 'tiktok' | 'instagram' | 'othe
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // Optional: require authentication for security
-    // const { userId } = await auth()
-    // if (!userId) {
-    //   return NextResponse.json(
-    //     { success: false, error: 'Unauthorized' },
-    //     { status: 401 }
-    //   )
-    // }
+    // Require authentication for security
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
 
     const body: UpdateRequest = await request.json().catch(() => ({}))
     const { submissionIds, bountyId } = body

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useUser, UserButton } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -75,7 +74,6 @@ const formatCurrency = (amount: number): string => {
 
 export default function ProfilePage() {
   const { user, isLoaded } = useUser();
-  const router = useRouter();
   const { theme } = useTheme();
   
   // Tab state
@@ -96,13 +94,6 @@ export default function ProfilePage() {
   // Progress dropdown state
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Redirect if not logged in
-  useEffect(() => {
-    if (isLoaded && !user) {
-      router.push('/');
-    }
-  }, [isLoaded, user, router]);
 
   // Fetch bounties
   useEffect(() => {
@@ -245,7 +236,7 @@ export default function ProfilePage() {
     );
   }
 
-  // Redirect if not logged in (handled by useEffect, but show nothing while redirecting)
+  // User is guaranteed to be authenticated by middleware, but check for safety
   if (!user) {
     return null;
   }
@@ -356,7 +347,7 @@ export default function ProfilePage() {
                   : "text-[#B8C5D6] hover:text-[#F5F8FC]"
             )}
           >
-            Your Progress
+            My progress
           </button>
         </div>
 
