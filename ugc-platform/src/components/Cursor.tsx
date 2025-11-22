@@ -40,6 +40,20 @@ export default function Cursor() {
   const particle4XSpring = useSpring(particle4X, { damping: 20, stiffness: 200, mass: 0.3 });
   const particle4YSpring = useSpring(particle4Y, { damping: 20, stiffness: 200, mass: 0.3 });
 
+  // Sparkle particles - create motion values for sparkles
+  const sparkle1X = useMotionValue(0);
+  const sparkle1Y = useMotionValue(0);
+  const sparkle2X = useMotionValue(0);
+  const sparkle2Y = useMotionValue(0);
+  const sparkle3X = useMotionValue(0);
+  const sparkle3Y = useMotionValue(0);
+  const sparkle4X = useMotionValue(0);
+  const sparkle4Y = useMotionValue(0);
+  const sparkle5X = useMotionValue(0);
+  const sparkle5Y = useMotionValue(0);
+  const sparkle6X = useMotionValue(0);
+  const sparkle6Y = useMotionValue(0);
+
   // Array of particles for easier iteration - memoized to prevent recreation
   const particles = useMemo(
     () => [
@@ -66,6 +80,19 @@ export default function Cursor() {
       particle4XSpring,
       particle4YSpring,
     ]
+  );
+
+  // Sparkles array - memoized
+  const sparkles = useMemo(
+    () => [
+      { x: sparkle1X, y: sparkle1Y, angle: 0, delay: 0 },
+      { x: sparkle2X, y: sparkle2Y, angle: 60, delay: 0.2 },
+      { x: sparkle3X, y: sparkle3Y, angle: 120, delay: 0.4 },
+      { x: sparkle4X, y: sparkle4Y, angle: 180, delay: 0.6 },
+      { x: sparkle5X, y: sparkle5Y, angle: 240, delay: 0.8 },
+      { x: sparkle6X, y: sparkle6Y, angle: 300, delay: 1.0 },
+    ],
+    [sparkle1X, sparkle1Y, sparkle2X, sparkle2Y, sparkle3X, sparkle3Y, sparkle4X, sparkle4Y, sparkle5X, sparkle5Y, sparkle6X, sparkle6Y]
   );
 
   // Check for reduced motion preference
@@ -144,8 +171,19 @@ export default function Cursor() {
           particle.y.set(y);
         }, index * 10);
       });
+
+      // Update sparkles in a circular pattern around cursor
+      const sparkleRadius = 20;
+      sparkles.forEach((sparkle) => {
+        const angle = (sparkle.angle + Date.now() * 0.001) % 360;
+        const radian = (angle * Math.PI) / 180;
+        const offsetX = Math.cos(radian) * sparkleRadius;
+        const offsetY = Math.sin(radian) * sparkleRadius;
+        sparkle.x.set(x + offsetX);
+        sparkle.y.set(y + offsetY);
+      });
     },
-    [cursorX, cursorY, isVisible, particles, isHovering]
+    [cursorX, cursorY, isVisible, particles, isHovering, sparkles]
   );
 
   // Mouse enter handler for interactive elements
@@ -252,12 +290,14 @@ export default function Cursor() {
   const cursorSize = isHovering ? 32 : 12;
   const cursorBorderWidth = isHovering ? 2 : 1.5;
   const particleSize = 4;
+  const lightBlue = "#87CEEB"; // Sky blue color
+  const lightBlueGlow = "#B0E0E6"; // Powder blue for glow
 
   return (
     <>
       {/* Main cursor */}
       <motion.div
-        className="fixed pointer-events-none z-[9999] mix-blend-difference"
+        className="fixed pointer-events-none z-[9999]"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
@@ -279,11 +319,11 @@ export default function Cursor() {
             width: cursorSize,
             height: cursorSize,
             borderWidth: cursorBorderWidth,
-            borderColor: "var(--color-accent)",
-            backgroundColor: isHovering ? "var(--color-accent)" : "transparent",
+            borderColor: lightBlue,
+            backgroundColor: isHovering ? lightBlue : "transparent",
             boxShadow: isHovering
-              ? "0 0 20px var(--color-accent), 0 0 40px var(--color-accent)"
-              : "none",
+              ? `0 0 20px ${lightBlue}, 0 0 40px ${lightBlueGlow}, 0 0 60px ${lightBlue}`
+              : `0 0 10px ${lightBlue}`,
           }}
         />
       </motion.div>
@@ -292,7 +332,7 @@ export default function Cursor() {
       {particles.map((particle, index) => (
         <motion.div
           key={index}
-          className="fixed pointer-events-none z-[9998] mix-blend-difference"
+          className="fixed pointer-events-none z-[9998]"
           style={{
             x: particle.xSpring,
             y: particle.ySpring,
@@ -311,10 +351,75 @@ export default function Cursor() {
             style={{
               width: particleSize,
               height: particleSize,
-              backgroundColor: "var(--color-accent)",
+              backgroundColor: lightBlue,
               opacity: 0.4 - index * 0.08,
+              boxShadow: `0 0 8px ${lightBlue}`,
             }}
           />
+        </motion.div>
+      ))}
+
+      {/* Sparkles */}
+      {sparkles.map((sparkle, index) => (
+        <motion.div
+          key={`sparkle-${index}`}
+          className="fixed pointer-events-none z-[9997]"
+          style={{
+            x: sparkle.x,
+            y: sparkle.y,
+            left: -4,
+            top: -4,
+          }}
+          animate={{
+            scale: [0.8, 1.2, 0.8],
+            opacity: [0.4, 1, 0.4],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            delay: sparkle.delay,
+            ease: "easeInOut",
+          }}
+        >
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              background: `radial-gradient(circle, ${lightBlueGlow} 0%, ${lightBlue} 50%, transparent 100%)`,
+              borderRadius: "50%",
+              boxShadow: `0 0 12px ${lightBlue}, 0 0 6px ${lightBlueGlow}`,
+              position: "relative",
+            }}
+          >
+            {/* Cross sparkle effect */}
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: 2,
+                height: 12,
+                background: lightBlue,
+                borderRadius: 1,
+                boxShadow: `0 0 4px ${lightBlue}`,
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%) rotate(90deg)",
+                width: 2,
+                height: 12,
+                background: lightBlue,
+                borderRadius: 1,
+                boxShadow: `0 0 4px ${lightBlue}`,
+              }}
+            />
+          </div>
         </motion.div>
       ))}
     </>
