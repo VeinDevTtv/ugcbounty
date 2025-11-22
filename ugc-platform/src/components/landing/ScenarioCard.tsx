@@ -18,7 +18,7 @@ export function ScenarioCard() {
           }
         })
       },
-      { threshold: 0.1, delay: 200 },
+      { threshold: 0.1 },
     )
 
     if (cardRef.current) {
