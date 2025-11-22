@@ -42,7 +42,7 @@ export default function Header() {
   return (
     <>
       {/* HEADER / NAVBAR */}
-      <nav className="sticky top-0 z-50 w-full border-b border-[#E4D5C2] bg-[#F5EFE4] backdrop-blur-md">
+      <nav className="sticky top-0 z-50 w-full border-b border-[#E3D7C3] bg-[#F5EEDC] backdrop-blur-md">
         <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3">
@@ -58,7 +58,7 @@ export default function Header() {
           </Link>
 
           {/* NAV PILLS (desktop) */}
-          <div className="hidden md:flex items-center gap-3 bg-[#FFF8EC]/60 px-3 py-1 rounded-full shadow-sm">
+          <div className="hidden md:flex items-center gap-3 bg-[#F8F3E7] px-4 py-1.5 rounded-full shadow-sm border border-[#E7DCCB]">
             {navItems.map((item) => {
               const isActive =
                 item.href === "/"
@@ -69,10 +69,10 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-4 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
+                  className={`px-5 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
                     isActive
-                      ? "bg-[#0F9D58] text-white shadow-sm"
-                      : "text-[#2F3A2E] hover:text-[#0F9D58] hover:bg-[#E2F4E8]"
+                      ? "bg-[#0E8A50] text-white shadow-sm"
+                      : "text-[#4C3A2D] hover:text-[#0E8A50] hover:bg-[#F2E8D8]"
                   }`}
                 >
                   {item.label}
@@ -85,47 +85,56 @@ export default function Header() {
           <div className="flex items-center gap-3">
             {isLoaded && (
               <>
+                {/* CREATE BOUNTY PILL */}
                 <SignedIn>
-  <Button
-    onClick={() => {
-      if (!user) {
-        alert("Please sign in to create a bounty");
-        return;
-      }
-      setShowCreateModal(true);
-    }}
-    size="sm"
-    variant="ghost"
-    className="
-      rounded-full 
-      bg-[#0F9D58] 
-      text-white 
-      px-6 
-      py-2 
-      text-sm 
-      font-semibold 
-      shadow-sm
-      hover:bg-[#0C7A44]
-    "
-  >
-    Create Bounty
-  </Button>
-</SignedIn>
+                  <Button
+                    onClick={() => {
+                      if (!user) {
+                        alert("Please sign in to create a bounty");
+                        return;
+                      }
+                      setShowCreateModal(true);
+                    }}
+                    size="sm"
+                    variant="ghost"
+                    className="
+                      rounded-full 
+                      bg-[#0E8A50]
+                      text-white 
+                      px-6 
+                      py-2 
+                      text-sm 
+                      font-semibold 
+                      shadow-sm
+                      hover:bg-[#0B6C3E]
+                    "
+                  >
+                    Create Bounty
+                  </Button>
+                </SignedIn>
 
-
+                {/* AUTH BUTTONS */}
                 <SignedOut>
                   <SignInButton mode="modal">
-                    <Button variant="ghost" size="sm" className="rounded-full">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-full text-[#4C3A2D] hover:bg-[#F2E8D8]"
+                    >
                       Sign In
                     </Button>
                   </SignInButton>
                   <SignUpButton mode="modal">
-                    <Button size="sm" className="rounded-full">
+                    <Button
+                      size="sm"
+                      className="rounded-full bg-white text-[#4C3A2D] border border-[#E3D7C3] hover:bg-[#F8F3E7]"
+                    >
                       Sign Up
                     </Button>
                   </SignUpButton>
                 </SignedOut>
 
+                {/* AVATAR */}
                 <SignedIn>
                   <Link href="/profile">
                     <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
@@ -137,10 +146,10 @@ export default function Header() {
                             user.emailAddresses[0]?.emailAddress ||
                             "Profile"
                           }
-                          className="h-9 w-9 rounded-full border-2 border-zinc-300"
+                          className="h-9 w-9 rounded-full border-2 border-[#E3D7C3] bg-[#F8F3E7]"
                         />
                       ) : (
-                        <div className="h-9 w-9 rounded-full bg-[#0F9D58] flex items-center justify-center text-white font-semibold text-sm border-2 border-[#E4D5C2]">
+                        <div className="h-9 w-9 rounded-full bg-[#0E8A50] flex items-center justify-center text-white font-semibold text-sm border-2 border-[#E3D7C3]">
                           {user?.username?.[0]?.toUpperCase() ||
                             user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
                             "U"}
@@ -158,14 +167,14 @@ export default function Header() {
       {/* CREATE BOUNTY MODAL */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-[#FFF8EC] shadow-2xl max-w-lg w-full rounded-lg border border-[#E4D5C2]">
-            <div className="flex justify-between items-start p-6 border-b border-[#E4D5C2]">
-              <h2 className="text-2xl font-bold text-[#2F3A2E]">
+          <div className="bg-white shadow-2xl max-w-lg w-full rounded-lg border border-[#E3D7C3]">
+            <div className="flex justify-between items-start p-6 border-b border-[#EDE1D0]">
+              <h2 className="text-2xl font-bold text-[#4C3A2D]">
                 Create New Bounty
               </h2>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-[#6B6A5E] hover:text-[#2F3A2E] transition-colors"
+                className="text-[#7A5A3A] hover:text-[#4C3A2D] transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -180,7 +189,7 @@ export default function Header() {
 
               {/* Bounty Name */}
               <div>
-                <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
                   Bounty Name *
                 </label>
                 <input
@@ -188,14 +197,14 @@ export default function Header() {
                   value={bountyName}
                   onChange={(e) => setBountyName(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                  className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
                   placeholder="e.g., Duo World Voices Campaign"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
                   Description *
                 </label>
                 <textarea
@@ -203,7 +212,7 @@ export default function Header() {
                   onChange={(e) => setBountyDescription(e.target.value)}
                   required
                   rows={4}
-                  className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                  className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
                   placeholder="Describe what creators should create..."
                 />
               </div>
@@ -211,7 +220,7 @@ export default function Header() {
               {/* Money fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                  <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
                     Total Bounty ($) *
                   </label>
                   <input
@@ -221,12 +230,12 @@ export default function Header() {
                     required
                     min="0"
                     step="0.01"
-                    className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                    className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
                     placeholder="10000"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                  <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
                     Rate per 1k Views ($) *
                   </label>
                   <input
@@ -236,7 +245,7 @@ export default function Header() {
                     required
                     min="0"
                     step="0.01"
-                    className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                    className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
                     placeholder="25.00"
                   />
                 </div>
@@ -244,21 +253,21 @@ export default function Header() {
 
               {/* Company Name */}
               <div>
-                <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
                   Company Name (Optional)
                 </label>
                 <input
                   type="text"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                  className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
                   placeholder="Duolingo"
                 />
               </div>
 
               {/* Logo Upload */}
               <div>
-                <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
                   Logo (Optional, max 5MB)
                 </label>
                 <div className="space-y-2">
@@ -266,10 +275,10 @@ export default function Header() {
                     type="file"
                     accept="image/jpeg,image/png,image/gif,image/webp"
                     onChange={handleLogoChange}
-                    className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                    className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
                   />
                   {logoPreview && (
-                    <div className="relative w-32 h-32 border border-[#E4D5C2] rounded-lg overflow-hidden">
+                    <div className="relative w-32 h-32 border border-[#E3D7C3] rounded-lg overflow-hidden bg-[#F8F3E7]">
                       <img
                         src={logoPreview}
                         alt="Logo preview"
@@ -291,7 +300,7 @@ export default function Header() {
               </div>
 
               {/* Footer buttons */}
-              <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#E4D5C2]">
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#EDE1D0]">
                 <Button
                   type="button"
                   variant="outline"
@@ -300,7 +309,7 @@ export default function Header() {
                     resetForm();
                   }}
                   disabled={isCreating}
-                  className="rounded-full"
+                  className="rounded-full border-[#E3D7C3] text-[#4C3A2D] hover:bg-[#F8F3E7]"
                 >
                   Cancel
                 </Button>
@@ -315,7 +324,7 @@ export default function Header() {
                     Number(totalBounty) <= 0 ||
                     Number(ratePer1k) <= 0
                   }
-                  className="rounded-full px-6"
+                  className="rounded-full px-6 bg-[#0E8A50] text-white hover:bg-[#0B6C3E]"
                 >
                   {isCreating ? "Creating..." : "Create Bounty"}
                 </Button>
