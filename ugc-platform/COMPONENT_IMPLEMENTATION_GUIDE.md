@@ -1,6 +1,6 @@
 # Component Implementation Guide
 
-This guide explains how to implement the missing component functionality to match `og/` behavior while keeping the existing `ugc-platform` design and colors.
+This guide explains how to implement the missing component functionality to match the behavior we are looking for while keeping the existing `ugc-platform` design and colors.
 
 ## Overview
 
