@@ -24,14 +24,14 @@ export default function Header() {
   return (
     <>
       {/* NAVIGATION BAR */}
-      <nav className="sticky top-0 z-50 w-full border-b border-[#1B263B] bg-[#0D1B2A] backdrop-blur-md shadow-sm">
+      <nav className="sticky top-0 z-50 w-full border-b border-[#C8D1E0] bg-[#E8ECF3] backdrop-blur-md shadow">
         <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3">
 
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3">
             <div className="relative h-16 w-44 md:h-20 md:w-52">
               <Image
-                src="/bountea.png"
+                src="/bountea.png" 
                 alt="Bountea Logo"
                 fill
                 priority
@@ -41,7 +41,7 @@ export default function Header() {
           </Link>
 
           {/* NAVIGATION LINKS (Desktop) */}
-          <div className="hidden md:flex items-center gap-3 bg-[#1B263B]/80 px-3 py-1 rounded-full shadow-sm">
+          <div className="hidden md:flex items-center gap-3 bg-white/60 px-3 py-1 rounded-full shadow-sm border border-[#D9E1EF]">
             {[
               { href: "/", label: "Feed" },
               { href: "/dashboard", label: "Dashboard" },
@@ -58,8 +58,8 @@ export default function Header() {
                   href={item.href}
                   className={`px-5 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
                     isActive
-                      ? "bg-[#415A77] text-white shadow-sm border border-[#1B263B]"
-                      : "text-[#E0E5EB] hover:text-[#AFC6E9] hover:bg-[#1B263B]"
+                      ? "bg-[#1B3C73] text-white shadow border border-[#102B52]"
+                      : "text-[#2E3A47] hover:text-[#4F6FA8] hover:bg-[#DDE5F2]"
                   }`}
                 >
                   {item.label}
@@ -68,7 +68,7 @@ export default function Header() {
             })}
           </div>
 
-          {/* RIGHT SIDE AUTH + BUTTONS */}
+          {/* RIGHT SIDE BUTTONS */}
           <div className="flex items-center gap-3">
             {isLoaded && (
               <>
@@ -77,7 +77,7 @@ export default function Header() {
                   <Button
                     onClick={() => setShowCreateModal(true)}
                     size="sm"
-                    className="rounded-full bg-[#778DA9] text-[#0D1B2A] px-6 py-2 text-sm font-semibold shadow-sm hover:bg-[#5A6F87]"
+                    className="rounded-full bg-[#7A8CB3] text-white px-6 py-2 text-sm font-semibold shadow-sm hover:bg-[#6A7AA0]"
                   >
                     Create Bounty
                   </Button>
@@ -89,7 +89,7 @@ export default function Header() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="rounded-full text-[#E0E5EB] hover:text-white hover:bg-[#1B263B]"
+                      className="rounded-full text-[#2E3A47] hover:text-[#1B3C73] hover:bg-[#DDE5F2]"
                     >
                       Sign In
                     </Button>
@@ -98,14 +98,14 @@ export default function Header() {
                   <SignUpButton mode="modal">
                     <Button
                       size="sm"
-                      className="rounded-full bg-[#778DA9] text-[#0D1B2A] hover:bg-[#5A6F87]"
+                      className="rounded-full bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
                     >
                       Sign Up
                     </Button>
                   </SignUpButton>
                 </SignedOut>
 
-                {/* USER PFP */}
+                {/* USER AVATAR */}
                 <SignedIn>
                   <Link href="/profile">
                     <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
@@ -113,10 +113,10 @@ export default function Header() {
                         <img
                           src={user.imageUrl}
                           alt="Profile"
-                          className="h-9 w-9 rounded-full border-2 border-[#1B263B] bg-[#1B263B]"
+                          className="h-9 w-9 rounded-full border-2 border-[#C8D1E0]"
                         />
                       ) : (
-                        <div className="h-9 w-9 rounded-full bg-[#1B263B] flex items-center justify-center text-[#E0E5EB] font-semibold text-sm border-2 border-[#415A77]">
+                        <div className="h-9 w-9 rounded-full bg-[#A7B7D1] flex items-center justify-center text-white font-semibold text-sm border-2 border-[#7A8CB3]">
                           {user?.username?.[0]?.toUpperCase() ||
                             user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
                             "U"}
@@ -131,7 +131,7 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* Create Modal - unchanged */}
+      {/* CREATE MODAL (unchanged) */}
     </>
   );
 }
