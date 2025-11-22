@@ -92,7 +92,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F1E8]">
+    <div className="min-h-screen bg-[#F5EFE4]">
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (
