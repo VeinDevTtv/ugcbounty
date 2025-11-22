@@ -14,6 +14,7 @@ interface BountyWithProgress {
   id: string; // UUID
   name: string;
   description: string;
+  instructions: string | null;
   total_bounty: number;
   rate_per_1k_views: number;
   calculated_claimed_bounty: number;
@@ -87,6 +88,7 @@ export default function ProfilePage() {
   const [editingBountyId, setEditingBountyId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
+  const [editInstructions, setEditInstructions] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   // Redirect if not logged in
@@ -141,12 +143,14 @@ export default function ProfilePage() {
     setEditingBountyId(bounty.id);
     setEditName(bounty.name);
     setEditDescription(bounty.description);
+    setEditInstructions(bounty.instructions || '');
   };
 
   const handleCancelEdit = () => {
     setEditingBountyId(null);
     setEditName('');
     setEditDescription('');
+    setEditInstructions('');
   };
 
   const handleSaveEdit = async (bountyId: string) => {
@@ -165,6 +169,7 @@ export default function ProfilePage() {
           id: bountyId,
           name: editName.trim(),
           description: editDescription.trim(),
+          instructions: editInstructions.trim() || null,
         }),
       });
 
@@ -174,13 +179,14 @@ export default function ProfilePage() {
         setBounties(prevBounties =>
           prevBounties.map(bounty =>
             bounty.id === bountyId
-              ? { ...bounty, name: updatedBounty.name, description: updatedBounty.description }
+              ? { ...bounty, name: updatedBounty.name, description: updatedBounty.description, instructions: updatedBounty.instructions || null }
               : bounty
           )
         );
         setEditingBountyId(null);
         setEditName('');
         setEditDescription('');
+        setEditInstructions('');
       } else {
         const error = await response.json();
         console.error('Failed to update bounty:', error);
@@ -317,6 +323,20 @@ export default function ProfilePage() {
                           className="w-full px-4 py-2 border border-[#C8D1E0] rounded-lg focus:outline-none focus:ring-2 focus:ring-black min-h-[100px]"
                           placeholder="Bounty description"
                         />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[#2E3A47] mb-2">
+                          Instructions (Optional)
+                        </label>
+                        <textarea
+                          value={editInstructions}
+                          onChange={(e) => setEditInstructions(e.target.value)}
+                          className="w-full px-4 py-2 border border-[#C8D1E0] rounded-lg focus:outline-none focus:ring-2 focus:ring-black min-h-[100px]"
+                          placeholder="Exact requirements that submitted videos must meet to be accepted..."
+                        />
+                        <p className="text-xs text-[#6B7A8F] mt-1">
+                          These instructions will be used for video validation. If left empty, the description will be used.
+                        </p>
                       </div>
                       <div className="flex gap-2">
                         <Button

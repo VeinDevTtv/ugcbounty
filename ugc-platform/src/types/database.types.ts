@@ -41,6 +41,7 @@ export interface Database {
           id: string
           name: string
           description: string
+          instructions: string | null
           total_bounty: number
           rate_per_1k_views: number
           claimed_bounty: number
@@ -54,6 +55,7 @@ export interface Database {
           id?: string
           name: string
           description: string
+          instructions?: string | null
           total_bounty: number
           rate_per_1k_views: number
           claimed_bounty?: number
@@ -67,6 +69,7 @@ export interface Database {
           id?: string
           name?: string
           description?: string
+          instructions?: string | null
           total_bounty?: number
           rate_per_1k_views?: number
           claimed_bounty?: number

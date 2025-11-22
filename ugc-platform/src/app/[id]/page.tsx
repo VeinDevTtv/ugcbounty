@@ -171,7 +171,7 @@ export default function BountyDetails({ params }: { params: { id: string } }) {
                         <hr className="my-8 border-zinc-100" />
 
                         <section className="space-y-4">
-                            <h3 className="text-lg font-bold text-zinc-900">Campaign Brief</h3>
+                            <h3 className="text-lg font-bold text-zinc-900">Description</h3>
                             <p className="text-zinc-600 leading-relaxed text-lg whitespace-pre-wrap">
                                 {bounty.description}
                             </p>

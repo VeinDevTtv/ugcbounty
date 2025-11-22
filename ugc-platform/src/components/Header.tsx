@@ -22,6 +22,7 @@ export default function Header() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [bountyName, setBountyName] = useState("");
   const [bountyDescription, setBountyDescription] = useState("");
+  const [bountyInstructions, setBountyInstructions] = useState("");
   const [totalBounty, setTotalBounty] = useState("");
   const [ratePer1k, setRatePer1k] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -70,6 +71,7 @@ export default function Header() {
           body: JSON.stringify({
             name: bountyName,
             description: bountyDescription,
+            instructions: bountyInstructions.trim() || null,
             totalBounty: parseFloat(totalBounty),
             ratePer1kViews: parseFloat(ratePer1k),
             companyName: companyName || null,
@@ -80,6 +82,7 @@ export default function Header() {
         if (response.ok) {
           setBountyName("");
           setBountyDescription("");
+          setBountyInstructions("");
           setTotalBounty("");
           setRatePer1k("");
           setCompanyName("");
@@ -297,6 +300,22 @@ export default function Header() {
                   rows={3}
                   className="w-full px-4 py-2 border border-[#C8D1E0] bg-white text-[#2E3A47] placeholder-[#6B7A8F] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3] resize-none"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#52677C] mb-2">
+                  Instructions (Optional)
+                </label>
+                <textarea
+                  value={bountyInstructions}
+                  onChange={(e) => setBountyInstructions(e.target.value)}
+                  placeholder="Exact requirements that submitted videos must meet to be accepted..."
+                  rows={3}
+                  className="w-full px-4 py-2 border border-[#C8D1E0] bg-white text-[#2E3A47] placeholder-[#6B7A8F] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3] resize-none"
+                />
+                <p className="text-xs text-[#6B7A8F] mt-1">
+                  These instructions will be used for video validation. If left empty, the description will be used.
+                </p>
               </div>
 
               <div>

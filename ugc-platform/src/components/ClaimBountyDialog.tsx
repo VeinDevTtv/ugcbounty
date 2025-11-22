@@ -10,7 +10,8 @@ type Bounty = {
   brand: string;
   payout: string;
   deadline: string;
-  description?: string; // For validation requirements (matching og/)
+  description?: string;
+  instructions?: string | null; // Exact requirements for video validation (takes priority over description)
 };
 
 type ClaimBountyDialogProps = {
@@ -183,7 +184,7 @@ export default function ClaimBountyDialog({
         },
         body: JSON.stringify({
           url: urlString,
-          requirements: bounty.description || bounty.title, // Use description if available, fallback to title
+          requirements: bounty.instructions || bounty.description || bounty.title, // Use instructions first, then description, then title
         }),
       });
 

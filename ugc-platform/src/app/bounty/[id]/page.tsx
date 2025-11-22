@@ -12,6 +12,7 @@ interface BountyWithCreator {
   id: string;
   name: string;
   description: string;
+  instructions: string | null;
   total_bounty: number;
   rate_per_1k_views: number;
   claimed_bounty: number;
@@ -51,6 +52,7 @@ interface Bounty {
   id: string;
   name: string;
   description: string;
+  instructions?: string | null;
   totalBounty: number;
   ratePer1kViews: number;
   claimedBounty: number;
@@ -111,6 +113,7 @@ export default function BountyDetailPage({
           id: foundBounty.id,
           name: foundBounty.name,
           description: foundBounty.description,
+          instructions: foundBounty.instructions || null,
           totalBounty: Number(foundBounty.total_bounty),
           ratePer1kViews: Number(foundBounty.rate_per_1k_views),
           claimedBounty: Number(foundBounty.calculated_claimed_bounty),
@@ -291,12 +294,23 @@ export default function BountyDetailPage({
 
               <section className="space-y-4">
                 <h3 className="text-lg font-bold text-[#2E3A47]">
-                  Campaign Brief
+                  Description
                 </h3>
                 <p className="text-[#52677C] leading-relaxed text-lg whitespace-pre-wrap">
                   {bounty.description}
                 </p>
               </section>
+
+              {bounty.instructions && (
+                <section className="mt-8 space-y-4">
+                  <h3 className="text-lg font-bold text-[#2E3A47]">
+                    Instructions
+                  </h3>
+                  <p className="text-[#52677C] leading-relaxed text-lg whitespace-pre-wrap bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                    {bounty.instructions}
+                  </p>
+                </section>
+              )}
 
               {/* Progress Bar */}
               <section className="mt-8 space-y-4">
@@ -495,6 +509,7 @@ export default function BountyDetailPage({
               payout: bounty.ratePer1kViews.toFixed(2),
               deadline: "Ongoing",
               description: bounty.description,
+              instructions: bounty.instructions || null,
             }}
             isCompleted={isCompleted}
           />
