@@ -6,6 +6,7 @@ import {
   useUser,
   SignedIn,
   SignedOut,
+  UserButton,
 } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -117,35 +118,7 @@ export function LandingNav() {
 
               {/* Signed In: User Avatar */}
               <SignedIn>
-                <Link href="/profile">
-                  <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-                    {user?.imageUrl ? (
-                      <img
-                        src={user.imageUrl}
-                        alt={
-                          user.username ||
-                          user.emailAddresses[0]?.emailAddress ||
-                          "Profile"
-                        }
-                        className={`h-9 w-9 rounded-full border-2 ${
-                          theme === "light"
-                            ? "border-[#C8D1E0] bg-white"
-                            : "border-[#1A2332] bg-[#141B23]"
-                        }`}
-                      />
-                    ) : (
-                      <div className={`h-9 w-9 rounded-full flex items-center justify-center text-white font-semibold text-sm border-2 ${
-                        theme === "light"
-                          ? "bg-[#1B3C73] border-[#C8D1E0]"
-                          : "bg-[#141B23] border-[#1A2332]"
-                      }`}>
-                        {user?.username?.[0]?.toUpperCase() ||
-                          user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
-                          "U"}
-                      </div>
-                    )}
-                  </div>
-                </Link>
+                <UserButton afterSignOutUrl="/" />
               </SignedIn>
             </>
           )}
