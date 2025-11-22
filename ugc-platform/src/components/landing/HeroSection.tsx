@@ -62,17 +62,21 @@ export function HeroSection() {
           style={{ lineHeight: "1.1", ...textShadow }}
         >
           Bountea, <br />
-          <span 
-            className={`inline-block text-transparent bg-clip-text ${
+          <span
+            className={`inline-block text-transparent bg-clip-text whitespace-nowrap ${
               theme === "light"
                 ? "bg-gradient-to-r from-[#1B3C73] via-[#3B82F6] to-[#1B3C73] animate-user-gradient-light"
                 : "bg-gradient-to-r from-[#60A5FA] via-[#93C5FD] via-[#3B82F6] to-[#60A5FA] animate-user-gradient"
             }`}
             style={{
               backgroundSize: "200% 200%",
+              maxWidth: "100%",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              display: "inline-block"
             }}
           >
-            User Generated
+            User&nbsp;Generated
           </span> <br />
           <span>
             <span 
@@ -94,7 +98,7 @@ export function HeroSection() {
         <div className="max-w-xl animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           <p className={`font-serif text-lg md:text-2xl leading-snug ${subtextColor} opacity-90 pb-8`}>
             Connect creators with brands. <br />
-            Earn money by creating content that <span className="italic">matters</span>—get paid for every view you generate—instantly because of our{" "}
+            Earn money by creating content that <span className="italic">matters</span>—get paid for every view you generate—instantly because of {" "}
             <span 
               className={`inline-block text-transparent bg-clip-text font-semibold ${
                 theme === "light"
@@ -105,7 +109,7 @@ export function HeroSection() {
                 backgroundSize: "200% 200%",
               }}
             >
-              AI
+              our AI
             </span>.
           </p>
         </div>
