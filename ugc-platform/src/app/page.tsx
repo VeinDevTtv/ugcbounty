@@ -6,6 +6,8 @@ import BountyCard from "@/components/BountyCard";
 import ClaimBountyDialog from "@/components/ClaimBountyDialog";
 import { useUser } from "@clerk/nextjs";
 import { useTheme } from "@/contexts/ThemeContext";
+import { Trophy, Award } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 interface BountyWithCreator {
   id: string;
@@ -97,61 +99,106 @@ export default function Home() {
     <div className={`min-h-screen transition-colors ${
       theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
     }`}>
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${
-              theme === "light" ? "border-[#1B3C73]" : "border-[#60A5FA]"
-            }`}></div>
-          </div>
-        ) : bounties.length === 0 ? (
-          <div className="text-center py-20">
-            <p className={`text-lg ${
-              theme === "light" ? "text-[#52677C]" : "text-gray-400"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex gap-8">
+          {/* Main Content */}
+          <main className="flex-1">
+            {isLoading ? (
+              <div className="flex justify-center items-center py-20">
+                <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${
+                  theme === "light" ? "border-[#1B3C73]" : "border-[#60A5FA]"
+                }`}></div>
+              </div>
+            ) : bounties.length === 0 ? (
+              <div className="text-center py-20">
+                <p className={`text-lg ${
+                  theme === "light" ? "text-[#52677C]" : "text-gray-400"
+                }`}>
+                  No bounties available yet. Create one to get started!
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {bounties.map((bounty) => {
+                  const rawBounty = bountiesWithCreatorId.find(b => b.id === bounty.id);
+                  const isOwner: boolean = Boolean(user && rawBounty?.creator_id === user.id);
+                  
+                  // Map to BountyCard's expected format
+                  const bountyCardData = {
+                    id: bounty.id,
+                    title: bounty.name,
+                    brand: bounty.companyName || "Unknown",
+                    payout: bounty.ratePer1kViews.toFixed(2),
+                    platforms: [] as ("instagram" | "tiktok" | "youtube" | "twitter")[], // Will be populated from submissions if needed
+                    budget: `$${bounty.totalBounty.toLocaleString()}`,
+                    deadline: "Ongoing", // Can be calculated from created_at if needed
+                    filled: Math.round(bounty.progressPercentage),
+                    logoUrl: bounty.logoUrl,
+                  };
+                  
+                  return (
+                    <div key={bounty.id} className="hover:z-10">
+                      <BountyCard
+                        data={{
+                          ...bountyCardData,
+                          isOwner,
+                          isCompleted: bounty.isCompleted,
+                          onClaim: (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleClaimBounty(bounty.id);
+                          },
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </main>
+
+          {/* Right Sidebar */}
+          <aside className="hidden lg:block w-64 flex-shrink-0">
+            <div className={`sticky top-24 border rounded-lg p-6 ${
+              theme === "light"
+                ? "bg-white border-[#C8D1E0]"
+                : "bg-[#141B23] border-[#1A2332]"
             }`}>
-              No bounties available yet. Create one to get started!
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bounties.map((bounty) => {
-              const rawBounty = bountiesWithCreatorId.find(b => b.id === bounty.id);
-              const isOwner: boolean = Boolean(user && rawBounty?.creator_id === user.id);
-              
-              // Map to BountyCard's expected format
-              const bountyCardData = {
-                id: bounty.id,
-                title: bounty.name,
-                brand: bounty.companyName || "Unknown",
-                payout: bounty.ratePer1kViews.toFixed(2),
-                platforms: [] as ("instagram" | "tiktok" | "youtube" | "twitter")[], // Will be populated from submissions if needed
-                budget: `$${bounty.totalBounty.toLocaleString()}`,
-                deadline: "Ongoing", // Can be calculated from created_at if needed
-                filled: Math.round(bounty.progressPercentage),
-                logoUrl: bounty.logoUrl,
-              };
-              
-              return (
-                <div key={bounty.id} className="hover:z-10">
-                  <BountyCard
-                    data={{
-                      ...bountyCardData,
-                      isOwner,
-                      isCompleted: bounty.isCompleted,
-                      onClaim: (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleClaimBounty(bounty.id);
-                      },
-                    }}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </main>
+              <h2 className={`text-lg font-bold mb-4 ${
+                theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+              }`}>
+                Your Progress
+              </h2>
+              <div className="space-y-3">
+                <Link href="/badges" className="block">
+                  <Button
+                    className={`w-full justify-start gap-2 ${
+                      theme === "light"
+                        ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
+                        : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
+                    }`}
+                  >
+                    <Trophy className="h-5 w-5" />
+                    Badges
+                  </Button>
+                </Link>
+                <Link href="/badges" className="block">
+                  <Button
+                    className={`w-full justify-start gap-2 ${
+                      theme === "light"
+                        ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
+                        : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
+                    }`}
+                  >
+                    <Award className="h-5 w-5" />
+                    Achievements
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
 
       {/* Claim Bounty Dialog */}
       {selectedBounty && (
