@@ -252,7 +252,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                                     : "bg-[#60A5FA] text-[#FFFFFF] hover:bg-[#3B82F6] focus:ring-[#60A5FA]/50"
                             }`}
                         >
-                            View Details
+                            Business - Cannot submit
                         </Link>
                     )}
                 </div>
