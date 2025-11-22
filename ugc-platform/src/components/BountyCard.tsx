@@ -1,6 +1,5 @@
-import { ArrowRight, DollarSign, Instagram, Youtube, Twitter } from "lucide-react";
+import { ArrowRight, DollarSign, Instagram, Youtube, Twitter, Clock } from "lucide-react";
 import Link from "next/link";
-import { Badge } from "./ui/Badge";
 
 // Updated interface to include 'filled' percentage
 interface BountyProps {
@@ -25,8 +24,8 @@ export default function BountyCard({ data }: { data: BountyProps }) {
 
     return (
         <div
-            className={`group block rounded-xl border border-zinc-200 bg-white p-5 transition-all hover:shadow-md 
-            ${isCompleted ? 'opacity-60 grayscale-[0.5]' : 'hover:border-indigo-300'}`}
+            className={`group block rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-1
+            ${isCompleted ? 'opacity-60 grayscale-[0.5]' : 'hover:border-emerald-500'}`}
         >
             <Link
                 href={isCompleted ? "#" : `/bounty/${data.id}`}
@@ -34,21 +33,31 @@ export default function BountyCard({ data }: { data: BountyProps }) {
             >
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
-                    <div className="flex gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-zinc-100 flex items-center justify-center text-xs font-bold text-zinc-500">
+                    <div className="flex gap-3 flex-1 min-w-0">
+                        {/* Avatar */}
+                        <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 flex-shrink-0">
                             {data.brand.substring(0, 2).toUpperCase()}
                         </div>
-                        <div>
-                            <h3 className="font-semibold text-zinc-900 line-clamp-1 group-hover:text-indigo-600">
+                        <div className="flex-1 min-w-0">
+                            {/* Title - Bold and prominent */}
+                            <h3 className="text-lg font-semibold text-zinc-900 line-clamp-1 group-hover:text-emerald-600 transition-colors">
                                 {data.title}
                             </h3>
-                            <p className="text-xs text-zinc-500">{data.brand}</p>
+                            {/* User Info: Avatar + Name + Time */}
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs text-zinc-500 font-medium">{data.brand}</span>
+                                <span className="text-zinc-300">•</span>
+                                <span className="text-xs text-zinc-500 flex items-center gap-1">
+                                    <Clock className="h-3 w-3" />
+                                    {data.deadline}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                    {/* Change Badge color if Sold Out */}
-                    <Badge variant={isCompleted ? "error" : "success"}>
-                        {isCompleted ? "SOLD OUT" : `$${data.payout} / 1k views`}
-                    </Badge>
+                    {/* Price Badge - Pill style */}
+                    <div className={`flex-shrink-0 ml-3 ${isCompleted ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'} px-3 py-1 rounded-full text-xs font-bold`}>
+                        {isCompleted ? "SOLD OUT" : `$${data.payout} / 1k`}
+                    </div>
                 </div>
 
                 {/* Platforms */}
@@ -65,7 +74,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                     <span className="text-xs ml-1">+ Requirements</span>
                 </div>
 
-                {/* 📊 NEW: BUDGET PROGRESS BAR */}
+                {/* Budget Progress Bar - Improved styling */}
                 <div className="mb-5">
                     <div className="flex justify-between text-xs mb-1.5">
                         <span className="text-zinc-500 font-medium">Budget Used</span>
@@ -75,7 +84,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                     </div>
                     <div className="w-full h-2 bg-zinc-100 rounded-full overflow-hidden">
                         <div 
-                            className={`h-full rounded-full transition-all duration-500 ${isCompleted ? 'bg-red-500' : 'bg-indigo-600'}`} 
+                            className={`h-full rounded-full transition-all duration-500 ${isCompleted ? 'bg-red-500' : 'bg-emerald-600'}`} 
                             style={{ width: `${data.filled}%` }}
                         ></div>
                     </div>
@@ -87,10 +96,9 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                         <span className="flex items-center gap-1">
                             <DollarSign className="h-3 w-3" /> Budget: {data.budget}
                         </span>
-                        <span>Ends {data.deadline}</span>
                     </div>
                     {!isCompleted && (
-                        <ArrowRight className="h-4 w-4 text-zinc-300 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
+                        <ArrowRight className="h-4 w-4 text-zinc-300 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
                     )}
                 </div>
             </Link>
@@ -99,9 +107,15 @@ export default function BountyCard({ data }: { data: BountyProps }) {
             {!isCompleted && (
                 <div className="mt-4 pt-4 border-t border-zinc-100">
                     {isOwner ? (
-                        <div className="text-center py-2 px-4 bg-zinc-50 rounded-lg border border-zinc-200">
-                            <span className="text-sm font-medium text-zinc-600">Your Bounty</span>
-                        </div>
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }}
+                            className="w-full py-2.5 px-4 bg-zinc-100 text-zinc-900 rounded-lg hover:bg-zinc-200 transition-colors text-sm font-medium"
+                        >
+                            Manage Bounty
+                        </button>
                     ) : data.onClaim ? (
                         <button
                             onClick={(e) => {
@@ -109,14 +123,14 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                                 e.stopPropagation();
                                 data.onClaim?.(e);
                             }}
-                            className="w-full py-2 px-4 border border-black bg-transparent text-black rounded-lg hover:bg-black hover:text-white transition-colors text-sm font-medium"
+                            className="w-full py-2.5 px-4 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-sm font-medium"
                         >
                             Submit for this Bounty
                         </button>
                     ) : (
                         <Link
                             href={`/bounty/${data.id}`}
-                            className="block w-full py-2 px-4 border border-black bg-transparent text-black rounded-lg hover:bg-black hover:text-white transition-colors text-sm font-medium text-center"
+                            className="block w-full py-2.5 px-4 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-sm font-medium text-center"
                         >
                             View Details
                         </Link>
@@ -126,8 +140,8 @@ export default function BountyCard({ data }: { data: BountyProps }) {
 
             {isCompleted && (
                 <div className="mt-4 pt-4 border-t border-zinc-100">
-                    <div className="text-center py-2 px-4 bg-green-50 rounded-lg border border-green-500">
-                        <span className="text-sm font-medium text-green-700">Bounty Completed</span>
+                    <div className="text-center py-2.5 px-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                        <span className="text-sm font-medium text-emerald-700">Bounty Completed</span>
                     </div>
                 </div>
             )}
