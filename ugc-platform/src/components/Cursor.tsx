@@ -306,7 +306,7 @@ export default function Cursor() {
         }}
         animate={{
           scale: isClicking ? 0.8 : isHovering ? 1.5 : 1,
-          opacity: 1,
+          opacity: isClicking || isHovering ? 0.7 : 1,
         }}
         transition={{
           scale: { type: "spring", stiffness: 400, damping: 25 },
@@ -367,8 +367,8 @@ export default function Cursor() {
           style={{
             x: sparkle.x,
             y: sparkle.y,
-            left: -4,
-            top: -4,
+            left: -2,
+            top: -2,
           }}
           animate={{
             scale: [0.8, 1.2, 0.8],
@@ -384,11 +384,11 @@ export default function Cursor() {
         >
           <div
             style={{
-              width: 8,
-              height: 8,
+              width: 4,
+              height: 4,
               background: `radial-gradient(circle, ${lightBlueGlow} 0%, ${lightBlue} 50%, transparent 100%)`,
               borderRadius: "50%",
-              boxShadow: `0 0 12px ${lightBlue}, 0 0 6px ${lightBlueGlow}`,
+              boxShadow: `0 0 6px ${lightBlue}, 0 0 3px ${lightBlueGlow}`,
               position: "relative",
             }}
           >
@@ -399,11 +399,11 @@ export default function Cursor() {
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
-                width: 2,
-                height: 12,
+                width: 1,
+                height: 6,
                 background: lightBlue,
-                borderRadius: 1,
-                boxShadow: `0 0 4px ${lightBlue}`,
+                borderRadius: 0.5,
+                boxShadow: `0 0 2px ${lightBlue}`,
               }}
             />
             <div
@@ -412,11 +412,11 @@ export default function Cursor() {
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%) rotate(90deg)",
-                width: 2,
-                height: 12,
+                width: 1,
+                height: 6,
                 background: lightBlue,
-                borderRadius: 1,
-                boxShadow: `0 0 4px ${lightBlue}`,
+                borderRadius: 0.5,
+                boxShadow: `0 0 2px ${lightBlue}`,
               }}
             />
           </div>
