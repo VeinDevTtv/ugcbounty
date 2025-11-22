@@ -257,7 +257,8 @@ export default function Dashboard() {
                                     </td>
                                 </tr>
                             ) : (
-                            // LOGIC: If tab is Submissions
+                            <>
+                            {/* LOGIC: If tab is Submissions */}
                             {activeTab === "submissions" && (
                                 submissions.length > 0 ? (
                                     submissions.map((sub) => (
@@ -283,7 +284,7 @@ export default function Dashboard() {
                                 )
                             )}
 
-                            // LOGIC: If tab is Bounties
+                            {/* LOGIC: If tab is Bounties */}
                             {activeTab === "bounties" && (
                                 bounties.length > 0 ? (
                                     bounties.map((bounty) => (
@@ -326,6 +327,7 @@ export default function Dashboard() {
                                     </tr>
                                 )
                             )}
+                            </>
                             )}
                         </tbody>
                     </table>
