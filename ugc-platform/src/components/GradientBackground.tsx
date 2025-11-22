@@ -4,7 +4,7 @@ import { GrainGradient } from "@paper-design/shaders-react"
 
 export function GradientBackground() {
   return (
-    <div className="absolute inset-0 -z-10">
+    <div className="absolute inset-0 -z-10 blur-sm">
       <GrainGradient
         style={{ height: "100%", width: "100%" }}
         colorBack="hsl(0, 0%, 0%)"
