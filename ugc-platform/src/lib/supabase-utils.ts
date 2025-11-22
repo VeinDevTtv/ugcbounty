@@ -343,7 +343,7 @@ export async function updateSubmissionStatus(
           .eq('id', submissionId)
           .single()
 
-        if (submission) {
+        if (submission && submission.bounty_id) {
           const bountyResult = await getBountyById(submission.bounty_id)
           if (bountyResult.data) {
             const earnedAmount = (viewCount / 1000) * bountyResult.data.rate_per_1k_views
