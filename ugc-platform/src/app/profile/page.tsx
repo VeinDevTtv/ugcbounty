@@ -220,7 +220,33 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-[#F5F1E8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-zinc-900 mb-8">Profile</h1>
+        {/* User Profile Header */}
+        <div className="bg-white border border-black rounded-lg p-6 mb-8">
+          <div className="flex items-center gap-4">
+            {user?.imageUrl ? (
+              <img
+                src={user.imageUrl}
+                alt={user.username || user.emailAddresses[0]?.emailAddress || "Profile"}
+                className="h-20 w-20 rounded-full border-2 border-zinc-300"
+              />
+            ) : (
+              <div className="h-20 w-20 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-2xl border-2 border-zinc-300">
+                {user?.username?.[0]?.toUpperCase() || user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || "U"}
+              </div>
+            )}
+            <div>
+              <h1 className="text-3xl font-bold text-zinc-900">
+                {user?.username || user?.firstName || user?.lastName || "Profile"}
+              </h1>
+              {user?.emailAddresses?.[0]?.emailAddress && (
+                <p className="text-zinc-600 mt-1">{user.emailAddresses[0].emailAddress}</p>
+              )}
+              {user?.username && user?.emailAddresses?.[0]?.emailAddress && (
+                <p className="text-sm text-zinc-500 mt-1">@{user.username}</p>
+              )}
+            </div>
+          </div>
+        </div>
 
         {/* Tab Navigation */}
         <div className="flex gap-8 border-b border-zinc-300 mb-8">

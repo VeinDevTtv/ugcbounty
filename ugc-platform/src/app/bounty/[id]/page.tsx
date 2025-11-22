@@ -34,6 +34,11 @@ interface SubmissionWithUser {
   earned_amount: number;
   status: string;
   validation_explanation: string | null;
+  title: string | null;
+  description: string | null;
+  cover_image_url: string | null;
+  author: string | null;
+  platform: 'youtube' | 'tiktok' | 'instagram' | 'other' | null;
   created_at: string;
   user_profiles: {
     user_id: string;
@@ -335,6 +340,19 @@ export default function BountyDetailPage({
                         className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
                       >
                         <div className="flex items-start justify-between gap-4">
+                          {/* Thumbnail */}
+                          {submission.cover_image_url && (
+                            <div className="flex-shrink-0">
+                              <img
+                                src={submission.cover_image_url}
+                                alt={submission.title || "Video thumbnail"}
+                                className="w-32 h-24 object-cover border border-zinc-200 rounded-lg"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = "none";
+                                }}
+                              />
+                            </div>
+                          )}
                           <div className="flex-1 space-y-3">
                             <div className="flex items-center gap-3">
                               <Badge variant={getStatusBadgeVariant(submission.status)}>
@@ -361,7 +379,7 @@ export default function BountyDetailPage({
                                 rel="noopener noreferrer"
                                 className="text-indigo-600 hover:text-indigo-800 font-medium text-sm break-all"
                               >
-                                {submission.video_url}
+                                {submission.title || submission.video_url}
                               </a>
                             </div>
 
@@ -476,6 +494,7 @@ export default function BountyDetailPage({
               brand: bounty.companyName || "Unknown",
               payout: bounty.ratePer1kViews.toFixed(2),
               deadline: "Ongoing",
+              description: bounty.description,
             }}
             isCompleted={isCompleted}
           />

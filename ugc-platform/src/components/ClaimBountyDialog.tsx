@@ -11,6 +11,7 @@ type Bounty = {
   brand: string;
   payout: string;
   deadline: string;
+  description?: string; // For validation requirements (matching og/)
 };
 
 type ClaimBountyDialogProps = {
@@ -180,7 +181,7 @@ export default function ClaimBountyDialog({
         },
         body: JSON.stringify({
           url: urlString,
-          requirements: bounty.title, // Using title as requirements placeholder
+          requirements: bounty.description || bounty.title, // Use description if available, fallback to title
         }),
       });
 

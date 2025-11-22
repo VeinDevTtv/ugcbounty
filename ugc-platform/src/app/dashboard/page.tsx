@@ -1,13 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import StatsWidget from "@/components/StatsWidget";
 import { BarChart3, DollarSign, Eye, ListVideo, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Define simple types for our future data
+// API Response Types
+interface SubmissionFromAPI {
+    id: string;
+    bounty_id: string;
+    user_id: string;
+    video_url: string;
+    view_count: number;
+    earned_amount: number;
+    status: "pending" | "approved" | "rejected";
+    created_at: string;
+    bounties: {
+        id: string;
+        name: string;
+        rate_per_1k_views: number;
+    } | null;
+}
+
+interface BountyFromAPI {
+    id: string;
+    name: string;
+    description: string;
+    total_bounty: number;
+    rate_per_1k_views: number;
+    calculated_claimed_bounty: number;
+    progress_percentage: number;
+    total_submission_views: number;
+    is_completed: boolean;
+    creator_id: string | null;
+    created_at: string;
+    submissions?: Array<{
+        id: string;
+        view_count: number;
+        status: string;
+    }>;
+}
+
+// Dashboard Display Types
 interface Submission {
     id: string;
     campaignName: string;
@@ -25,11 +64,86 @@ interface Bounty {
 }
 
 export default function Dashboard() {
+    const { user, isLoaded } = useUser();
+    const router = useRouter();
     const [activeTab, setActiveTab] = useState<"submissions" | "bounties">("submissions");
+    const [isLoading, setIsLoading] = useState(true);
 
-    // STATE: These are now empty arrays, waiting for real data from Supabase
+    // STATE: Real data from API
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [bounties, setBounties] = useState<Bounty[]>([]);
+
+    // Redirect if not logged in
+    useEffect(() => {
+        if (isLoaded && !user) {
+            router.push("/");
+        }
+    }, [isLoaded, user, router]);
+
+    // Fetch data when user is loaded
+    useEffect(() => {
+        if (user && isLoaded) {
+            fetchDashboardData();
+        }
+    }, [user, isLoaded]);
+
+    const fetchDashboardData = async () => {
+        try {
+            setIsLoading(true);
+
+            // Fetch submissions
+            const submissionsResponse = await fetch("/api/submissions");
+            if (submissionsResponse.ok) {
+                const submissionsData: SubmissionFromAPI[] = await submissionsResponse.json();
+                const mappedSubmissions: Submission[] = submissionsData.map((sub) => ({
+                    id: sub.id,
+                    campaignName: sub.bounties?.name || "Unknown Bounty",
+                    status: sub.status === "approved" ? "Approved" : sub.status === "rejected" ? "Rejected" : "Pending",
+                    views: Number(sub.view_count) || 0,
+                    earnings: Number(sub.earned_amount) || 0,
+                }));
+                setSubmissions(mappedSubmissions);
+            }
+
+            // Fetch all bounties and filter by creator_id
+            const bountiesResponse = await fetch("/api/bounties");
+            if (bountiesResponse.ok) {
+                const allBounties: BountyFromAPI[] = await bountiesResponse.json();
+                const userBounties = allBounties.filter((bounty) => bounty.creator_id === user?.id);
+                
+                const mappedBounties: Bounty[] = userBounties.map((bounty) => {
+                    // Count submissions for this bounty
+                    const submissionCount = bounty.submissions?.length || 0;
+                    
+                    return {
+                        id: bounty.id,
+                        title: bounty.name,
+                        budgetSpent: Number(bounty.calculated_claimed_bounty) || 0,
+                        budgetTotal: Number(bounty.total_bounty) || 0,
+                        submissionCount,
+                    };
+                });
+                setBounties(mappedBounties);
+            }
+        } catch (error) {
+            console.error("Error fetching dashboard data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Calculate stats
+    const submissionStats = {
+        totalEarnings: submissions.reduce((sum, sub) => sum + sub.earnings, 0),
+        totalViews: submissions.reduce((sum, sub) => sum + sub.views, 0),
+        activeSubmissions: submissions.filter((sub) => sub.status === "Approved" || sub.status === "Pending").length,
+    };
+
+    const bountyStats = {
+        totalSpend: bounties.reduce((sum, bounty) => sum + bounty.budgetSpent, 0),
+        activeCampaigns: bounties.length,
+        pendingApprovals: 0, // This would need to be calculated from submissions if we had that data
+    };
 
     return (
         <div className="space-y-8">
@@ -59,22 +173,55 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Conditional Stats Row - Now initialized to Zero */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                {activeTab === "submissions" ? (
-                    <>
-                        <StatsWidget label="Total Earnings" value="$0.00" icon={DollarSign} trend="-- this month" />
-                        <StatsWidget label="Total Views" value="0" icon={Eye} trend="-- this month" />
-                        <StatsWidget label="Active Submissions" value={submissions.length.toString()} icon={ListVideo} />
-                    </>
-                ) : (
-                    <>
-                        <StatsWidget label="Total Spend" value="$0.00" icon={DollarSign} />
-                        <StatsWidget label="Active Campaigns" value={bounties.length.toString()} icon={Briefcase} />
-                        <StatsWidget label="Pending Approvals" value="0" icon={ListVideo} trend="All caught up" />
-                    </>
-                )}
-            </div>
+            {/* Conditional Stats Row */}
+            {isLoading ? (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div className="h-24 bg-zinc-100 rounded-lg animate-pulse" />
+                    <div className="h-24 bg-zinc-100 rounded-lg animate-pulse" />
+                    <div className="h-24 bg-zinc-100 rounded-lg animate-pulse" />
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    {activeTab === "submissions" ? (
+                        <>
+                            <StatsWidget 
+                                label="Total Earnings" 
+                                value={`$${submissionStats.totalEarnings.toFixed(2)}`} 
+                                icon={DollarSign} 
+                            />
+                            <StatsWidget 
+                                label="Total Views" 
+                                value={submissionStats.totalViews.toLocaleString()} 
+                                icon={Eye} 
+                            />
+                            <StatsWidget 
+                                label="Active Submissions" 
+                                value={submissionStats.activeSubmissions.toString()} 
+                                icon={ListVideo} 
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <StatsWidget 
+                                label="Total Spend" 
+                                value={`$${bountyStats.totalSpend.toFixed(2)}`} 
+                                icon={DollarSign} 
+                            />
+                            <StatsWidget 
+                                label="Active Campaigns" 
+                                value={bountyStats.activeCampaigns.toString()} 
+                                icon={Briefcase} 
+                            />
+                            <StatsWidget 
+                                label="Pending Approvals" 
+                                value={bountyStats.pendingApprovals.toString()} 
+                                icon={ListVideo} 
+                                trend="All caught up" 
+                            />
+                        </>
+                    )}
+                </div>
+            )}
 
             {/* Content Table */}
             <div className="rounded-xl border border-zinc-200 bg-white overflow-hidden min-h-[300px]">
@@ -100,6 +247,17 @@ export default function Dashboard() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-zinc-100">
+                            {isLoading ? (
+                                <tr>
+                                    <td colSpan={4} className="px-6 py-12 text-center text-zinc-500">
+                                        <div className="flex items-center justify-center gap-2">
+                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-zinc-900"></div>
+                                            <span>Loading...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : (
+                            <>
                             {/* LOGIC: If tab is Submissions */}
                             {activeTab === "submissions" && (
                                 submissions.length > 0 ? (
@@ -117,7 +275,9 @@ export default function Dashboard() {
                                             <div className="flex flex-col items-center justify-center gap-2">
                                                 <ListVideo className="h-8 w-8 text-zinc-300" />
                                                 <p>No submissions yet.</p>
-                                                <Button size="sm" variant="outline" className="mt-2">Browse Bounties</Button>
+                                                <Link href="/">
+                                                    <Button size="sm" variant="outline" className="mt-2">Browse Bounties</Button>
+                                                </Link>
                                             </div>
                                         </td>
                                     </tr>
@@ -137,7 +297,11 @@ export default function Dashboard() {
                                                 <span className="text-xs text-zinc-500 mt-1 block">${bounty.budgetSpent} / ${bounty.budgetTotal}</span>
                                             </td>
                                             <td className="px-6 py-4 text-center">{bounty.submissionCount}</td>
-                                            <td className="px-6 py-4 text-right"><Button size="sm" variant="outline">Manage</Button></td>
+                                            <td className="px-6 py-4 text-right">
+                                                <Link href={`/bounty/${bounty.id}`}>
+                                                    <Button size="sm" variant="outline">Manage</Button>
+                                                </Link>
+                                            </td>
                                         </tr>
                                     ))
                                 ) : (
@@ -146,11 +310,24 @@ export default function Dashboard() {
                                             <div className="flex flex-col items-center justify-center gap-2">
                                                 <Briefcase className="h-8 w-8 text-zinc-300" />
                                                 <p>You haven't created any campaigns.</p>
-                                                <Button size="sm" variant="primary" className="mt-2">Create Campaign</Button>
+                                                <Button 
+                                                    size="sm" 
+                                                    variant="primary" 
+                                                    className="mt-2"
+                                                    onClick={() => {
+                                                        // Trigger create bounty modal - this will be handled by Header
+                                                        // For now, just show alert
+                                                        alert("Click 'Create Bounty' in the header to create a new campaign");
+                                                    }}
+                                                >
+                                                    Create Campaign
+                                                </Button>
                                             </div>
                                         </td>
                                     </tr>
                                 )
+                            )}
+                            </>
                             )}
                         </tbody>
                     </table>
