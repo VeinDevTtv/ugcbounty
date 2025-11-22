@@ -42,125 +42,23 @@ export default function Header() {
   return (
     <>
       {/* HEADER / NAVBAR */}
-     /*  --- COLOR-UPDATED HEADER ---  */
-
-<nav className="sticky top-0 z-50 w-full border-b border-[#D9CAB3] bg-[#E8DCC5] backdrop-blur-md">
-  <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
-    
-    {/* LOGO */}
-    <Link href="/" className="flex items-center gap-3">
-      <div className="relative h-16 w-44 md:h-20 md:w-52">
-        <Image
-          src="/bountea.png"
-          alt="Bountea Logo"
-          fill
-          priority
-          className="object-contain rounded-md"
-        />
-      </div>
-    </Link>
-
-    {/* NAV TABS */}
-    <div className="hidden md:flex items-center gap-3 bg-[#FAF8F4] px-4 py-1.5 rounded-full shadow-sm border border-[#D9CAB3]">
-      {navItems.map((item) => {
-        const isActive =
-          item.href === "/" ? pathname === "/" : pathname?.startsWith(item.href);
-
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`px-5 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
-              isActive
-                ? "bg-[#6F8F72] text-white shadow-sm"
-                : "text-[#3A3D3F] hover:text-[#6F8F72] hover:bg-[#E8DCC5]"
-            }`}
-          >
-            {item.label}
+      <nav className="sticky top-0 z-50 w-full border-b border-[#D9CAB3] bg-[#E8DCC5] backdrop-blur-md">
+        <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
+          {/* LOGO */}
+          <Link href="/" className="flex items-center gap-3">
+            <div className="relative h-16 w-44 md:h-20 md:w-52">
+              <Image
+                src="/bountea.png"
+                alt="Bountea Logo"
+                fill
+                priority
+                className="object-contain rounded-md"
+              />
+            </div>
           </Link>
-        );
-      })}
-    </div>
 
-    {/* RIGHT SIDE */}
-    <div className="flex items-center gap-3">
-      {isLoaded && (
-        <>
-          {/* CREATE BOUNTY BUTTON */}
-          <SignedIn>
-            <Button
-              onClick={() => {
-                if (!user) return;
-                setShowCreateModal(true);
-              }}
-              size="sm"
-              variant="ghost"
-              className="
-                rounded-full 
-                bg-[#6F8F72]
-                text-white 
-                px-6 
-                py-2 
-                text-sm 
-                font-semibold 
-                shadow-sm
-                hover:bg-[#5A7760]
-              "
-            >
-              Create Bounty
-            </Button>
-          </SignedIn>
-
-          {/* AUTH BUTTONS */}
-          <SignedOut>
-            <SignInButton mode="modal">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="rounded-full text-[#3A3D3F] hover:bg-[#E8DCC5]"
-              >
-                Sign In
-              </Button>
-            </SignInButton>
-
-            <SignUpButton mode="modal">
-              <Button
-                size="sm"
-                className="rounded-full bg-white text-[#3A3D3F] border border-[#D9CAB3] hover:bg-[#FAF8F4]"
-              >
-                Sign Up
-              </Button>
-            </SignUpButton>
-          </SignedOut>
-
-          {/* USER AVATAR */}
-          <SignedIn>
-            <Link href="/profile">
-              <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-                {user?.imageUrl ? (
-                  <img
-                    src={user.imageUrl}
-                    alt="Profile"
-                    className="h-9 w-9 rounded-full border-2 border-[#D9CAB3] bg-[#FAF8F4]"
-                  />
-                ) : (
-                  <div className="h-9 w-9 rounded-full bg-[#6F8F72] flex items-center justify-center text-white font-semibold text-sm border-2 border-[#D9CAB3]">
-                    {user?.username?.[0]?.toUpperCase() ||
-                      user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
-                      "U"}
-                  </div>
-                )}
-              </div>
-            </Link>
-          </SignedIn>
-        </>
-      )}
-    </div>
-  </div>
-</nav>
-
-          {/* NAV PILLS (desktop) */}
-          <div className="hidden md:flex items-center gap-3 bg-[#F8F3E7] px-4 py-1.5 rounded-full shadow-sm border border-[#E7DCCB]">
+          {/* NAV TABS */}
+          <div className="hidden md:flex items-center gap-3 bg-[#FAF8F4] px-4 py-1.5 rounded-full shadow-sm border border-[#D9CAB3]">
             {navItems.map((item) => {
               const isActive =
                 item.href === "/"
@@ -173,8 +71,8 @@ export default function Header() {
                   href={item.href}
                   className={`px-5 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
                     isActive
-                      ? "bg-[#0E8A50] text-white shadow-sm"
-                      : "text-[#4C3A2D] hover:text-[#0E8A50] hover:bg-[#F2E8D8]"
+                      ? "bg-[#6F8F72] text-white shadow-sm"
+                      : "text-[#3A3D3F] hover:text-[#6F8F72] hover:bg-[#E8DCC5]"
                   }`}
                 >
                   {item.label}
@@ -187,28 +85,25 @@ export default function Header() {
           <div className="flex items-center gap-3">
             {isLoaded && (
               <>
-                {/* CREATE BOUNTY PILL */}
+                {/* CREATE BOUNTY BUTTON */}
                 <SignedIn>
                   <Button
                     onClick={() => {
-                      if (!user) {
-                        alert("Please sign in to create a bounty");
-                        return;
-                      }
+                      if (!user) return;
                       setShowCreateModal(true);
                     }}
                     size="sm"
                     variant="ghost"
                     className="
                       rounded-full 
-                      bg-[#0E8A50]
+                      bg-[#6F8F72]
                       text-white 
                       px-6 
                       py-2 
                       text-sm 
                       font-semibold 
                       shadow-sm
-                      hover:bg-[#0B6C3E]
+                      hover:bg-[#5A7760]
                     "
                   >
                     Create Bounty
@@ -221,22 +116,23 @@ export default function Header() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="rounded-full text-[#4C3A2D] hover:bg-[#F2E8D8]"
+                      className="rounded-full text-[#3A3D3F] hover:bg-[#E8DCC5]"
                     >
                       Sign In
                     </Button>
                   </SignInButton>
+
                   <SignUpButton mode="modal">
                     <Button
                       size="sm"
-                      className="rounded-full bg-white text-[#4C3A2D] border border-[#E3D7C3] hover:bg-[#F8F3E7]"
+                      className="rounded-full bg-white text-[#3A3D3F] border border-[#D9CAB3] hover:bg-[#FAF8F4]"
                     >
                       Sign Up
                     </Button>
                   </SignUpButton>
                 </SignedOut>
 
-                {/* AVATAR */}
+                {/* USER AVATAR */}
                 <SignedIn>
                   <Link href="/profile">
                     <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
@@ -248,10 +144,10 @@ export default function Header() {
                             user.emailAddresses[0]?.emailAddress ||
                             "Profile"
                           }
-                          className="h-9 w-9 rounded-full border-2 border-[#E3D7C3] bg-[#F8F3E7]"
+                          className="h-9 w-9 rounded-full border-2 border-[#D9CAB3] bg-[#FAF8F4]"
                         />
                       ) : (
-                        <div className="h-9 w-9 rounded-full bg-[#0E8A50] flex items-center justify-center text-white font-semibold text-sm border-2 border-[#E3D7C3]">
+                        <div className="h-9 w-9 rounded-full bg-[#6F8F72] flex items-center justify-center text-white font-semibold text-sm border-2 border-[#D9CAB3]">
                           {user?.username?.[0]?.toUpperCase() ||
                             user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
                             "U"}
@@ -269,14 +165,14 @@ export default function Header() {
       {/* CREATE BOUNTY MODAL */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white shadow-2xl max-w-lg w-full rounded-lg border border-[#E3D7C3]">
-            <div className="flex justify-between items-start p-6 border-b border-[#EDE1D0]">
-              <h2 className="text-2xl font-bold text-[#4C3A2D]">
+          <div className="bg-[#FAF8F4] shadow-2xl max-w-lg w-full rounded-lg border border-[#D9CAB3]">
+            <div className="flex justify-between items-start p-6 border-b border-[#E3D4BF]">
+              <h2 className="text-2xl font-bold text-[#3A3D3F]">
                 Create New Bounty
               </h2>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-[#7A5A3A] hover:text-[#4C3A2D] transition-colors"
+                className="text-[#6F8F72] hover:text-[#3A3D3F] transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -291,7 +187,7 @@ export default function Header() {
 
               {/* Bounty Name */}
               <div>
-                <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
+                <label className="block text-sm font-medium text-[#3A3D3F] mb-2">
                   Bounty Name *
                 </label>
                 <input
@@ -299,14 +195,14 @@ export default function Header() {
                   value={bountyName}
                   onChange={(e) => setBountyName(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
+                  className="w-full px-4 py-2 border border-[#D9CAB3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6F8F72]"
                   placeholder="e.g., Duo World Voices Campaign"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
+                <label className="block text-sm font-medium text-[#3A3D3F] mb-2">
                   Description *
                 </label>
                 <textarea
@@ -314,7 +210,7 @@ export default function Header() {
                   onChange={(e) => setBountyDescription(e.target.value)}
                   required
                   rows={4}
-                  className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
+                  className="w-full px-4 py-2 border border-[#D9CAB3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6F8F72]"
                   placeholder="Describe what creators should create..."
                 />
               </div>
@@ -322,7 +218,7 @@ export default function Header() {
               {/* Money fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
+                  <label className="block text-sm font-medium text-[#3A3D3F] mb-2">
                     Total Bounty ($) *
                   </label>
                   <input
@@ -332,12 +228,12 @@ export default function Header() {
                     required
                     min="0"
                     step="0.01"
-                    className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
+                    className="w-full px-4 py-2 border border-[#D9CAB3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6F8F72]"
                     placeholder="10000"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
+                  <label className="block text-sm font-medium text-[#3A3D3F] mb-2">
                     Rate per 1k Views ($) *
                   </label>
                   <input
@@ -347,7 +243,7 @@ export default function Header() {
                     required
                     min="0"
                     step="0.01"
-                    className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
+                    className="w-full px-4 py-2 border border-[#D9CAB3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6F8F72]"
                     placeholder="25.00"
                   />
                 </div>
@@ -355,21 +251,21 @@ export default function Header() {
 
               {/* Company Name */}
               <div>
-                <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
+                <label className="block text-sm font-medium text-[#3A3D3F] mb-2">
                   Company Name (Optional)
                 </label>
                 <input
                   type="text"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
+                  className="w-full px-4 py-2 border border-[#D9CAB3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6F8F72]"
                   placeholder="Duolingo"
                 />
               </div>
 
               {/* Logo Upload */}
               <div>
-                <label className="block text-sm font-medium text-[#4C3A2D] mb-2">
+                <label className="block text-sm font-medium text-[#3A3D3F] mb-2">
                   Logo (Optional, max 5MB)
                 </label>
                 <div className="space-y-2">
@@ -377,10 +273,10 @@ export default function Header() {
                     type="file"
                     accept="image/jpeg,image/png,image/gif,image/webp"
                     onChange={handleLogoChange}
-                    className="w-full px-4 py-2 border border-[#E3D7C3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E8A50]"
+                    className="w-full px-4 py-2 border border-[#D9CAB3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6F8F72]"
                   />
                   {logoPreview && (
-                    <div className="relative w-32 h-32 border border-[#E3D7C3] rounded-lg overflow-hidden bg-[#F8F3E7]">
+                    <div className="relative w-32 h-32 border border-[#D9CAB3] rounded-lg overflow-hidden bg-[#FAF8F4]">
                       <img
                         src={logoPreview}
                         alt="Logo preview"
@@ -402,7 +298,7 @@ export default function Header() {
               </div>
 
               {/* Footer buttons */}
-              <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#EDE1D0]">
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#E3D4BF]">
                 <Button
                   type="button"
                   variant="outline"
@@ -411,7 +307,7 @@ export default function Header() {
                     resetForm();
                   }}
                   disabled={isCreating}
-                  className="rounded-full border-[#E3D7C3] text-[#4C3A2D] hover:bg-[#F8F3E7]"
+                  className="rounded-full border-[#D9CAB3] text-[#3A3D3F] hover:bg-[#FAF8F4]"
                 >
                   Cancel
                 </Button>
@@ -426,7 +322,7 @@ export default function Header() {
                     Number(totalBounty) <= 0 ||
                     Number(ratePer1k) <= 0
                   }
-                  className="rounded-full px-6 bg-[#0E8A50] text-white hover:bg-[#0B6C3E]"
+                  className="rounded-full px-6 bg-[#6F8F72] text-white hover:bg-[#5A7760]"
                 >
                   {isCreating ? "Creating..." : "Create Bounty"}
                 </Button>
@@ -444,12 +340,7 @@ export default function Header() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "image/webp",
-    ];
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       setError(
         "Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed."
