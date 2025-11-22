@@ -24,8 +24,8 @@ export default function Header() {
             <Image
               src="/bountea.png"
               alt="Bountea Logo"
-              width={42}
-              height={42}
+              width={70}
+              height={70}
               className="rounded-md"
             />
           </Link>
