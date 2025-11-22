@@ -6,7 +6,7 @@ import BountyCard from "@/components/BountyCard";
 import ClaimBountyDialog from "@/components/ClaimBountyDialog";
 import { useUser } from "@clerk/nextjs";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Trophy, Award } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 interface BountyWithCreator {
@@ -169,32 +169,18 @@ export default function Home() {
               }`}>
                 Your Progress
               </h2>
-              <div className="space-y-3">
-                <Link href="/badges" className="block">
-                  <Button
-                    className={`w-full justify-start gap-2 ${
-                      theme === "light"
-                        ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
-                        : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
-                    }`}
-                  >
-                    <Trophy className="h-5 w-5" />
-                    Badges
-                  </Button>
-                </Link>
-                <Link href="/badges" className="block">
-                  <Button
-                    className={`w-full justify-start gap-2 ${
-                      theme === "light"
-                        ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
-                        : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
-                    }`}
-                  >
-                    <Award className="h-5 w-5" />
-                    Achievements
-                  </Button>
-                </Link>
-              </div>
+              <Link href="/badges" className="block">
+                <Button
+                  className={`w-full justify-start gap-2 ${
+                    theme === "light"
+                      ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
+                      : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
+                  }`}
+                >
+                  <Trophy className="h-5 w-5" />
+                  Badges & Achievements
+                </Button>
+              </Link>
             </div>
           </aside>
         </div>
