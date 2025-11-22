@@ -69,7 +69,7 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-4 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
+                  className={`px-5 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
                     isActive
                       ? "bg-[#10B981] text-white shadow-sm"
                       : "text-[#F9FAFB] hover:text-[#10B981] hover:bg-[#111827]"
@@ -85,47 +85,57 @@ export default function Header() {
           <div className="flex items-center gap-3">
             {isLoaded && (
               <>
+                {/* CREATE BOUNTY BUTTON */}
                 <SignedIn>
-  <Button
-    onClick={() => {
-      if (!user) {
-        alert("Please sign in to create a bounty");
-        return;
-      }
-      setShowCreateModal(true);
-    }}
-    size="sm"
-    variant="ghost"
-    className="
-      rounded-full 
-      bg-[#10B981] 
-      text-white 
-      px-6 
-      py-2 
-      text-sm 
-      font-semibold 
-      shadow-sm
-      hover:bg-[#059669]
-    "
-  >
-    Create Bounty
-  </Button>
-</SignedIn>
+                  <Button
+                    onClick={() => {
+                      if (!user) {
+                        alert("Please sign in to create a bounty");
+                        return;
+                      }
+                      setShowCreateModal(true);
+                    }}
+                    size="sm"
+                    variant="ghost"
+                    className="
+                      rounded-full 
+                      bg-[#10B981] 
+                      text-white 
+                      px-6 
+                      py-2 
+                      text-sm 
+                      font-semibold 
+                      shadow-sm
+                      hover:bg-[#059669]
+                    "
+                  >
+                    Create Bounty
+                  </Button>
+                </SignedIn>
 
-
+                {/* AUTH BUTTONS */}
                 <SignedOut>
                   <SignInButton mode="modal">
-                    <Button variant="ghost" size="sm" className="rounded-full">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-full text-[#F9FAFB] hover:bg-[#111827]"
+                    >
                       Sign In
                     </Button>
                   </SignInButton>
+
                   <SignUpButton mode="modal">
-                    <Button size="sm" className="rounded-full">
+                    <Button
+                      size="sm"
+                      className="rounded-full bg-[#10B981] text-white border border-[#10B981] hover:bg-[#059669]"
+                    >
                       Sign Up
                     </Button>
                   </SignUpButton>
                 </SignedOut>
 
+                {/* USER AVATAR */}
                 <SignedIn>
                   <Link href="/profile">
                     <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
@@ -137,7 +147,7 @@ export default function Header() {
                             user.emailAddresses[0]?.emailAddress ||
                             "Profile"
                           }
-                          className="h-9 w-9 rounded-full border-2 border-zinc-300"
+                          className="h-9 w-9 rounded-full border-2 border-[#1F2937] bg-[#111827]"
                         />
                       ) : (
                         <div className="h-9 w-9 rounded-full bg-[#10B981] flex items-center justify-center text-white font-semibold text-sm border-2 border-[#1F2937]">
@@ -173,7 +183,7 @@ export default function Header() {
 
             <form onSubmit={handleCreateBounty} className="p-6 space-y-4">
               {error && (
-                <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+                <div className="rounded-md bg-red-900/30 px-3 py-2 text-sm text-red-400">
                   {error}
                 </div>
               )}
@@ -300,7 +310,7 @@ export default function Header() {
                     resetForm();
                   }}
                   disabled={isCreating}
-                  className="rounded-full"
+                  className="rounded-full border-[#1F2937] text-[#F9FAFB] hover:bg-[#111827]"
                 >
                   Cancel
                 </Button>
@@ -315,7 +325,7 @@ export default function Header() {
                     Number(totalBounty) <= 0 ||
                     Number(ratePer1k) <= 0
                   }
-                  className="rounded-full px-6"
+                  className="rounded-full px-6 bg-[#10B981] text-white hover:bg-[#059669]"
                 >
                   {isCreating ? "Creating..." : "Create Bounty"}
                 </Button>
@@ -333,12 +343,7 @@ export default function Header() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "image/webp",
-    ];
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       setError(
         "Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed."
