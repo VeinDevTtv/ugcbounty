@@ -13,13 +13,15 @@ import { useRouter, usePathname } from "next/navigation";
 import { Button } from "./ui/Button";
 import { X } from "lucide-react";
 import Image from "next/image";
+import React from "react";
 
 export default function Header() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const pathname = usePathname();
+
   const [showCreateModal, setShowCreateModal] = useState(false);
-  
+
   // Form state
   const [bountyName, setBountyName] = useState("");
   const [bountyDescription, setBountyDescription] = useState("");
@@ -31,18 +33,17 @@ export default function Header() {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 👇 Just add My Profile here
   const navItems = [
     { href: "/", label: "Feed" },
     { href: "/dashboard", label: "Dashboard" },
-    { href: "/profile", label: "My Profile" }, // change href if your route is different
+    { href: "/profile", label: "My Profile" },
   ];
 
   return (
     <>
-      {/* NAVBAR */}
+      {/* HEADER / NAVBAR */}
       <nav className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-[#F5EEDC] backdrop-blur-md">
-        <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3">
+        <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3">
             <div className="relative h-16 w-44 md:h-20 md:w-52">
@@ -56,7 +57,7 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* NAV PILLS (desktop) */}
           <div className="hidden md:flex items-center gap-3 bg-white/40 px-3 py-1 rounded-full shadow-sm">
             {navItems.map((item) => {
               const isActive =
@@ -68,8 +69,7 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm lg:text-base font-semibold px-4 py-2 rounded-full transition-all
-                  ${
+                  className={`px-4 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
                     isActive
                       ? "bg-emerald-600 text-white shadow-sm"
                       : "text-zinc-700 hover:text-emerald-700 hover:bg-emerald-50"
@@ -81,61 +81,83 @@ export default function Header() {
             })}
           </div>
 
-          {/* Right Side */}
-          <div className="flex items-center gap-4">
-            <SignedIn>
-              <Button
-                onClick={() => {
-                  if (!user) {
-                    alert("Please sign in to create a bounty");
-                    return;
-                  }
-                  setShowCreateModal(true);
-                }}
-                size="sm"
-              >
-                Create Bounty
-              </Button>
-            </SignedIn>
+          {/* RIGHT SIDE */}
+          <div className="flex items-center gap-3">
+            {isLoaded && (
+              <>
+                <SignedIn>
+  <Button
+    onClick={() => {
+      if (!user) {
+        alert("Please sign in to create a bounty");
+        return;
+      }
+      setShowCreateModal(true);
+    }}
+    size="sm"
+    variant="ghost"
+    className="
+      rounded-full 
+      bg-emerald-600 
+      text-white 
+      px-6 
+      py-2 
+      text-sm 
+      font-semibold 
+      shadow-sm
+      hover:bg-emerald-700
+    "
+  >
+    Create Bounty
+  </Button>
+</SignedIn>
 
 
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <Button variant="ghost" size="sm" className="rounded-full">
+                      Sign In
+                    </Button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <Button size="sm" className="rounded-full">
+                      Sign Up
+                    </Button>
+                  </SignUpButton>
+                </SignedOut>
 
-            <SignedOut>
-              <SignInButton mode="modal">
-                <Button variant="ghost" size="sm">
-                  Sign In
-                </Button>
-              </SignInButton>
-
-              <SignUpButton mode="modal">
-                <Button size="sm">Sign Up</Button>
-              </SignUpButton>
-            </SignedOut>
-
-            <SignedIn>
-              <Link href="/profile">
-                <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-                  {user?.imageUrl ? (
-                    <img
-                      src={user.imageUrl}
-                      alt={user.username || user.emailAddresses[0]?.emailAddress || "Profile"}
-                      className="h-8 w-8 rounded-full border-2 border-zinc-300"
-                    />
-                  ) : (
-                    <div className="h-8 w-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-semibold text-sm border-2 border-zinc-300">
-                      {user?.username?.[0]?.toUpperCase() || user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || "U"}
+                <SignedIn>
+                  <Link href="/profile">
+                    <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                      {user?.imageUrl ? (
+                        <img
+                          src={user.imageUrl}
+                          alt={
+                            user.username ||
+                            user.emailAddresses[0]?.emailAddress ||
+                            "Profile"
+                          }
+                          className="h-9 w-9 rounded-full border-2 border-zinc-300"
+                        />
+                      ) : (
+                        <div className="h-9 w-9 rounded-full bg-emerald-600 flex items-center justify-center text-white font-semibold text-sm border-2 border-zinc-300">
+                          {user?.username?.[0]?.toUpperCase() ||
+                            user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
+                            "U"}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              </Link>
-            </SignedIn>
+                  </Link>
+                </SignedIn>
+              </>
+            )}
           </div>
         </div>
       </nav>
 
-      {/* MODAL */}
+      {/* CREATE BOUNTY MODAL */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="bg-white shadow-2xl max-w-lg w-full rounded-lg border border-zinc-200">
             <div className="flex justify-between items-start p-6 border-b border-zinc-200">
               <h2 className="text-2xl font-bold text-zinc-900">
@@ -149,17 +171,14 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Form */}
-            <form
-              onSubmit={handleCreateBounty}
-              className="p-6 space-y-4"
-            >
+            <form onSubmit={handleCreateBounty} className="p-6 space-y-4">
               {error && (
                 <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
                   {error}
                 </div>
               )}
 
+              {/* Bounty Name */}
               <div>
                 <label className="block text-sm font-medium text-zinc-900 mb-2">
                   Bounty Name *
@@ -170,10 +189,11 @@ export default function Header() {
                   onChange={(e) => setBountyName(e.target.value)}
                   required
                   className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="e.g., Summer Campaign 2024"
+                  placeholder="e.g., Duo World Voices Campaign"
                 />
               </div>
 
+              {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-zinc-900 mb-2">
                   Description *
@@ -188,6 +208,7 @@ export default function Header() {
                 />
               </div>
 
+              {/* Money fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-zinc-900 mb-2">
@@ -221,6 +242,7 @@ export default function Header() {
                 </div>
               </div>
 
+              {/* Company Name */}
               <div>
                 <label className="block text-sm font-medium text-zinc-900 mb-2">
                   Company Name (Optional)
@@ -230,10 +252,11 @@ export default function Header() {
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Your Company"
+                  placeholder="Duolingo"
                 />
               </div>
 
+              {/* Logo Upload */}
               <div>
                 <label className="block text-sm font-medium text-zinc-900 mb-2">
                   Logo (Optional, max 5MB)
@@ -267,6 +290,7 @@ export default function Header() {
                 </div>
               </div>
 
+              {/* Footer buttons */}
               <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-200">
                 <Button
                   type="button"
@@ -276,6 +300,7 @@ export default function Header() {
                     resetForm();
                   }}
                   disabled={isCreating}
+                  className="rounded-full"
                 >
                   Cancel
                 </Button>
@@ -290,6 +315,7 @@ export default function Header() {
                     Number(totalBounty) <= 0 ||
                     Number(ratePer1k) <= 0
                   }
+                  className="rounded-full px-6"
                 >
                   {isCreating ? "Creating..." : "Create Bounty"}
                 </Button>
@@ -301,28 +327,34 @@ export default function Header() {
     </>
   );
 
+  // === helpers ===
+
   function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
     if (!allowedTypes.includes(file.type)) {
-      setError('Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.');
+      setError(
+        "Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed."
+      );
       return;
     }
 
-    // Validate file size (max 5MB)
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      setError('File too large. Maximum size is 5MB.');
+      setError("File too large. Maximum size is 5MB.");
       return;
     }
 
     setLogoFile(file);
     setError(null);
 
-    // Create preview
     const reader = new FileReader();
     reader.onloadend = () => {
       setLogoPreview(reader.result as string);
@@ -349,30 +381,28 @@ export default function Header() {
     try {
       let logoUrl: string | null = null;
 
-      // Upload logo if provided
       if (logoFile) {
         const formData = new FormData();
-        formData.append('file', logoFile);
+        formData.append("file", logoFile);
 
-        const uploadResponse = await fetch('/api/upload-logo', {
-          method: 'POST',
+        const uploadResponse = await fetch("/api/upload-logo", {
+          method: "POST",
           body: formData,
         });
 
         if (!uploadResponse.ok) {
           const uploadError = await uploadResponse.json();
-          throw new Error(uploadError.error || 'Failed to upload logo');
+          throw new Error(uploadError.error || "Failed to upload logo");
         }
 
         const uploadData = await uploadResponse.json();
         logoUrl = uploadData.url;
       }
 
-      // Create bounty
-      const response = await fetch('/api/bounties', {
-        method: 'POST',
+      const response = await fetch("/api/bounties", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: bountyName.trim(),
@@ -386,17 +416,18 @@ export default function Header() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create bounty');
+        throw new Error(errorData.error || "Failed to create bounty");
       }
 
-      // Success - reset form and close modal
       resetForm();
       setShowCreateModal(false);
-      
-      // Redirect to home page to show new bounty (like og/)
-      router.push('/');
+      router.push("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred while creating the bounty');
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while creating the bounty"
+      );
     } finally {
       setIsCreating(false);
     }
