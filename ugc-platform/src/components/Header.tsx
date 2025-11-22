@@ -7,7 +7,7 @@ import {
   SignedIn,
   SignedOut,
 } from "@clerk/nextjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Button } from "./ui/Button";
@@ -16,12 +16,23 @@ import Image from "next/image";
 import React from "react";
 import ThemeToggle from "./ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
+import BountySearchBar from "./action-search-bar";
+
+interface Bounty {
+  id: string;
+  name: string;
+  description: string;
+  companyName?: string | null;
+  ratePer1kViews: number;
+  totalBounty: number;
+}
 
 export default function Header() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const pathname = usePathname();
   const { theme } = useTheme();
+  const [bounties, setBounties] = useState<Bounty[]>([]);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [bountyName, setBountyName] = useState("");
@@ -134,6 +145,30 @@ export default function Header() {
     }
   };
 
+  // Fetch bounties for search
+  useEffect(() => {
+    const fetchBounties = async () => {
+      try {
+        const response = await fetch("/api/bounties");
+        if (response.ok) {
+          const data = await response.json();
+          const mappedBounties: Bounty[] = data.map((bounty: any) => ({
+            id: bounty.id,
+            name: bounty.name,
+            description: bounty.description,
+            companyName: bounty.company_name,
+            ratePer1kViews: Number(bounty.rate_per_1k_views),
+            totalBounty: Number(bounty.total_bounty),
+          }));
+          setBounties(mappedBounties);
+        }
+      } catch (error) {
+        console.error("Error fetching bounties for search:", error);
+      }
+    };
+    fetchBounties();
+  }, []);
+
   const navItems = [
     { href: "/", label: "Feed" },
     { href: "/dashboard", label: "Dashboard" },
@@ -196,6 +231,9 @@ export default function Header() {
 
           {/* RIGHT SIDE */}
           <div className="flex items-center gap-3">
+            {/* SEARCH BAR */}
+            <BountySearchBar bounties={bounties} compact={true} />
+            
             {/* THEME TOGGLE */}
             <ThemeToggle />
             
