@@ -38,36 +38,36 @@ export function LandingNav() {
       <div className="flex items-center gap-4">
         {/* Navigation Links - Only show when signed in */}
         <SignedIn>
-          <nav className="hidden md:flex items-center gap-4">
+          <nav className="hidden md:flex items-center gap-3">
             <Link
               href="/feed"
-              className={`text-sm font-medium transition-colors ${
+              className={`px-4 py-2.5 text-base font-semibold rounded-lg transition-all duration-200 ${
                 theme === "light"
-                  ? "text-[#2E3A47] hover:text-[#1B3C73]"
-                  : "text-[#B8C5D6] hover:text-[#60A5FA]"
+                  ? "bg-[#1B3C73] text-white hover:bg-[#102B52] hover:shadow-md"
+                  : "bg-[#60A5FA] text-white hover:bg-[#3B82F6] hover:shadow-md"
               }`}
             >
               Feed
             </Link>
             <Link
               href="/dashboard"
-              className={`text-sm font-medium transition-colors ${
+              className={`px-4 py-2.5 text-base font-semibold rounded-lg transition-all duration-200 ${
                 theme === "light"
-                  ? "text-[#2E3A47] hover:text-[#1B3C73]"
-                  : "text-[#B8C5D6] hover:text-[#60A5FA]"
+                  ? "bg-[#1B3C73] text-white hover:bg-[#102B52] hover:shadow-md"
+                  : "bg-[#60A5FA] text-white hover:bg-[#3B82F6] hover:shadow-md"
               }`}
             >
               Dashboard
             </Link>
             <Link
               href="/profile"
-              className={`text-sm font-medium transition-colors ${
+              className={`px-4 py-2.5 text-base font-semibold rounded-lg transition-all duration-200 ${
                 theme === "light"
-                  ? "text-[#2E3A47] hover:text-[#1B3C73]"
-                  : "text-[#B8C5D6] hover:text-[#60A5FA]"
+                  ? "bg-[#1B3C73] text-white hover:bg-[#102B52] hover:shadow-md"
+                  : "bg-[#60A5FA] text-white hover:bg-[#3B82F6] hover:shadow-md"
               }`}
             >
-              Profile
+              My Profile
             </Link>
           </nav>
         </SignedIn>
