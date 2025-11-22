@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser, UserButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
-import { Edit2, ExternalLink, DollarSign, Eye, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Edit2, ExternalLink, DollarSign, Eye, CheckCircle, XCircle, Clock, Trophy, ChevronDown } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 
 // TypeScript Interfaces
@@ -79,7 +79,7 @@ export default function ProfilePage() {
   const { theme } = useTheme();
   
   // Tab state
-  const [activeTab, setActiveTab] = useState<'bounties' | 'submissions'>('bounties');
+  const [activeTab, setActiveTab] = useState<'bounties' | 'submissions' | 'progress'>('bounties');
   
   // Data state
   const [bounties, setBounties] = useState<BountyWithProgress[]>([]);
@@ -92,6 +92,10 @@ export default function ProfilePage() {
   const [editDescription, setEditDescription] = useState('');
   const [editInstructions, setEditInstructions] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Progress dropdown state
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -107,6 +111,23 @@ export default function ProfilePage() {
       fetchSubmissions();
     }
   }, [user, isLoaded]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   const fetchBounties = async () => {
     try {
@@ -321,6 +342,21 @@ export default function ProfilePage() {
             )}
           >
             My Submissions ({submissions.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('progress')}
+            className={cn(
+              "pb-4 px-2 text-sm font-medium transition-colors",
+              activeTab === 'progress'
+                ? theme === "light"
+                  ? "border-b-2 border-[#1B3C73] text-black"
+                  : "border-b-2 border-[#60A5FA] text-[#F5F8FC]"
+                : theme === "light"
+                  ? "text-[#6B7A8F] hover:text-[#2E3A47]"
+                  : "text-[#B8C5D6] hover:text-[#F5F8FC]"
+            )}
+          >
+            Your Progress
           </button>
         </div>
 
@@ -760,6 +796,165 @@ export default function ProfilePage() {
                 );
               })
             )}
+          </div>
+        )}
+
+        {/* Progress Tab */}
+        {activeTab === 'progress' && (
+          <div className="space-y-6">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className={`border rounded-lg p-4 ${
+                theme === "light"
+                  ? "bg-white border-[#C8D1E0]"
+                  : "bg-[#141B23] border-[#1A2332]"
+              }`}>
+                <p className={`text-sm mb-1 ${
+                  theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                }`}>
+                  Total Earnings
+                </p>
+                <p className={`text-2xl font-bold ${
+                  theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                }`}>
+                  {formatCurrency(submissionStats.totalEarnings)}
+                </p>
+              </div>
+              <div className={`border rounded-lg p-4 ${
+                theme === "light"
+                  ? "bg-white border-[#C8D1E0]"
+                  : "bg-[#141B23] border-[#1A2332]"
+              }`}>
+                <p className={`text-sm mb-1 ${
+                  theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                }`}>
+                  Total Views
+                </p>
+                <p className={`text-2xl font-bold ${
+                  theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                }`}>
+                  {submissionStats.totalViews.toLocaleString()}
+                </p>
+              </div>
+              <div className={`border rounded-lg p-4 ${
+                theme === "light"
+                  ? "bg-white border-[#C8D1E0]"
+                  : "bg-[#141B23] border-[#1A2332]"
+              }`}>
+                <p className={`text-sm mb-1 ${
+                  theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                }`}>
+                  Total Submissions
+                </p>
+                <p className={`text-2xl font-bold ${
+                  theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                }`}>
+                  {submissions.length}
+                </p>
+              </div>
+              <div className={`border rounded-lg p-4 ${
+                theme === "light"
+                  ? "bg-white border-[#C8D1E0]"
+                  : "bg-[#141B23] border-[#1A2332]"
+              }`}>
+                <p className={`text-sm mb-1 ${
+                  theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                }`}>
+                  My Bounties
+                </p>
+                <p className={`text-2xl font-bold ${
+                  theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                }`}>
+                  {bounties.length}
+                </p>
+              </div>
+            </div>
+
+            {/* Achievements Section */}
+            <div className={`border rounded-lg p-6 ${
+              theme === "light"
+                ? "bg-white border-[#C8D1E0]"
+                : "bg-[#141B23] border-[#1A2332]"
+            }`}>
+              <h2 className={`text-lg font-bold mb-4 ${
+                theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+              }`}>
+                Achievements
+              </h2>
+              <div className="relative" ref={dropdownRef}>
+                <Button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className={`w-full justify-between gap-2 ${
+                    theme === "light"
+                      ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
+                      : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5" />
+                    View Achievements
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${
+                    isDropdownOpen ? "rotate-180" : ""
+                  }`} />
+                </Button>
+                {isDropdownOpen && (
+                  <div className={`absolute top-full left-0 right-0 mt-2 z-50 border rounded-lg shadow-lg ${
+                    theme === "light"
+                      ? "bg-white border-[#C8D1E0]"
+                      : "bg-[#141B23] border-[#1A2332]"
+                  }`}>
+                    <Link
+                      href="/badges"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className={`block px-4 py-3 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                        theme === "light"
+                          ? "text-[#2E3A47] hover:bg-[#E8ECF3]"
+                          : "text-[#F5F8FC] hover:bg-[#1A2332]"
+                      }`}
+                    >
+                      View All
+                    </Link>
+                    <Link
+                      href="/badges#levels"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className={`block px-4 py-3 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg border-t ${
+                        theme === "light"
+                          ? "text-[#2E3A47] hover:bg-[#E8ECF3] border-[#C8D1E0]"
+                          : "text-[#F5F8FC] hover:bg-[#1A2332] border-[#1A2332]"
+                      }`}
+                    >
+                      Levels
+                    </Link>
+                    <Link
+                      href="/badges#badges"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className={`block px-4 py-3 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg border-t ${
+                        theme === "light"
+                          ? "text-[#2E3A47] hover:bg-[#E8ECF3] border-[#C8D1E0]"
+                          : "text-[#F5F8FC] hover:bg-[#1A2332] border-[#1A2332]"
+                      }`}
+                    >
+                      Badges
+                    </Link>
+                  </div>
+                )}
+              </div>
+              <div className={`mt-4 pt-4 border-t ${
+                theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
+              }`}>
+                <Link
+                  href="/badges"
+                  className={`font-medium text-sm inline-flex items-center gap-1 ${
+                    theme === "light"
+                      ? "text-indigo-600 hover:text-indigo-800"
+                      : "text-[#60A5FA] hover:text-[#3B82F6]"
+                  }`}
+                >
+                  View Full Progress Dashboard →
+                </Link>
+              </div>
+            </div>
           </div>
         )}
       </div>

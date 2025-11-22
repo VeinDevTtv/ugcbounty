@@ -42,7 +42,7 @@ export function FooterSection() {
 
       <div className={`flex flex-col md:flex-row justify-between items-end text-[10px] font-mono tracking-widest uppercase ${footerText}`}>
         <div className="flex items-center gap-2">
-          <span>©2024</span>
+          <span>©2025</span>
           <span>+</span>
           <Link href="/" className="hover:opacity-70 transition-opacity">
             <span>BOUNTEA</span>

@@ -46,8 +46,8 @@ export function HeroSection() {
           className={`font-serif text-6xl md:text-8xl lg:text-9xl leading-[1.1] ${textColor} mb-16 italic tracking-tight opacity-0 pb-4`}
           style={{ lineHeight: "1.1", ...textShadow }}
         >
-          bountea <br />
-          UGC Platform
+          Bountea <br />
+          User Generated Content Platform
         </h1>
 
         <div className="max-w-xl animate-fade-in-up" style={{ animationDelay: "0.2s" }}>

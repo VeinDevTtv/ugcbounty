@@ -17,7 +17,7 @@ export function FooterSection() {
 
       <div className="flex flex-col md:flex-row justify-between items-end text-[10px] font-mono tracking-widest uppercase text-cyan-200/40">
         <div className="flex items-center gap-2">
-          <span>©2024</span>
+          <span>©2025</span>
           <span>+</span>
           <span>RUNWAY</span>
         </div>
