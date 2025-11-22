@@ -148,17 +148,54 @@ export default function OnboardingPage() {
         throw new Error('Role was not set successfully. Please try again.');
       }
 
-      // Small delay to ensure state is updated before redirect
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Redirect based on role using replace to avoid history issues
-      console.log('[Onboarding] Redirecting to:', role === 'creator' ? '/feed' : '/dashboard');
-      if (role === 'creator') {
-        router.replace('/feed');
-      } else {
-        router.replace('/dashboard');
+      // Verify role was actually saved by re-fetching (with retries)
+      console.log('[Onboarding] Verifying role was saved...');
+      let verified = false;
+      let attempts = 0;
+      const maxAttempts = 5;
+      
+      while (!verified && attempts < maxAttempts) {
+        attempts++;
+        await new Promise(resolve => setTimeout(resolve, 300 * attempts)); // Exponential backoff
+        
+        try {
+          const verifyResponse = await fetch('/api/sync-user-profile', {
+            cache: 'no-store', // Prevent caching
+          });
+          
+          if (verifyResponse.ok) {
+            const verifyResult = await verifyResponse.json();
+            const savedRole = verifyResult?.data?.role || null;
+            console.log(`[Onboarding] Verification attempt ${attempts}: role =`, savedRole);
+            
+            if (savedRole === role) {
+              verified = true;
+              console.log('[Onboarding] Role verified successfully!');
+              break;
+            }
+          }
+        } catch (verifyError) {
+          console.warn(`[Onboarding] Verification attempt ${attempts} failed:`, verifyError);
+        }
       }
-      // Note: isSettingRole will remain true but component will unmount on redirect
+
+      if (!verified) {
+        console.warn('[Onboarding] Role verification failed after', maxAttempts, 'attempts, proceeding anyway');
+        // Still proceed with redirect - the middleware will handle it
+      }
+
+      // Additional delay to ensure database replication
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Use hard redirect to force full page reload and clear any cached state
+      const redirectUrl = role === 'creator' ? '/feed' : '/dashboard';
+      console.log('[Onboarding] Performing hard redirect to:', redirectUrl);
+      
+      // Set redirecting flag to prevent useEffect from running
+      redirectingRef.current = true;
+      
+      // Use window.location.href for hard redirect (forces full page reload)
+      window.location.href = redirectUrl;
     } catch (error) {
       console.error('[Onboarding] Error setting role:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to set role. Please try again.';

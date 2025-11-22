@@ -26,13 +26,35 @@ export default clerkMiddleware(async (auth, req) => {
 
   // If user is authenticated and not on a public route or onboarding route
   if (userId && !isPublicRoute(req) && !isOnboardingRoute(req)) {
-    // Check if user has a role
-    const userRole = await getUserRole(userId);
+    // Check if user has a role with retry logic to handle race conditions
+    let userRole = await getUserRole(userId);
     
-    // If user doesn't have a role, redirect to onboarding
+    // If no role found and user might have just set it, retry with exponential backoff
     if (!userRole) {
+      const referer = req.headers.get('referer');
+      const isFromOnboarding = referer?.includes('/onboarding');
+      
+      // If coming from onboarding, give database a moment to sync
+      if (isFromOnboarding) {
+        console.log('[Middleware] User from onboarding, retrying role check...');
+        await new Promise(resolve => setTimeout(resolve, 300));
+        userRole = await getUserRole(userId);
+        
+        // Second retry if still no role
+        if (!userRole) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+          userRole = await getUserRole(userId);
+        }
+      }
+    }
+    
+    // If user doesn't have a role after retries, redirect to onboarding
+    if (!userRole) {
+      console.log('[Middleware] No role found for user, redirecting to onboarding');
       const onboardingUrl = new URL('/onboarding', req.url);
       return NextResponse.redirect(onboardingUrl);
+    } else {
+      console.log('[Middleware] User has role:', userRole);
     }
   }
 

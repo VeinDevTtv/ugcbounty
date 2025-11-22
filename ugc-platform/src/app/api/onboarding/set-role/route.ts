@@ -78,13 +78,46 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Verify the role was actually saved by querying it again
+    console.log('[Set-Role API] Verifying role was saved...')
+    const { data: verifiedData, error: verifyError } = await supabaseServer
+      .from('user_profiles')
+      .select('role')
+      .eq('user_id', userId)
+      .single()
+
+    if (verifyError) {
+      console.error('[Set-Role API] Verification query failed:', verifyError)
+      // Still return success since upsert succeeded, but log the warning
+    } else if (verifiedData?.role !== role) {
+      console.error('[Set-Role API] Role mismatch! Expected:', role, 'Got:', verifiedData?.role)
+      // This shouldn't happen, but if it does, return error
+      return NextResponse.json(
+        { 
+          error: 'Role verification failed',
+          details: `Expected role ${role} but got ${verifiedData?.role}`
+        },
+        { status: 500 }
+      )
+    } else {
+      console.log('[Set-Role API] Role verified successfully:', verifiedData.role)
+    }
+
+    // Return response with cache headers to prevent stale data
     return NextResponse.json(
       { 
         success: true, 
         data: { user_id: data.user_id, role: data.role },
         message: 'Role set successfully'
       },
-      { status: 200 }
+      { 
+        status: 200,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }
     )
   } catch (error) {
     console.error('Error in set-role API:', error)
