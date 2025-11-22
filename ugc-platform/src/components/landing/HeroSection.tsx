@@ -74,7 +74,18 @@ export function HeroSection() {
           >
             User Generated
           </span> <br />
-          Content Platform
+          <span 
+            className={`inline-block text-transparent bg-clip-text ${
+              theme === "light"
+                ? "bg-gradient-to-r from-[#1B3C73] via-[#3B82F6] to-[#1B3C73] animate-user-gradient-light"
+                : "bg-gradient-to-r from-[#60A5FA] via-[#93C5FD] via-[#3B82F6] to-[#60A5FA] animate-user-gradient"
+            }`}
+            style={{
+              backgroundSize: "200% 200%",
+            }}
+          >
+            Content
+          </span> <br /> Platform
         </h1>
 
         <div className="max-w-xl animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
