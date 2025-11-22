@@ -22,7 +22,7 @@ export default function Header() {
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3">
             <Image
-              src="https://cdn.jumpshare.com/preview/VBksfwhjaqMHVksHOAbM-800.png"
+              src="/bountea.png"
               alt="Bountea Logo"
               width={42}
               height={42}
