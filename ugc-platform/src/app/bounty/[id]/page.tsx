@@ -206,15 +206,15 @@ export default function BountyDetailPage({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F5F1E8] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#10B981]"></div>
       </div>
     );
   }
 
   if (notFound || !bounty) {
     return (
-      <div className="min-h-screen bg-[#F5F1E8]">
+      <div className="min-h-screen bg-[#020617]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Link
             href="/"
@@ -236,7 +236,7 @@ export default function BountyDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F1E8]">
+    <div className="min-h-screen bg-[#020617]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link
           href="/"

@@ -280,32 +280,32 @@ export default function ClaimBountyDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl bg-[#111827] p-6 shadow-lg border border-[#1F2933]">
+      <div className="w-full max-w-md rounded-2xl bg-[#020617] p-6 shadow-lg border border-[#010A12]">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-[#F9FAFB]">
+            <h2 className="text-lg font-semibold text-[#FFFFFF]">
               Claim "{bounty.title}"
             </h2>
-            <p className="mt-1 text-sm text-[#9CA3AF]">
+            <p className="mt-1 text-sm text-[#CFCFCF]">
               Brand: {bounty.brand} · Payout: ${bounty.payout}
             </p>
           </div>
           <button
             onClick={handleClose}
-            className="text-[#9CA3AF] hover:text-[#F9FAFB] transition-colors"
+            className="text-[#CFCFCF] hover:text-[#FFFFFF] transition-colors"
           >
             <XCircle className="h-5 w-5" />
           </button>
         </div>
 
         {isCompleted && (
-          <div className="mt-3 rounded-md bg-[#1F2933] px-3 py-2 text-xs text-[#9CA3AF]">
+          <div className="mt-3 rounded-md bg-[#010A12] px-3 py-2 text-xs text-[#CFCFCF]">
             This bounty has been marked as completed. New submissions are disabled.
           </div>
         )}
 
         {submitSuccess && (
-          <div className="mt-3 rounded-md bg-[rgba(34,197,94,0.12)] px-3 py-2 text-xs text-[#F9FAFB] flex items-center gap-2 border border-[#22C55E]">
+          <div className="mt-3 rounded-md bg-[rgba(16,185,129,0.12)] px-3 py-2 text-xs text-[#FFFFFF] flex items-center gap-2 border border-[#10B981]">
             <CheckCircle className="h-4 w-4" />
             Submission successful! Redirecting...
           </div>
@@ -319,7 +319,7 @@ export default function ClaimBountyDialog({
 
         <div className="mt-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#F9FAFB] mb-2">
+            <label className="block text-sm font-medium text-[#FFFFFF] mb-2">
               Content URL (YouTube, Instagram, or TikTok)
             </label>
             <input
@@ -327,14 +327,14 @@ export default function ClaimBountyDialog({
               value={url}
               onChange={(e) => handleUrlChange(e.target.value)}
               placeholder="https://youtube.com/watch?v=... or https://tiktok.com/@user/video/..."
-              className="w-full px-4 py-2 border border-[#1F2933] bg-[#020617] text-[#F9FAFB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22C55E]/20 focus:border-[#22C55E] disabled:bg-[#1F2933] disabled:cursor-not-allowed placeholder:text-[#9CA3AF]"
+              className="w-full px-4 py-2 border border-[#010A12] bg-[#020617] text-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] disabled:bg-[#010A12] disabled:cursor-not-allowed placeholder:text-[#CFCFCF]"
               disabled={isCompleted || isSubmitting}
             />
             {urlError && (
               <p className="mt-1 text-xs text-red-400">{urlError}</p>
             )}
             {platform && platform !== 'other' && !urlError && (
-              <p className="mt-1 text-xs text-[#22C55E] flex items-center gap-1">
+              <p className="mt-1 text-xs text-[#10B981] flex items-center gap-1">
                 <CheckCircle className="h-3 w-3" />
                 {platform.charAt(0).toUpperCase() + platform.slice(1)} URL detected
               </p>
@@ -343,7 +343,7 @@ export default function ClaimBountyDialog({
 
           {/* Preview Loading */}
           {isLoadingPreview && (
-            <div className="flex items-center gap-2 text-sm text-[#9CA3AF]">
+            <div className="flex items-center gap-2 text-sm text-[#CFCFCF]">
               <Loader2 className="h-4 w-4 animate-spin" />
               Loading preview...
             </div>
@@ -358,7 +358,7 @@ export default function ClaimBountyDialog({
 
           {/* Preview Card */}
           {previewData && !previewError && (
-            <div className="border border-[#1F2933] rounded-lg p-4 bg-[#020617]">
+            <div className="border border-[#010A12] rounded-lg p-4 bg-[#020617]">
               {previewData.image && (
                 <img
                   src={previewData.image}
@@ -366,11 +366,11 @@ export default function ClaimBountyDialog({
                   className="w-full h-32 object-cover rounded mb-3"
                 />
               )}
-              <h4 className="font-semibold text-sm text-[#F9FAFB] mb-1 line-clamp-2">
+              <h4 className="font-semibold text-sm text-[#FFFFFF] mb-1 line-clamp-2">
                 {previewData.title}
               </h4>
               {previewData.description && (
-                <p className="text-xs text-[#9CA3AF] line-clamp-2 mb-2">
+                <p className="text-xs text-[#CFCFCF] line-clamp-2 mb-2">
                   {previewData.description}
                 </p>
               )}
@@ -378,7 +378,7 @@ export default function ClaimBountyDialog({
                 href={previewData.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[#22C55E] hover:text-[#16A34A] inline-flex items-center gap-1"
+                className="text-xs text-[#10B981] hover:text-[#059669] inline-flex items-center gap-1"
               >
                 {previewData.url}
                 <ExternalLink className="h-3 w-3" />
@@ -390,7 +390,7 @@ export default function ClaimBountyDialog({
           {validationResult && (
             <div className={`rounded-md px-3 py-2 text-xs ${
               validationResult.valid
-                ? 'bg-[rgba(34,197,94,0.12)] text-[#F9FAFB] border border-[#22C55E]'
+                ? 'bg-[rgba(16,185,129,0.12)] text-[#FFFFFF] border border-[#10B981]'
                 : 'bg-red-900/30 text-red-400'
             }`}>
               <div className="font-semibold mb-1">

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css"; // Standard Next.js global css
 import Header from "@/components/Header";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,14 +28,16 @@ export default function RootLayout({
 
   return (
     <ClerkProvider publishableKey={publishableKey}>
-      <html lang="en">
-        <body className={`${inter.className} bg-zinc-50 min-h-screen`}>
-          <Header />
-          <main className="container mx-auto px-4 py-8">
-            {children}
-          </main>
-        </body>
-      </html>
+      <ThemeProvider>
+        <html lang="en">
+          <body className={`${inter.className} min-h-screen`}>
+            <Header />
+            <main className="container mx-auto px-4 py-8">
+              {children}
+            </main>
+          </body>
+        </html>
+      </ThemeProvider>
     </ClerkProvider>
   );
 }

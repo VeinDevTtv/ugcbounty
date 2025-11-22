@@ -1,26 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  /* Dark & Sleek color palette */
-  --color-bg: #020617;
-  --color-surface: #111827;
-  --color-border: #1F2933;
-  --color-text: #F9FAFB;
-  --color-text-muted: #9CA3AF;
-  --color-accent: #22C55E;
-  --color-accent-hover: #16A34A;
+  /* Light theme (default) */
+  --color-bg: #F9FAFB;
+  --color-header: #FFFFFF;
+  --color-card: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-text: #111827;
+  --color-text-muted: #6B7280;
+  --color-accent: #1F2937;
+  --color-accent-hover: #374151;
   --color-button-text: #FFFFFF;
-  --color-disabled-bg: #1F2933;
-  --color-disabled-text: #6B7280;
+  --color-disabled-bg: #E5E7EB;
+  --color-disabled-text: #9CA3AF;
   
   /* Legacy support */
   --background: var(--color-bg);
   --foreground: var(--color-text);
 }
 
+.dark {
+  /* Dark Navy theme */
+  --color-bg: #1F2937;
+  --color-header: #1F2937;
+  --color-card: #1F2937;
+  --color-border: #010A12;
+  --color-text: #FFFFFF;
+  --color-text-muted: #CFCFCF;
+  --color-accent: #10B981;
+  --color-accent-hover: #059669;
+  --color-button-text: #FFFFFF;
+  --color-disabled-bg: #1F2937;
+  --color-disabled-text: #6B7280;
+}
+
 @theme inline {
   --color-background: var(--color-bg);
-  --color-surface: var(--color-surface);
+  --color-header: var(--color-header);
+  --color-surface: var(--color-card);
   --color-card-border: var(--color-border);
   --color-primary-text: var(--color-text);
   --color-secondary-text: var(--color-text-muted);
@@ -33,7 +50,8 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

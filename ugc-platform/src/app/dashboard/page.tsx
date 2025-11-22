@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import StatsWidget from "@/components/StatsWidget";
 import { BarChart3, DollarSign, Eye, ListVideo, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/contexts/ThemeContext";
 
 // API Response Types
 interface SubmissionFromAPI {
@@ -66,6 +67,7 @@ interface Bounty {
 export default function Dashboard() {
     const { user, isLoaded } = useUser();
     const router = useRouter();
+    const { theme } = useTheme();
     const [activeTab, setActiveTab] = useState<"submissions" | "bounties">("submissions");
     const [isLoading, setIsLoading] = useState(true);
 
@@ -148,15 +150,25 @@ export default function Dashboard() {
     return (
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h1 className="text-3xl font-bold text-[#F9FAFB]">Dashboard</h1>
+                <h1 className={`text-3xl font-bold ${
+                    theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                }`}>Dashboard</h1>
 
                 {/* Tab Switcher */}
-                <div className="bg-[#1F2933] p-1 rounded-lg inline-flex">
+                <div className={`p-1 rounded-lg inline-flex ${
+                    theme === "light" ? "bg-gray-200" : "bg-[#010A12]"
+                }`}>
                     <button
                         onClick={() => setActiveTab("submissions")}
                         className={cn(
                             "px-4 py-2 rounded-md text-sm font-medium transition-all",
-                            activeTab === "submissions" ? "bg-[#111827] text-[#F9FAFB] shadow-sm" : "text-[#9CA3AF] hover:text-[#F9FAFB]"
+                            activeTab === "submissions" 
+                                ? theme === "light"
+                                    ? "bg-white text-gray-900 shadow-sm"
+                                    : "bg-[#1F2937] text-[#FFFFFF] shadow-sm"
+                                : theme === "light"
+                                ? "text-gray-600 hover:text-gray-900"
+                                : "text-[#CFCFCF] hover:text-[#FFFFFF]"
                         )}
                     >
                         My Submissions
@@ -165,7 +177,13 @@ export default function Dashboard() {
                         onClick={() => setActiveTab("bounties")}
                         className={cn(
                             "px-4 py-2 rounded-md text-sm font-medium transition-all",
-                            activeTab === "bounties" ? "bg-[#111827] text-[#F9FAFB] shadow-sm" : "text-[#9CA3AF] hover:text-[#F9FAFB]"
+                            activeTab === "bounties"
+                                ? theme === "light"
+                                    ? "bg-white text-gray-900 shadow-sm"
+                                    : "bg-[#1F2937] text-[#FFFFFF] shadow-sm"
+                                : theme === "light"
+                                ? "text-gray-600 hover:text-gray-900"
+                                : "text-[#CFCFCF] hover:text-[#FFFFFF]"
                         )}
                     >
                         My Bounties (Brand)
@@ -176,9 +194,15 @@ export default function Dashboard() {
             {/* Conditional Stats Row */}
             {isLoading ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <div className="h-24 bg-[#111827] rounded-2xl animate-pulse" />
-                    <div className="h-24 bg-[#111827] rounded-2xl animate-pulse" />
-                    <div className="h-24 bg-[#111827] rounded-2xl animate-pulse" />
+                    <div className={`h-24 rounded-2xl animate-pulse ${
+                        theme === "light" ? "bg-gray-200" : "bg-[#1F2937]"
+                    }`} />
+                    <div className={`h-24 rounded-2xl animate-pulse ${
+                        theme === "light" ? "bg-gray-200" : "bg-[#1F2937]"
+                    }`} />
+                    <div className={`h-24 rounded-2xl animate-pulse ${
+                        theme === "light" ? "bg-gray-200" : "bg-[#1F2937]"
+                    }`} />
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -224,34 +248,60 @@ export default function Dashboard() {
             )}
 
             {/* Content Table */}
-            <div className="rounded-2xl border border-[#1F2933] bg-[#111827] overflow-hidden min-h-[300px] shadow-[0_12px_30px_rgba(15,23,42,0.6)]">
+            <div className={`rounded-2xl border overflow-hidden min-h-[300px] ${
+                theme === "light"
+                    ? "border-gray-200 bg-white shadow-sm"
+                    : "border-[#010A12] bg-[#1F2937] shadow-[0_12px_30px_rgba(15,23,42,0.6)]"
+            }`}>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-[#1F2933] border-b border-[#1F2933]">
+                        <thead className={`border-b ${
+                            theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#010A12] border-[#010A12]"
+                        }`}>
                             <tr>
                                 {activeTab === "submissions" ? (
                                     <>
-                                        <th className="px-6 py-4 font-medium text-[#9CA3AF]">Bounty Campaign</th>
-                                        <th className="px-6 py-4 font-medium text-[#9CA3AF]">Status</th>
-                                        <th className="px-6 py-4 font-medium text-[#9CA3AF] text-right">Views</th>
-                                        <th className="px-6 py-4 font-medium text-[#9CA3AF] text-right">Earnings</th>
+                                        <th className={`px-6 py-4 font-medium ${
+                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                        }`}>Bounty Campaign</th>
+                                        <th className={`px-6 py-4 font-medium ${
+                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                        }`}>Status</th>
+                                        <th className={`px-6 py-4 font-medium text-right ${
+                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                        }`}>Views</th>
+                                        <th className={`px-6 py-4 font-medium text-right ${
+                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                        }`}>Earnings</th>
                                     </>
                                 ) : (
                                     <>
-                                        <th className="px-6 py-4 font-medium text-[#9CA3AF]">Campaign Name</th>
-                                        <th className="px-6 py-4 font-medium text-[#9CA3AF]">Budget Used</th>
-                                        <th className="px-6 py-4 font-medium text-[#9CA3AF] text-center">Submissions</th>
-                                        <th className="px-6 py-4 font-medium text-[#9CA3AF] text-right">Actions</th>
+                                        <th className={`px-6 py-4 font-medium ${
+                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                        }`}>Campaign Name</th>
+                                        <th className={`px-6 py-4 font-medium ${
+                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                        }`}>Budget Used</th>
+                                        <th className={`px-6 py-4 font-medium text-center ${
+                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                        }`}>Submissions</th>
+                                        <th className={`px-6 py-4 font-medium text-right ${
+                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                        }`}>Actions</th>
                                     </>
                                 )}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-zinc-100">
+                        <tbody className={theme === "light" ? "divide-y divide-gray-200" : "divide-y divide-gray-800"}>
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={4} className="px-6 py-12 text-center text-[#9CA3AF]">
+                                    <td colSpan={4} className={`px-6 py-12 text-center ${
+                                        theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                    }`}>
                                         <div className="flex items-center justify-center gap-2">
-                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#22C55E]"></div>
+                                            <div className={`animate-spin rounded-full h-5 w-5 border-b-2 ${
+                                                theme === "light" ? "border-[#1F2937]" : "border-[#10B981]"
+                                            }`}></div>
                                             <span>Loading...</span>
                                         </div>
                                     </td>
@@ -262,18 +312,28 @@ export default function Dashboard() {
                             {activeTab === "submissions" && (
                                 submissions.length > 0 ? (
                                     submissions.map((sub) => (
-                                        <tr key={sub.id} className="hover:bg-[#1F2933]/50">
-                                            <td className="px-6 py-4 font-medium text-[#F9FAFB]">{sub.campaignName}</td>
+                                        <tr key={sub.id} className={theme === "light" ? "hover:bg-gray-50" : "hover:bg-[#010A12]/50"}>
+                                            <td className={`px-6 py-4 font-medium ${
+                                                theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                                            }`}>{sub.campaignName}</td>
                                             <td className="px-6 py-4"><Badge variant={sub.status === 'Approved' ? 'success' : 'warning'}>{sub.status}</Badge></td>
-                                            <td className="px-6 py-4 text-right text-[#F9FAFB]">{sub.views.toLocaleString()}</td>
-                                            <td className="px-6 py-4 text-right font-medium text-[#F9FAFB]">${sub.earnings.toFixed(2)}</td>
+                                            <td className={`px-6 py-4 text-right ${
+                                                theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                                            }`}>{sub.views.toLocaleString()}</td>
+                                            <td className={`px-6 py-4 text-right font-medium ${
+                                                theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                                            }`}>${sub.earnings.toFixed(2)}</td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={4} className="px-6 py-12 text-center text-[#9CA3AF]">
+                                        <td colSpan={4} className={`px-6 py-12 text-center ${
+                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                        }`}>
                                             <div className="flex flex-col items-center justify-center gap-2">
-                                                <ListVideo className="h-8 w-8 text-[#9CA3AF]" />
+                                                <ListVideo className={`h-8 w-8 ${
+                                                    theme === "light" ? "text-gray-400" : "text-[#CFCFCF]"
+                                                }`} />
                                                 <p>No submissions yet.</p>
                                                 <Link href="/">
                                                     <Button size="sm" variant="outline" className="mt-2">Browse Bounties</Button>
@@ -288,15 +348,25 @@ export default function Dashboard() {
                             {activeTab === "bounties" && (
                                 bounties.length > 0 ? (
                                     bounties.map((bounty) => (
-                                        <tr key={bounty.id} className="hover:bg-[#1F2933]/50">
-                                            <td className="px-6 py-4 font-medium text-[#F9FAFB]">{bounty.title}</td>
+                                        <tr key={bounty.id} className={theme === "light" ? "hover:bg-gray-50" : "hover:bg-[#010A12]/50"}>
+                                            <td className={`px-6 py-4 font-medium ${
+                                                theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                                            }`}>{bounty.title}</td>
                                             <td className="px-6 py-4">
-                                                <div className="w-full max-w-[100px] h-2 bg-[#1F2933] rounded-full overflow-hidden">
-                                                    <div className="h-full bg-[#22C55E]" style={{ width: `${(bounty.budgetSpent / bounty.budgetTotal) * 100}%` }}></div>
+                                                <div className={`w-full max-w-[100px] h-2 rounded-full overflow-hidden ${
+                                                    theme === "light" ? "bg-gray-200" : "bg-[#010A12]"
+                                                }`}>
+                                                    <div className={`h-full ${
+                                                        theme === "light" ? "bg-[#1F2937]" : "bg-[#10B981]"
+                                                    }`} style={{ width: `${(bounty.budgetSpent / bounty.budgetTotal) * 100}%` }}></div>
                                                 </div>
-                                                <span className="text-xs text-[#9CA3AF] mt-1 block">${bounty.budgetSpent} / ${bounty.budgetTotal}</span>
+                                                <span className={`text-xs mt-1 block ${
+                                                    theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                                }`}>${bounty.budgetSpent} / ${bounty.budgetTotal}</span>
                                             </td>
-                                            <td className="px-6 py-4 text-center text-[#F9FAFB]">{bounty.submissionCount}</td>
+                                            <td className={`px-6 py-4 text-center ${
+                                                theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                                            }`}>{bounty.submissionCount}</td>
                                             <td className="px-6 py-4 text-right">
                                                 <Link href={`/bounty/${bounty.id}`}>
                                                     <Button size="sm" variant="outline">Manage</Button>
@@ -306,9 +376,13 @@ export default function Dashboard() {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={4} className="px-6 py-12 text-center text-[#9CA3AF]">
+                                        <td colSpan={4} className={`px-6 py-12 text-center ${
+                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                        }`}>
                                             <div className="flex flex-col items-center justify-center gap-2">
-                                                <Briefcase className="h-8 w-8 text-[#9CA3AF]" />
+                                                <Briefcase className={`h-8 w-8 ${
+                                                    theme === "light" ? "text-gray-400" : "text-[#CFCFCF]"
+                                                }`} />
                                                 <p>You haven't created any campaigns.</p>
                                                 <Button 
                                                     size="sm" 

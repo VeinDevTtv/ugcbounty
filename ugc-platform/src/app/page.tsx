@@ -5,6 +5,7 @@ import Link from "next/link";
 import BountyCard from "@/components/BountyCard";
 import ClaimBountyDialog from "@/components/ClaimBountyDialog";
 import { useUser } from "@clerk/nextjs";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface BountyWithCreator {
   id: string;
@@ -40,6 +41,7 @@ interface Bounty {
 
 export default function Home() {
   const { user } = useUser();
+  const { theme } = useTheme();
   const [bounties, setBounties] = useState<Bounty[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [bountiesWithCreatorId, setBountiesWithCreatorId] = useState<BountyWithCreator[]>([]);
@@ -92,16 +94,22 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617]">
+    <div className={`min-h-screen transition-colors ${
+      theme === "light" ? "bg-gray-50" : "bg-[#1F2937]"
+    }`}>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+            <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${
+              theme === "light" ? "border-[#1F2937]" : "border-[#10B981]"
+            }`}></div>
           </div>
         ) : bounties.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-600 text-lg">
+            <p className={`text-lg ${
+              theme === "light" ? "text-gray-600" : "text-gray-400"
+            }`}>
               No bounties available yet. Create one to get started!
             </p>
           </div>

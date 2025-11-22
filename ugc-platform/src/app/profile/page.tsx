@@ -207,7 +207,7 @@ export default function ProfilePage() {
   if (!isLoaded || isLoading) {
     return (
       <div className="min-h-screen bg-[#020617] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#10B981]"></div>
       </div>
     );
   }
