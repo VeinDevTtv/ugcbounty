@@ -6,112 +6,149 @@ import {
   useUser,
   SignedIn,
   SignedOut,
-  UserButton,
 } from "@clerk/nextjs";
 import Link from "next/link";
-import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useTheme } from "@/contexts/ThemeContext";
 import ThemeToggle from "@/components/ThemeToggle";
+import Logo from "@/components/Logo";
+import { Button } from "@/components/ui/Button";
 
 export function LandingNav() {
   const { user, isLoaded } = useUser();
   const { theme } = useTheme();
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: "/feed", label: "Feed" },
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/profile", label: "My Profile" },
+  ];
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-6 md:px-12 transition-colors ${
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-colors ${
       theme === "light" 
         ? "bg-[#E8ECF3]/80 backdrop-blur-md border-b border-[#C8D1E0]/50" 
         : "bg-[#0A0F17]/80 backdrop-blur-md border-b border-[#1A2332]/50"
     }`}>
-      <Link href="/" className="flex items-center">
-        <div className="relative h-12 w-32 md:h-16 md:w-40">
-          <Image
-            src="/bountea.png"
-            alt="BountyHunted Logo"
-            fill
-            priority
-            className="object-contain"
-          />
+      <div className="container mx-auto grid grid-cols-[1fr_auto_1fr] items-center min-h-24 px-4 py-3 font-sans">
+        {/* LEFT: LOGO */}
+        <div className="flex items-center">
+          <Logo href="/" />
         </div>
-      </Link>
 
-      <div className="flex items-center gap-4">
-        {/* Navigation Links - Only show when signed in */}
-        <SignedIn>
-          <nav className="hidden md:flex items-center gap-3">
-            <Link
-              href="/feed"
-              className={`px-4 py-2.5 text-base font-semibold rounded-lg transition-all duration-200 ${
-                theme === "light"
-                  ? "bg-[#1B3C73] text-white hover:bg-[#102B52] hover:shadow-md"
-                  : "bg-[#60A5FA] text-white hover:bg-[#3B82F6] hover:shadow-md"
-              }`}
-            >
-              Feed
-            </Link>
-            <Link
-              href="/dashboard"
-              className={`px-4 py-2.5 text-base font-semibold rounded-lg transition-all duration-200 ${
-                theme === "light"
-                  ? "bg-[#1B3C73] text-white hover:bg-[#102B52] hover:shadow-md"
-                  : "bg-[#60A5FA] text-white hover:bg-[#3B82F6] hover:shadow-md"
-              }`}
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/profile"
-              className={`px-4 py-2.5 text-base font-semibold rounded-lg transition-all duration-200 ${
-                theme === "light"
-                  ? "bg-[#1B3C73] text-white hover:bg-[#102B52] hover:shadow-md"
-                  : "bg-[#60A5FA] text-white hover:bg-[#3B82F6] hover:shadow-md"
-              }`}
-            >
-              My Profile
-            </Link>
-          </nav>
-        </SignedIn>
+        {/* CENTER: NAVBAR PILL CONTAINER */}
+        <div className="flex items-center justify-center">
+          {/* Signed In: Navigation Pills */}
+          <SignedIn>
+            <div className={`hidden md:flex items-center gap-3 px-3 py-1 rounded-full shadow-sm ${
+              theme === "light" 
+                ? "bg-white/60 border border-[#D9E1EF]" 
+                : "bg-[#141B23]/60"
+            }`}>
+              {navItems.map((item) => {
+                const isActive = item.href === "/feed"
+                  ? pathname === "/feed"
+                  : pathname?.startsWith(item.href);
 
-        {/* Theme Toggle */}
-        <ThemeToggle />
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`px-5 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
+                      isActive
+                        ? theme === "light"
+                          ? "bg-[#1B3C73] text-white shadow border border-[#102B52]"
+                          : "bg-[#141B23] text-[#F5F8FC] shadow-sm"
+                        : theme === "light"
+                        ? "text-[#2E3A47] hover:text-[#4F6FA8] hover:bg-[#DDE5F2]"
+                        : "text-[#F5F8FC] hover:text-[#60A5FA] hover:bg-[#141B23]"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </SignedIn>
 
-        {/* Auth Buttons */}
-        <SignedOut>
-          <div className="flex items-center gap-3">
-            <SignInButton mode="modal">
-              <button
-                className={`px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
-                  theme === "light"
-                    ? "border border-[#1B3C73] text-[#1B3C73] bg-transparent hover:bg-[#1B3C73] hover:text-white hover:shadow-md"
-                    : "border border-[#60A5FA] text-[#60A5FA] bg-transparent hover:bg-[#60A5FA] hover:text-white hover:shadow-md"
-                }`}
-              >
-                Log In
-              </button>
-            </SignInButton>
-            <SignUpButton mode="modal">
-              <button
-                className={`px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 shadow-sm ${
-                  theme === "light"
-                    ? "bg-[#1B3C73] text-white hover:bg-[#102B52] hover:shadow-md"
-                    : "bg-[#60A5FA] text-white hover:bg-[#3B82F6] hover:shadow-md"
-                }`}
-              >
-                Sign Up
-              </button>
-            </SignUpButton>
-          </div>
-        </SignedOut>
+          {/* Signed Out: Auth Buttons in Pill Container */}
+          <SignedOut>
+            <div className={`hidden md:flex items-center gap-3 px-3 py-1 rounded-full shadow-sm ${
+              theme === "light" 
+                ? "bg-white/60 border border-[#D9E1EF]" 
+                : "bg-[#141B23]/60"
+            }`}>
+              <SignInButton mode="modal">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`rounded-full ${
+                    theme === "light"
+                      ? "text-[#2E3A47] hover:text-[#1B3C73] hover:bg-[#DDE5F2]"
+                      : "text-[#F5F8FC] hover:bg-[#141B23]"
+                  }`}
+                >
+                  Sign In
+                </Button>
+              </SignInButton>
 
-        <SignedIn>
-          <UserButton
-            appearance={{
-              elements: {
-                avatarBox: "w-8 h-8",
-              },
-            }}
-          />
-        </SignedIn>
+              <SignUpButton mode="modal">
+                <Button
+                  size="sm"
+                  className={`rounded-full ${
+                    theme === "light"
+                      ? "bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
+                      : "bg-[#141B23] text-white border border-[#1A2332] hover:bg-[#1F2937]"
+                  }`}
+                >
+                  Sign Up
+                </Button>
+              </SignUpButton>
+            </div>
+          </SignedOut>
+        </div>
+
+        {/* RIGHT: THEME TOGGLE + USER BUTTON */}
+        <div className="flex items-center justify-end gap-3">
+          <ThemeToggle />
+          
+          {isLoaded && (
+            <>
+              <SignedIn>
+                <Link href="/profile">
+                  <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                    {user?.imageUrl ? (
+                      <img
+                        src={user.imageUrl}
+                        alt={
+                          user.username ||
+                          user.emailAddresses[0]?.emailAddress ||
+                          "Profile"
+                        }
+                        className={`h-9 w-9 rounded-full border-2 ${
+                          theme === "light"
+                            ? "border-[#C8D1E0] bg-white"
+                            : "border-[#1A2332] bg-[#141B23]"
+                        }`}
+                      />
+                    ) : (
+                      <div className={`h-9 w-9 rounded-full flex items-center justify-center text-white font-semibold text-sm border-2 ${
+                        theme === "light"
+                          ? "bg-[#1B3C73] border-[#C8D1E0]"
+                          : "bg-[#141B23] border-[#1A2332]"
+                      }`}>
+                        {user?.username?.[0]?.toUpperCase() ||
+                          user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
+                          "U"}
+                      </div>
+                    )}
+                  </div>
+                </Link>
+              </SignedIn>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
