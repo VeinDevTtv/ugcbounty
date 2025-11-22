@@ -32,9 +32,11 @@ export default function Header() {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // 👇 Just add My Profile here
   const navItems = [
     { href: "/", label: "Feed" },
     { href: "/dashboard", label: "Dashboard" },
+    { href: "/profile", label: "My Profile" }, // change href if your route is different
   ];
 
   return (
@@ -56,7 +58,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3 bg-white/40 px-3 py-1 rounded-full shadow-sm">
             {navItems.map((item) => {
               const isActive =
                 item.href === "/"
@@ -67,7 +69,7 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-base lg:text-lg font-semibold px-4 py-2 rounded-full transition-all
+                  className={`text-sm lg:text-base font-semibold px-4 py-2 rounded-full transition-all
                   ${
                     isActive
                       ? "bg-emerald-600 text-white shadow-sm"
@@ -83,14 +85,25 @@ export default function Header() {
           {/* Right Side */}
           <div className="flex items-center gap-4">
             <SignedIn>
-              <Button
-                onClick={() => setShowCreateModal(true)}
-                size="sm"
-                className="hidden md:flex"
-              >
-                Create Bounty
-              </Button>
-            </SignedIn>
+  {(() => {
+    const isActive = pathname.startsWith("/create-bounty");
+
+    return (
+      <Link
+        href="/create-bounty"
+        className={`text-sm lg:text-base font-semibold px-4 py-2 rounded-full transition-all
+        ${
+          isActive
+            ? "bg-emerald-600 text-white shadow-sm"
+            : "text-zinc-700 hover:text-emerald-700 hover:bg-emerald-50"
+        }`}
+      >
+        Create Bounty
+      </Link>
+    );
+  })()}
+</SignedIn>
+
 
             <SignedOut>
               <SignInButton mode="modal">
