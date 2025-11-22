@@ -326,7 +326,7 @@ export default function ProfilePage() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-[#2E3A47] mb-2">
-                          Instructions (Optional)
+                          Instructions 
                         </label>
                         <textarea
                           value={editInstructions}

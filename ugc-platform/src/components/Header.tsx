@@ -304,7 +304,7 @@ export default function Header() {
 
               <div>
                 <label className="block text-sm font-medium text-[#52677C] mb-2">
-                  Instructions (Optional)
+                  Instructions
                 </label>
                 <textarea
                   value={bountyInstructions}
