@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import BountyCard from "@/components/BountyCard";
 import ClaimBountyDialog from "@/components/ClaimBountyDialog";
 import { useUser } from "@clerk/nextjs";
 import { useTheme } from "@/contexts/ThemeContext";
+import { Trophy, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 interface BountyWithCreator {
   id: string;
@@ -46,11 +48,30 @@ export default function FeedPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [bountiesWithCreatorId, setBountiesWithCreatorId] = useState<BountyWithCreator[]>([]);
   const [selectedBounty, setSelectedBounty] = useState<string | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Fetch bounties from database on mount
   useEffect(() => {
     fetchBounties();
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   const fetchBounties = async () => {
     try {
@@ -97,8 +118,82 @@ export default function FeedPage() {
     <div className={`min-h-screen transition-colors ${
       theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
     }`}>
+      {/* Left Sidebar */}
+      <aside className="hidden lg:block fixed left-6 top-24 w-64 z-30">
+        <div className={`sticky top-24 border rounded-lg p-6 ${
+          theme === "light"
+            ? "bg-white border-[#C8D1E0]"
+            : "bg-[#141B23] border-[#1A2332]"
+        }`}>
+          <h2 className={`text-lg font-bold mb-4 ${
+            theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+          }`}>
+            Your Progress
+          </h2>
+          <div className="relative" ref={dropdownRef}>
+            <Button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className={`w-full justify-between gap-2 ${
+                theme === "light"
+                  ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
+                  : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <Trophy className="h-5 w-5" />
+                Achievements
+              </div>
+              <ChevronDown className={`h-4 w-4 transition-transform ${
+                isDropdownOpen ? "rotate-180" : ""
+              }`} />
+            </Button>
+            {isDropdownOpen && (
+              <div className={`absolute top-full left-0 right-0 mt-2 z-50 border rounded-lg shadow-lg ${
+                theme === "light"
+                  ? "bg-white border-[#C8D1E0]"
+                  : "bg-[#141B23] border-[#1A2332]"
+              }`}>
+                <Link
+                  href="/badges"
+                  onClick={() => setIsDropdownOpen(false)}
+                  className={`block px-4 py-3 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                    theme === "light"
+                      ? "text-[#2E3A47] hover:bg-[#E8ECF3]"
+                      : "text-[#F5F8FC] hover:bg-[#1A2332]"
+                  }`}
+                >
+                  View All
+                </Link>
+                <Link
+                  href="/badges#levels"
+                  onClick={() => setIsDropdownOpen(false)}
+                  className={`block px-4 py-3 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg border-t ${
+                    theme === "light"
+                      ? "text-[#2E3A47] hover:bg-[#E8ECF3] border-[#C8D1E0]"
+                      : "text-[#F5F8FC] hover:bg-[#1A2332] border-[#1A2332]"
+                  }`}
+                >
+                  Levels
+                </Link>
+                <Link
+                  href="/badges#badges"
+                  onClick={() => setIsDropdownOpen(false)}
+                  className={`block px-4 py-3 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg border-t ${
+                    theme === "light"
+                      ? "text-[#2E3A47] hover:bg-[#E8ECF3] border-[#C8D1E0]"
+                      : "text-[#F5F8FC] hover:bg-[#1A2332] border-[#1A2332]"
+                  }`}
+                >
+                  Badges
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </aside>
+
       {/* Main Content */}
-      <div>
+      <div className="px-4 md:px-6 lg:pl-80 lg:pr-6 py-6">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${
