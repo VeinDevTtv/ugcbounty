@@ -41,129 +41,110 @@ export default function Header() {
 
   return (
     <>
-      {/* HEADER / NAVBAR */}
-      <nav className="sticky top-0 z-50 w-full border-b border-[#3A2518] bg-[#1B120D] backdrop-blur-md shadow-sm">
-        <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
-          {/* LOGO */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="relative h-16 w-44 md:h-20 md:w-52">
-              <Image
-                src="/bountea.png"
-                alt="Bountea Logo"
-                fill
-                priority
-                className="object-contain rounded-md"
-              />
-            </div>
+     {/* HEADER / NAVBAR */}
+<nav className="sticky top-0 z-50 w-full border-b border-[#4A4A4A] bg-[#E5E5E5] backdrop-blur-md shadow-sm">
+  <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
+    
+    {/* LOGO */}
+    <Link href="/" className="flex items-center gap-3">
+      <div className="relative h-16 w-44 md:h-20 md:w-52">
+        <Image
+          src="/bountea.png"
+          alt="Bountea Logo"
+          fill
+          priority
+          className="object-contain rounded-md"
+        />
+      </div>
+    </Link>
+
+    {/* NAV PILLS (desktop) */}
+    <div className="hidden md:flex items-center gap-3 bg-[#D1D1D1] px-3 py-1 rounded-full shadow-sm">
+      {navItems.map((item) => {
+        const isActive =
+          item.href === "/"
+            ? pathname === "/"
+            : pathname?.startsWith(item.href);
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`px-5 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
+              isActive
+                ? "bg-[#C9C9C9] text-[#1F1F1F] shadow-sm border border-[#B5B5B5]"
+                : "text-[#3A3A3A] hover:text-black hover:bg-[#CFCFCF]"
+            }`}
+          >
+            {item.label}
           </Link>
+        );
+      })}
+    </div>
 
-          {/* NAV PILLS (desktop) */}
-          <div className="hidden md:flex items-center gap-3 bg-[#25160F]/60 px-3 py-1 rounded-full shadow-sm">
-            {navItems.map((item) => {
-              const isActive =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname?.startsWith(item.href);
+    {/* RIGHT SIDE */}
+    <div className="flex items-center gap-3">
+      {isLoaded && (
+        <>
+          {/* CREATE BOUNTY BUTTON */}
+          <SignedIn>
+            <Button
+              onClick={() => setShowCreateModal(true)}
+              size="sm"
+              variant="ghost"
+              className="rounded-full bg-[#C9C9C9] text-[#1F1F1F] px-6 py-2 text-sm font-semibold shadow-sm hover:bg-[#BEBEBE]"
+            >
+              Create Bounty
+            </Button>
+          </SignedIn>
 
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`px-5 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
-                    isActive
-                      ? "bg-[#25160F] text-[#F7F1E8] shadow-sm border border-[#3A2518]"
-                      : "text-[#F7F1E8] hover:text-[#C47A53] hover:bg-[#25160F]"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
+          {/* AUTH BUTTONS */}
+          <SignedOut>
+            <SignInButton mode="modal">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="rounded-full text-[#1F1F1F] hover:bg-[#CFCFCF]"
+              >
+                Sign In
+              </Button>
+            </SignInButton>
 
-          {/* RIGHT SIDE */}
-          <div className="flex items-center gap-3">
-            {isLoaded && (
-              <>
-                {/* CREATE BOUNTY BUTTON */}
-                <SignedIn>
-                  <Button
-                    onClick={() => {
-                      if (!user) {
-                        alert("Please sign in to create a bounty");
-                        return;
-                      }
-                      setShowCreateModal(true);
-                    }}
-                    size="sm"
-                    variant="ghost"
-                    className="
-                      rounded-full 
-                      bg-[#E7D0B0] 
-                      text-[#3B2415] 
-                      px-6 
-                      py-2 
-                      text-sm 
-                      font-semibold 
-                      shadow-sm
-                      hover:bg-[#D4BA96]
-                    "
-                  >
-                    Create Bounty
-                  </Button>
-                </SignedIn>
+            <SignUpButton mode="modal">
+              <Button
+                size="sm"
+                className="rounded-full bg-[#C9C9C9] text-[#1F1F1F] border border-[#C9C9C9] hover:bg-[#BEBEBE]"
+              >
+                Sign Up
+              </Button>
+            </SignUpButton>
+          </SignedOut>
 
-                {/* AUTH BUTTONS */}
-                <SignedOut>
-                  <SignInButton mode="modal">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-full text-[#F7F1E8] hover:bg-[#25160F]"
-                    >
-                      Sign In
-                    </Button>
-                  </SignInButton>
-
-                  <SignUpButton mode="modal">
-                    <Button
-                      size="sm"
-                      className="rounded-full bg-[#E7D0B0] text-[#3B2415] border border-[#E7D0B0] hover:bg-[#D4BA96]"
-                    >
-                      Sign Up
-                    </Button>
-                  </SignUpButton>
-                </SignedOut>
-
-                {/* USER AVATAR */}
-                <SignedIn>
-                  <Link href="/profile">
-                    <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-                      {user?.imageUrl ? (
-                        <img
-                          src={user.imageUrl}
-                          alt={
-                            user.username ||
-                            user.emailAddresses[0]?.emailAddress ||
-                            "Profile"
-                          }
-                          className="h-9 w-9 rounded-full border-2 border-[#3A2518] bg-[#25160F]"
-                        />
-                      ) : (
-                        <div className="h-9 w-9 rounded-full bg-[#341B11] flex items-center justify-center text-[#F7F1E8] font-semibold text-sm border-2 border-[#3A2518]">
-                          {user?.username?.[0]?.toUpperCase() ||
-                            user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
-                            "U"}
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-                </SignedIn>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+          {/* USER AVATAR */}
+          <SignedIn>
+            <Link href="/profile">
+              <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                {user?.imageUrl ? (
+                  <img
+                    src={user.imageUrl}
+                    alt="Profile"
+                    className="h-9 w-9 rounded-full border-2 border-[#A5A5A5] bg-[#D1D1D1]"
+                  />
+                ) : (
+                  <div className="h-9 w-9 rounded-full bg-[#BBBBBB] flex items-center justify-center text-[#1F1F1F] font-semibold text-sm border-2 border-[#A5A5A5]">
+                    {user?.username?.[0]?.toUpperCase() ||
+                      user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
+                      "U"}
+                  </div>
+                )}
+              </div>
+            </Link>
+          </SignedIn>
+        </>
+      )}
+    </div>
+  </div>
+</nav>
 
       {/* CREATE BOUNTY MODAL */}
       {showCreateModal && (
