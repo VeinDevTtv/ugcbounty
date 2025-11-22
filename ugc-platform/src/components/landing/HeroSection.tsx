@@ -62,13 +62,49 @@ export function HeroSection() {
           style={{ lineHeight: "1.1", ...textShadow }}
         >
           Bountea <br />
-          User Generated Content Platform
+          <span className="inline-block">
+            <span 
+              className={`inline-block text-transparent bg-clip-text ${
+                theme === "light"
+                  ? "bg-gradient-to-r from-[#1B3C73] via-[#3B82F6] to-[#1B3C73] animate-user-gradient-light"
+                  : "bg-gradient-to-r from-[#60A5FA] via-[#93C5FD] via-[#3B82F6] to-[#60A5FA] animate-user-gradient"
+              }`}
+              style={{
+                backgroundSize: "200% 200%",
+              }}
+            >
+              User
+            </span>{" "}
+            Generated Content Platform
+          </span>
         </h1>
 
         <div className="max-w-xl animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-          <p className={`font-serif text-lg md:text-2xl leading-snug ${subtextColor} opacity-90`}>
+          <p className={`font-serif text-lg md:text-2xl leading-snug ${subtextColor} opacity-90 pb-8`}>
             Connect creators with brands. <br />
-            Earn money by creating content that <span className="italic">matters</span>—get paid for every view you generate.
+            Earn money by creating content that <span className="italic">matters</span>—get paid for every view you generate—instantly because of our{" "}
+            <span className="relative inline-block align-top">
+              <span className={`font-semibold ${
+                theme === "light" 
+                  ? "text-[#1B3C73]" 
+                  : "text-[#60A5FA]"
+              }`}>
+                AI
+              </span>
+              <span 
+                className={`absolute top-full left-0 mt-1 text-xs md:text-sm font-serif italic whitespace-nowrap opacity-0 animate-fade-in-up ${
+                  theme === "light"
+                    ? "text-[#3B82F6]"
+                    : "text-[#93C5FD]"
+                }`}
+                style={{ 
+                  animationDelay: "0.6s",
+                  opacity: 0
+                }}
+              >
+                Powered by intelligent automation
+              </span>
+            </span>.
           </p>
         </div>
       </div>

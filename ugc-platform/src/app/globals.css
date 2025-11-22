@@ -179,15 +179,59 @@ select,
   animation: pulse-slow 15s ease-in-out infinite;
 }
 
+/* Animated gradient for "User" word */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(96, 165, 250, 0.6)) drop-shadow(0 0 24px rgba(96, 165, 250, 0.4));
+  }
+}
+
+@keyframes glow-pulse-light {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px rgba(27, 60, 115, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(27, 60, 115, 0.5)) drop-shadow(0 0 18px rgba(27, 60, 115, 0.3));
+  }
+}
+
+.animate-user-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite, glow-pulse 2s ease-in-out infinite;
+}
+
+.animate-user-gradient-light {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite, glow-pulse-light 2s ease-in-out infinite;
+}
+
 /* Respect reduced motion for animations */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in-up,
   .animate-float,
   .animate-float-delayed,
   .animate-float-slow,
-  .animate-pulse-slow {
+  .animate-pulse-slow,
+  .animate-user-gradient,
+  .animate-user-gradient-light {
     animation: none;
     opacity: 1;
     transform: none;
+    filter: none;
   }
 }
