@@ -42,7 +42,7 @@ export function HeroSection() {
           className={`font-serif text-6xl md:text-8xl lg:text-9xl leading-[1.1] ${textColor} mb-16 italic tracking-tight opacity-0 pb-4`}
           style={{ lineHeight: "1.1" }}
         >
-          BountyHunted <br />
+          bountea <br />
           UGC Platform
         </h1>
 

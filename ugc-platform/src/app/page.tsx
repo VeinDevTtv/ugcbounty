@@ -1,6 +1,5 @@
 "use client";
 
-import { LandingNav } from "@/components/landing/LandingNav";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { NarrativeSection } from "@/components/landing/NarrativeSection";
 import { DriverCard } from "@/components/landing/DriverCard";
@@ -47,8 +46,6 @@ export default function LandingPage() {
           ? "from-[#1B3C73]/10 via-transparent to-transparent"
           : "from-black/20 via-transparent to-[#60A5FA]/5"
       }`} />
-
-      <LandingNav />
 
       <HeroSection />
 

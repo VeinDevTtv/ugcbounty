@@ -48,7 +48,7 @@ export function NarrativeSection() {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         <div ref={section2Ref} className="md:col-span-6 space-y-6 opacity-0">
           <h2 className={`font-serif text-4xl md:text-5xl ${headingColor}`}>
-            BountyHunted is the <span className="italic">next evolution</span> of creator monetization.
+            bountea is the <span className="italic">next evolution</span> of creator monetization.
           </h2>
           <p className={`font-mono text-sm leading-relaxed ${textColor} opacity-70 max-w-md`}>
             Track your earnings, manage submissions, and discover new opportunities all in one place. Whether you're

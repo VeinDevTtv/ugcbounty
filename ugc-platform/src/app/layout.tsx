@@ -10,7 +10,7 @@ import CursorWrapper from "@/components/CursorWrapper";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BountyHunted | UGC Platform",
+  title: "bountea | UGC Platform",
   description: "Find and create content for brands.",
 };
 

@@ -44,8 +44,8 @@ export function FooterSection() {
         <div className="flex items-center gap-2">
           <span>©2024</span>
           <span>+</span>
-          <Link href="/feed" className="hover:opacity-70 transition-opacity">
-            <span>BOUNTYHUNTED</span>
+          <Link href="/" className="hover:opacity-70 transition-opacity">
+            <span>BOUNTEA</span>
           </Link>
         </div>
         <div className={`writing-vertical-lr rotate-180 hidden md:block opacity-50 ${
