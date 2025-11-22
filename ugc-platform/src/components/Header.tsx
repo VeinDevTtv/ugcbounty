@@ -20,6 +20,87 @@ export default function Header() {
   const pathname = usePathname();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [bountyName, setBountyName] = useState("");
+  const [bountyDescription, setBountyDescription] = useState("");
+  const [totalBounty, setTotalBounty] = useState("");
+  const [ratePer1k, setRatePer1k] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setLogoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCreateBounty = async () => {
+    if (bountyName && bountyDescription && totalBounty && ratePer1k) {
+      try {
+        setIsCreating(true);
+
+        let logoUrl = null;
+        if (logoFile) {
+          const formData = new FormData();
+          formData.append('file', logoFile);
+          
+          const uploadResponse = await fetch('/api/upload-logo', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (uploadResponse.ok) {
+            const uploadResult = await uploadResponse.json();
+            logoUrl = uploadResult.url;
+          }
+        }
+
+        const response = await fetch("/api/bounties", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: bountyName,
+            description: bountyDescription,
+            totalBounty: parseFloat(totalBounty),
+            ratePer1kViews: parseFloat(ratePer1k),
+            companyName: companyName || null,
+            logoUrl: logoUrl,
+          }),
+        });
+
+        if (response.ok) {
+          setBountyName("");
+          setBountyDescription("");
+          setTotalBounty("");
+          setRatePer1k("");
+          setCompanyName("");
+          setLogoFile(null);
+          setLogoPreview(null);
+          setShowCreateModal(false);
+          
+          router.push("/");
+          router.refresh();
+        } else {
+          const error = await response.json();
+          alert(`Failed to create bounty: ${error.error || "Unknown error"}`);
+        }
+      } catch (error) {
+        console.error("Error creating bounty:", error);
+        alert("Failed to create bounty. Please try again.");
+      } finally {
+        setIsCreating(false);
+      }
+    }
+  };
 
   return (
     <>
@@ -131,7 +212,142 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* CREATE MODAL (unchanged) */}
+      {/* CREATE BOUNTY MODAL */}
+      {showCreateModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[100]"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowCreateModal(false);
+            }
+          }}
+        >
+          <div 
+            className="bg-[#25160F] shadow-2xl max-w-lg w-full p-6 rounded-lg border border-[#3A2518]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-start mb-6">
+              <h2 className="text-2xl font-bold text-[#F7F1E8]">
+                Create New Bounty
+              </h2>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="text-[#CBB8A4] hover:text-[#F7F1E8] text-2xl transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                  Bounty Name
+                </label>
+                <input
+                  type="text"
+                  value={bountyName}
+                  onChange={(e) => setBountyName(e.target.value)}
+                  placeholder="e.g., Sushi Hat Challenge"
+                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] placeholder-[#A38E7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C47A53]/20 focus:border-[#C47A53]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                  Company Name
+                </label>
+                <input
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  placeholder="e.g., Acme Corp"
+                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] placeholder-[#A38E7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C47A53]/20 focus:border-[#C47A53]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                  Company Logo
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoChange}
+                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] rounded-lg file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-[#C47A53] file:text-[#F7F1E8] file:font-semibold file:rounded-lg hover:file:bg-[#B86942] file:cursor-pointer cursor-pointer"
+                />
+                {logoPreview && (
+                  <div className="mt-2">
+                    <img
+                      src={logoPreview}
+                      alt="Logo preview"
+                      className="h-20 w-20 object-contain border border-[#3A2518] rounded-lg"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={bountyDescription}
+                  onChange={(e) => setBountyDescription(e.target.value)}
+                  placeholder="Describe what creators should do..."
+                  rows={3}
+                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] placeholder-[#A38E7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C47A53]/20 focus:border-[#C47A53] resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                  Total Bounty ($)
+                </label>
+                <input
+                  type="number"
+                  value={totalBounty}
+                  onChange={(e) => setTotalBounty(e.target.value)}
+                  placeholder="5000"
+                  min="0"
+                  step="0.01"
+                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] placeholder-[#A38E7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C47A53]/20 focus:border-[#C47A53]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                  Rate per 1k Views ($)
+                </label>
+                <input
+                  type="number"
+                  value={ratePer1k}
+                  onChange={(e) => setRatePer1k(e.target.value)}
+                  placeholder="8"
+                  min="0"
+                  step="0.01"
+                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] placeholder-[#A38E7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C47A53]/20 focus:border-[#C47A53]"
+                />
+              </div>
+
+              <div className="pt-2">
+                <button
+                  onClick={handleCreateBounty}
+                  disabled={
+                    !bountyName ||
+                    !bountyDescription ||
+                    !totalBounty ||
+                    !ratePer1k ||
+                    isCreating
+                  }
+                  className="w-full bg-[#C47A53] text-[#F7F1E8] font-semibold py-3 px-6 rounded-lg hover:bg-[#B86942] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#C47A53]"
+                >
+                  {isCreating ? "Creating..." : "Create Bounty"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
