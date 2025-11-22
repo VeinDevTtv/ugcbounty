@@ -152,14 +152,7 @@ export default function Header() {
         const response = await fetch("/api/bounties");
         if (response.ok) {
           const data = await response.json();
-          const mappedBounties: Bounty[] = data.map((bounty: {
-            id: string;
-            name: string;
-            description: string;
-            company_name?: string | null;
-            rate_per_1k_views: number;
-            total_bounty: number;
-          }) => ({
+          const mappedBounties: Bounty[] = data.map((bounty: any) => ({
             id: bounty.id,
             name: bounty.name,
             description: bounty.description,
@@ -185,10 +178,10 @@ export default function Header() {
   return (
     <>
       {/* HEADER / NAVBAR */}
-      <nav className={`sticky top-0 z-50 w-full backdrop-blur-2xl shadow-lg transition-all ${
+      <nav className={`sticky top-0 z-50 w-full backdrop-blur-md shadow-sm transition-colors ${
         theme === "light" 
-          ? "border-b border-white/20 bg-white/10" 
-          : "border-b border-white/10 bg-black/10"
+          ? "border-b border-[#C8D1E0] bg-[#E8ECF3]" 
+          : "border-b border-[#1A2332] bg-[#0D1419]"
       }`}>
         <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
           {/* LOGO */}
@@ -205,10 +198,10 @@ export default function Header() {
           </Link>
 
           {/* NAV PILLS (desktop) */}
-          <div className={`hidden md:flex items-center gap-2 px-2 py-1 rounded-full backdrop-blur-xl ${
+          <div className={`hidden md:flex items-center gap-3 px-3 py-1 rounded-full shadow-sm ${
             theme === "light" 
-              ? "bg-white/20 border border-white/30" 
-              : "bg-black/20 border border-white/10"
+              ? "bg-white/60 border border-[#D9E1EF]" 
+              : "bg-[#141B23]/60"
           }`}>
             {navItems.map((item) => {
               const isActive =
@@ -220,14 +213,14 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-4 py-1.5 text-sm lg:text-base font-medium rounded-full transition-all ${
+                  className={`px-5 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
                     isActive
                       ? theme === "light"
-                        ? "bg-white/30 text-[#1B3C73] shadow-sm backdrop-blur-sm"
-                        : "bg-white/10 text-[#F5F8FC] shadow-sm backdrop-blur-sm"
+                        ? "bg-[#1B3C73] text-white shadow border border-[#102B52]"
+                        : "bg-[#141B23] text-[#F5F8FC] shadow-sm"
                       : theme === "light"
-                      ? "text-[#2E3A47] hover:text-[#1B3C73] hover:bg-white/20"
-                      : "text-[#B8C5D6] hover:text-[#F5F8FC] hover:bg-white/5"
+                      ? "text-[#2E3A47] hover:text-[#4F6FA8] hover:bg-[#DDE5F2]"
+                      : "text-[#F5F8FC] hover:text-[#60A5FA] hover:bg-[#141B23]"
                   }`}
                 >
                   {item.label}
@@ -309,17 +302,17 @@ export default function Header() {
                             user.emailAddresses[0]?.emailAddress ||
                             "Profile"
                           }
-                          className={`h-9 w-9 rounded-full border-2 backdrop-blur-sm ${
+                          className={`h-9 w-9 rounded-full border-2 ${
                             theme === "light"
-                              ? "border-white/30 bg-white/20"
-                              : "border-white/20 bg-white/10"
+                              ? "border-[#C8D1E0] bg-white"
+                              : "border-[#1A2332] bg-[#141B23]"
                           }`}
                         />
                       ) : (
-                        <div className={`h-9 w-9 rounded-full flex items-center justify-center text-white font-semibold text-sm border-2 backdrop-blur-sm ${
+                        <div className={`h-9 w-9 rounded-full flex items-center justify-center text-white font-semibold text-sm border-2 ${
                           theme === "light"
-                            ? "bg-[#1B3C73]/80 border-white/30"
-                            : "bg-[#141B23]/80 border-white/20"
+                            ? "bg-[#1B3C73] border-[#C8D1E0]"
+                            : "bg-[#141B23] border-[#1A2332]"
                         }`}>
                           {user?.username?.[0]?.toUpperCase() ||
                             user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
