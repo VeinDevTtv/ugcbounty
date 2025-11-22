@@ -155,6 +155,7 @@ export default function Home() {
             brand: bounties.find((b) => b.id === selectedBounty)?.companyName || "Unknown",
             payout: bounties.find((b) => b.id === selectedBounty)?.ratePer1kViews.toFixed(2) || "0.00",
             deadline: "Ongoing",
+            description: bounties.find((b) => b.id === selectedBounty)?.description,
           }}
           isCompleted={bounties.find((b) => b.id === selectedBounty)?.isCompleted || false}
         />
