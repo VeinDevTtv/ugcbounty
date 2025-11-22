@@ -183,7 +183,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               }
 
               // Only calculate earned_amount for approved submissions
-              if (submission.status === 'approved') {
+              if (submission.status === 'approved' && submission.bounty_id) {
                 // Get bounty to calculate earned_amount
                 const { data: bountyData } = await supabaseServer
                   .from('bounties')
@@ -306,7 +306,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               }
 
               // Only calculate earned_amount for approved submissions
-              if (submission.status === 'approved') {
+              if (submission.status === 'approved' && submission.bounty_id) {
                 // Get bounty to calculate earned_amount
                 const { data: bountyData } = await supabaseServer
                   .from('bounties')
