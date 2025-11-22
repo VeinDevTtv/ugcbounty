@@ -10,7 +10,7 @@ import {
 } from "@clerk/nextjs";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Button } from "./ui/Button";
 import { X } from "lucide-react";
 import Image from "next/image";
@@ -18,18 +18,22 @@ import Image from "next/image";
 export default function Header() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const navItems = [
+    { href: "/", label: "Feed" },
+    { href: "/dashboard", label: "Dashboard" },
+  ];
 
   return (
     <>
       {/* NAVBAR */}
       <nav className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-[#F5EEDC] backdrop-blur-md">
-        {/* Taller header so logo never gets clipped */}
         <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3">
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3">
-            {/* Wrapper controls logo size and keeps it inside the header */}
-            <div className="relative h-30 w-80 md:h-30 md:w-80">
+            <div className="relative h-16 w-44 md:h-20 md:w-52">
               <Image
                 src="/bountea.png"
                 alt="Bountea Logo"
@@ -41,19 +45,28 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-6">
-            <Link
-              href="/"
-              className="text-sm font-medium text-zinc-600 hover:text-emerald-600"
-            >
-              Feed
-            </Link>
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium text-zinc-600 hover:text-emerald-600"
-            >
-              Dashboard
-            </Link>
+          <div className="hidden md:flex items-center gap-4">
+            {navItems.map((item) => {
+              const isActive =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname?.startsWith(item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-base lg:text-lg font-semibold px-4 py-2 rounded-full transition-all
+                  ${
+                    isActive
+                      ? "bg-emerald-600 text-white shadow-sm"
+                      : "text-zinc-700 hover:text-emerald-700 hover:bg-emerald-50"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Right Side */}
