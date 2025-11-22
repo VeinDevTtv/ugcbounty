@@ -74,48 +74,38 @@ export function HeroSection() {
           >
             User Generated
           </span> <br />
-          <span 
-            className={`inline-block text-transparent bg-clip-text ${
-              theme === "light"
-                ? "bg-gradient-to-r from-[#1B3C73] via-[#3B82F6] to-[#1B3C73] animate-user-gradient-light"
-                : "bg-gradient-to-r from-[#60A5FA] via-[#93C5FD] via-[#3B82F6] to-[#60A5FA] animate-user-gradient"
-            }`}
-            style={{
-              backgroundSize: "200% 200%",
-            }}
-          >
-            Content
-          </span> <br /> Platform
+          <span>
+            <span 
+              className={`inline-block text-transparent bg-clip-text ${
+                theme === "light"
+                  ? "bg-gradient-to-r from-[#1B3C73] via-[#3B82F6] to-[#1B3C73] animate-user-gradient-light"
+                  : "bg-gradient-to-r from-[#60A5FA] via-[#93C5FD] via-[#3B82F6] to-[#60A5FA] animate-user-gradient"
+              }`}
+              style={{
+                backgroundSize: "200% 200%",
+              }}
+            >
+              Content
+            </span>{" "}
+            Platform
+          </span>
         </h1>
 
         <div className="max-w-xl animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           <p className={`font-serif text-lg md:text-2xl leading-snug ${subtextColor} opacity-90 pb-8`}>
             Connect creators with brands. <br />
             Earn money by creating content that <span className="italic">matters</span>—get paid for every view you generate—instantly because of our{" "}
-            <span className="relative inline-block align-top px-3 py-1">
-              <span className={`font-semibold relative z-10 ${
-                theme === "light" 
-                  ? "text-[#1B3C73]" 
-                  : "text-[#60A5FA]"
-              }`}>
-                AI
-              </span>
-              <div className={`hand-drawn-circle-wrapper hand-drawn-circle ${
+            <span 
+              className={`inline-block text-transparent bg-clip-text font-semibold ${
                 theme === "light"
-                  ? "text-[#1B3C73]"
-                  : "text-[#60A5FA]"
-              }`}>
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                  <path
-                    d="M40,8 C48,8 55,10 60,14 C65,18 68,24 69,30 C70,36 69,42 67,47 C65,52 61,56 57,59 C53,62 48,64 42,65 C36,66 30,65 25,63 C20,61 16,58 13,54 C10,50 8,45 7,40 C6,35 7,30 9,25 C11,20 14,16 18,13 C22,10 27,8 33,8 C35,8 37,8 40,8 Z"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+                  ? "bg-gradient-to-r from-[#1B3C73] via-[#3B82F6] to-[#1B3C73] animate-user-gradient-light"
+                  : "bg-gradient-to-r from-[#60A5FA] via-[#93C5FD] via-[#3B82F6] to-[#60A5FA] animate-user-gradient"
+              }`}
+              style={{
+                backgroundSize: "200% 200%",
+              }}
+            >
+              AI
             </span>.
           </p>
         </div>
