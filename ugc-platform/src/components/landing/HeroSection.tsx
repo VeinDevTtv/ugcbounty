@@ -39,11 +39,11 @@ export function HeroSection() {
     : "text-[#F5F8FC]"
 
   return (
-    <section className="relative pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
+    <section className="relative pt-20 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
       <div className="max-w-4xl">
         <h1
           ref={titleRef}
-          className={`font-serif text-6xl md:text-8xl lg:text-9xl leading-[1.1] ${textColor} mb-16 italic tracking-tight opacity-0 pb-4`}
+          className={`font-serif text-5xl md:text-7xl lg:text-8xl leading-[1.1] ${textColor} mb-10 italic tracking-tight opacity-0 pb-4`}
           style={{ lineHeight: "1.1", ...textShadow }}
         >
           Bountea <br />
@@ -51,7 +51,7 @@ export function HeroSection() {
         </h1>
 
         <div className="max-w-xl animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-          <p className={`font-serif text-xl md:text-3xl leading-snug ${subtextColor} opacity-90`}>
+          <p className={`font-serif text-lg md:text-2xl leading-snug ${subtextColor} opacity-90`}>
             Connect creators with brands. <br />
             Earn money by creating content that <span className="italic">matters</span>—get paid for every view you generate.
           </p>
