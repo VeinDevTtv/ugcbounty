@@ -11,6 +11,7 @@ export default function Cursor() {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const hoveredElementRef = useRef<HTMLElement | null>(null);
   const magneticOffsetRef = useRef({ x: 0, y: 0 });
+  const cursorPathRef = useRef<Array<{ x: number; y: number; timestamp: number }>>([]);
 
   // Smooth spring animations for cursor position
   const cursorX = useMotionValue(0);
@@ -40,19 +41,46 @@ export default function Cursor() {
   const particle4XSpring = useSpring(particle4X, { damping: 20, stiffness: 200, mass: 0.3 });
   const particle4YSpring = useSpring(particle4Y, { damping: 20, stiffness: 200, mass: 0.3 });
 
-  // Sparkle particles - create motion values for sparkles
+  // Sparkle particles - create motion values and springs for sparkles (trailing line)
   const sparkle1X = useMotionValue(0);
   const sparkle1Y = useMotionValue(0);
+  const sparkle1XSpring = useSpring(sparkle1X, { damping: 15, stiffness: 150, mass: 0.2 });
+  const sparkle1YSpring = useSpring(sparkle1Y, { damping: 15, stiffness: 150, mass: 0.2 });
+  
   const sparkle2X = useMotionValue(0);
   const sparkle2Y = useMotionValue(0);
+  const sparkle2XSpring = useSpring(sparkle2X, { damping: 15, stiffness: 150, mass: 0.2 });
+  const sparkle2YSpring = useSpring(sparkle2Y, { damping: 15, stiffness: 150, mass: 0.2 });
+  
   const sparkle3X = useMotionValue(0);
   const sparkle3Y = useMotionValue(0);
+  const sparkle3XSpring = useSpring(sparkle3X, { damping: 15, stiffness: 150, mass: 0.2 });
+  const sparkle3YSpring = useSpring(sparkle3Y, { damping: 15, stiffness: 150, mass: 0.2 });
+  
   const sparkle4X = useMotionValue(0);
   const sparkle4Y = useMotionValue(0);
+  const sparkle4XSpring = useSpring(sparkle4X, { damping: 15, stiffness: 150, mass: 0.2 });
+  const sparkle4YSpring = useSpring(sparkle4Y, { damping: 15, stiffness: 150, mass: 0.2 });
+  
   const sparkle5X = useMotionValue(0);
   const sparkle5Y = useMotionValue(0);
+  const sparkle5XSpring = useSpring(sparkle5X, { damping: 15, stiffness: 150, mass: 0.2 });
+  const sparkle5YSpring = useSpring(sparkle5Y, { damping: 15, stiffness: 150, mass: 0.2 });
+  
   const sparkle6X = useMotionValue(0);
   const sparkle6Y = useMotionValue(0);
+  const sparkle6XSpring = useSpring(sparkle6X, { damping: 15, stiffness: 150, mass: 0.2 });
+  const sparkle6YSpring = useSpring(sparkle6Y, { damping: 15, stiffness: 150, mass: 0.2 });
+  
+  const sparkle7X = useMotionValue(0);
+  const sparkle7Y = useMotionValue(0);
+  const sparkle7XSpring = useSpring(sparkle7X, { damping: 15, stiffness: 150, mass: 0.2 });
+  const sparkle7YSpring = useSpring(sparkle7Y, { damping: 15, stiffness: 150, mass: 0.2 });
+  
+  const sparkle8X = useMotionValue(0);
+  const sparkle8Y = useMotionValue(0);
+  const sparkle8XSpring = useSpring(sparkle8X, { damping: 15, stiffness: 150, mass: 0.2 });
+  const sparkle8YSpring = useSpring(sparkle8Y, { damping: 15, stiffness: 150, mass: 0.2 });
 
   // Array of particles for easier iteration - memoized to prevent recreation
   const particles = useMemo(
@@ -82,17 +110,52 @@ export default function Cursor() {
     ]
   );
 
-  // Sparkles array - memoized
+  // Sparkles array - memoized (for trailing line effect)
   const sparkles = useMemo(
     () => [
-      { x: sparkle1X, y: sparkle1Y, angle: 0, delay: 0 },
-      { x: sparkle2X, y: sparkle2Y, angle: 60, delay: 0.2 },
-      { x: sparkle3X, y: sparkle3Y, angle: 120, delay: 0.4 },
-      { x: sparkle4X, y: sparkle4Y, angle: 180, delay: 0.6 },
-      { x: sparkle5X, y: sparkle5Y, angle: 240, delay: 0.8 },
-      { x: sparkle6X, y: sparkle6Y, angle: 300, delay: 1.0 },
+      { x: sparkle1X, y: sparkle1Y, xSpring: sparkle1XSpring, ySpring: sparkle1YSpring, delay: 0 },
+      { x: sparkle2X, y: sparkle2Y, xSpring: sparkle2XSpring, ySpring: sparkle2YSpring, delay: 0.1 },
+      { x: sparkle3X, y: sparkle3Y, xSpring: sparkle3XSpring, ySpring: sparkle3YSpring, delay: 0.2 },
+      { x: sparkle4X, y: sparkle4Y, xSpring: sparkle4XSpring, ySpring: sparkle4YSpring, delay: 0.3 },
+      { x: sparkle5X, y: sparkle5Y, xSpring: sparkle5XSpring, ySpring: sparkle5YSpring, delay: 0.4 },
+      { x: sparkle6X, y: sparkle6Y, xSpring: sparkle6XSpring, ySpring: sparkle6YSpring, delay: 0.5 },
+      { x: sparkle7X, y: sparkle7Y, xSpring: sparkle7XSpring, ySpring: sparkle7YSpring, delay: 0.6 },
+      { x: sparkle8X, y: sparkle8Y, xSpring: sparkle8XSpring, ySpring: sparkle8YSpring, delay: 0.7 },
     ],
-    [sparkle1X, sparkle1Y, sparkle2X, sparkle2Y, sparkle3X, sparkle3Y, sparkle4X, sparkle4Y, sparkle5X, sparkle5Y, sparkle6X, sparkle6Y]
+    [
+      sparkle1X,
+      sparkle1Y,
+      sparkle1XSpring,
+      sparkle1YSpring,
+      sparkle2X,
+      sparkle2Y,
+      sparkle2XSpring,
+      sparkle2YSpring,
+      sparkle3X,
+      sparkle3Y,
+      sparkle3XSpring,
+      sparkle3YSpring,
+      sparkle4X,
+      sparkle4Y,
+      sparkle4XSpring,
+      sparkle4YSpring,
+      sparkle5X,
+      sparkle5Y,
+      sparkle5XSpring,
+      sparkle5YSpring,
+      sparkle6X,
+      sparkle6Y,
+      sparkle6XSpring,
+      sparkle6YSpring,
+      sparkle7X,
+      sparkle7Y,
+      sparkle7XSpring,
+      sparkle7YSpring,
+      sparkle8X,
+      sparkle8Y,
+      sparkle8XSpring,
+      sparkle8YSpring,
+    ]
   );
 
   // Check for reduced motion preference
@@ -164,6 +227,15 @@ export default function Cursor() {
       cursorX.set(x);
       cursorY.set(y);
 
+      // Store cursor path for sparkle trail
+      const now = Date.now();
+      cursorPathRef.current.push({ x, y, timestamp: now });
+      
+      // Keep only recent positions (last 500ms)
+      cursorPathRef.current = cursorPathRef.current.filter(
+        (point) => now - point.timestamp < 500
+      );
+
       // Update trailing particles with delay
       particles.forEach((particle, index) => {
         setTimeout(() => {
@@ -172,16 +244,59 @@ export default function Cursor() {
         }, index * 10);
       });
 
-      // Update sparkles in a circular pattern around cursor
-      const sparkleRadius = 20;
-      sparkles.forEach((sparkle) => {
-        const angle = (sparkle.angle + Date.now() * 0.001) % 360;
-        const radian = (angle * Math.PI) / 180;
-        const offsetX = Math.cos(radian) * sparkleRadius;
-        const offsetY = Math.sin(radian) * sparkleRadius;
-        sparkle.x.set(x + offsetX);
-        sparkle.y.set(y + offsetY);
-      });
+      // Update sparkles to follow cursor path as a smooth trailing line
+      const path = cursorPathRef.current;
+      if (path.length > 1) {
+        sparkles.forEach((sparkle) => {
+          // Calculate position along the path based on delay
+          const delayMs = sparkle.delay * 100; // Convert delay to milliseconds
+          const targetTime = now - delayMs;
+          
+          // Find the two points in the path that bracket the target time
+          let point1 = path[0];
+          let point2 = path[1];
+          
+          for (let i = 0; i < path.length - 1; i++) {
+            if (path[i].timestamp <= targetTime && path[i + 1].timestamp >= targetTime) {
+              point1 = path[i];
+              point2 = path[i + 1];
+              break;
+            }
+          }
+          
+          // If target time is before the path, use the oldest point
+          if (targetTime < path[0].timestamp) {
+            point1 = path[0];
+            point2 = path[0];
+          }
+          
+          // If target time is after the path, use the newest point
+          if (targetTime > path[path.length - 1].timestamp) {
+            point1 = path[path.length - 1];
+            point2 = path[path.length - 1];
+          }
+          
+          // Interpolate between the two points
+          let interpolatedX = point1.x;
+          let interpolatedY = point1.y;
+          
+          if (point1.timestamp !== point2.timestamp) {
+            const t = (targetTime - point1.timestamp) / (point2.timestamp - point1.timestamp);
+            interpolatedX = point1.x + (point2.x - point1.x) * t;
+            interpolatedY = point1.y + (point2.y - point1.y) * t;
+          }
+          
+          // Smoothly update sparkle position
+          sparkle.x.set(interpolatedX);
+          sparkle.y.set(interpolatedY);
+        });
+      } else {
+        // If path is too short, just use current position
+        sparkles.forEach((sparkle) => {
+          sparkle.x.set(x);
+          sparkle.y.set(y);
+        });
+      }
     },
     [cursorX, cursorY, isVisible, particles, isHovering, sparkles]
   );
@@ -365,8 +480,8 @@ export default function Cursor() {
           key={`sparkle-${index}`}
           className="fixed pointer-events-none z-[9997]"
           style={{
-            x: sparkle.x,
-            y: sparkle.y,
+            x: sparkle.xSpring,
+            y: sparkle.ySpring,
             left: -2,
             top: -2,
           }}
