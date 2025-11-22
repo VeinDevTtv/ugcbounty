@@ -214,8 +214,8 @@ export default function Header() {
                     size="sm"
                     className={`rounded-full px-6 py-2 text-sm font-semibold shadow-sm ${
                       theme === "light"
-                        ? "bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
-                        : "bg-[#141B23] text-white hover:bg-[#1F2937]"
+                        ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
+                        : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
                     }`}
                   >
                     Create Bounty
@@ -555,7 +555,7 @@ export default function Header() {
                   }
                   className={`rounded-full px-6 ${
                     theme === "light"
-                      ? "bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
+                      ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
                       : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
                   }`}
                 >
