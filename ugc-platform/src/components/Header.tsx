@@ -29,7 +29,7 @@ export default function Header() {
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3">
             {/* Wrapper controls logo size and keeps it inside the header */}
-            <div className="relative h-30 w-80 md:h-30 md:w-80">
+            <div className="relative h-40 w-80 md:h-45 md:w-85">
               <Image
                 src="/bountea.png"
                 alt="Bountea Logo"
