@@ -6,7 +6,6 @@ import BountyCard from "@/components/BountyCard";
 import ClaimBountyDialog from "@/components/ClaimBountyDialog";
 import { useUser } from "@clerk/nextjs";
 import { useTheme } from "@/contexts/ThemeContext";
-import ActionSearchBar from "@/components/action-search-bar";
 
 interface BountyWithCreator {
   id: string;
@@ -100,9 +99,6 @@ export default function Home() {
     }`}>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <ActionSearchBar />
-        </div>
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${
