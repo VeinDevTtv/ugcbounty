@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { useTheme } from "@/contexts/ThemeContext";
-import { User, Briefcase, Loader2 } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { User, Briefcase, Loader2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface RoleSelectionProps {
@@ -13,20 +14,53 @@ interface RoleSelectionProps {
 
 export default function RoleSelection({ onRoleSelected, isLoading = false }: RoleSelectionProps) {
   const { theme } = useTheme();
+  const { user, isLoaded } = useUser();
   const [selectedRole, setSelectedRole] = useState<'creator' | 'business' | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  // Clear error when role is selected
+  useEffect(() => {
+    if (selectedRole) {
+      setError(null);
+    }
+  }, [selectedRole]);
 
   const handleSelectRole = (role: 'creator' | 'business') => {
     setSelectedRole(role);
     setError(null);
+    setRetryCount(0); // Reset retry count when selecting a new role
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!selectedRole) {
       setError("Please select a role to continue");
       return;
     }
-    onRoleSelected(selectedRole);
+
+    // Check if Clerk user is loaded before proceeding
+    if (!isLoaded) {
+      setError("Please wait for your account to finish loading...");
+      return;
+    }
+
+    if (!user) {
+      setError("You must be signed in to continue. Please sign in and try again.");
+      return;
+    }
+
+    // Clear any previous errors
+    setError(null);
+    
+    try {
+      // Call the parent's role selection handler
+      await onRoleSelected(selectedRole);
+    } catch (err) {
+      // This shouldn't normally catch since onRoleSelected doesn't throw,
+      // but we handle it defensively
+      console.error('[RoleSelection] Error in role selection:', err);
+      setError("Failed to set your role. Please try again.");
+    }
   };
 
   return (
@@ -48,12 +82,32 @@ export default function RoleSelection({ onRoleSelected, isLoading = false }: Rol
 
       {error && (
         <div className={cn(
-          "mb-6 p-4 rounded-lg border",
+          "mb-6 p-4 rounded-lg border flex items-start gap-3",
           theme === "light" 
             ? "bg-red-50 border-red-200 text-red-800" 
             : "bg-red-900/20 border-red-800 text-red-300"
         )}>
-          {error}
+          <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-medium">{error}</p>
+            {retryCount > 0 && (
+              <p className="text-sm mt-1 opacity-75">
+                Attempt {retryCount + 1} - If this persists, please refresh the page.
+              </p>
+            )}
+          </div>
+          <button
+            onClick={() => {
+              setError(null);
+              setRetryCount(0);
+            }}
+            className={cn(
+              "text-sm underline",
+              theme === "light" ? "text-red-600" : "text-red-400"
+            )}
+          >
+            Dismiss
+          </button>
         </div>
       )}
 

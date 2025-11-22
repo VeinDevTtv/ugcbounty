@@ -30,7 +30,12 @@ export default function RootLayout({
   }
 
   return (
-    <ClerkProvider publishableKey={publishableKey}>
+    <ClerkProvider 
+      publishableKey={publishableKey}
+      signUpFallbackRedirectUrl="/onboarding"
+      afterSignUpUrl="/onboarding"
+      afterSignInUrl="/onboarding"
+    >
       <ThemeProvider>
         <html lang="en">
           <body className={`${inter.className} min-h-screen`}>
