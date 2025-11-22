@@ -74,14 +74,25 @@ export default function Header() {
           {/* Right Side */}
           <div className="flex items-center gap-4">
             <SignedIn>
-              <Button
-                onClick={() => setShowCreateModal(true)}
-                size="sm"
-                className="hidden md:flex"
-              >
-                Create Bounty
-              </Button>
-            </SignedIn>
+  {(() => {
+    const isActive = pathname.startsWith("/create-bounty");
+
+    return (
+      <Link
+        href="/create-bounty"
+        className={`text-sm lg:text-base font-semibold px-4 py-2 rounded-full transition-all
+        ${
+          isActive
+            ? "bg-emerald-600 text-white shadow-sm"
+            : "text-zinc-700 hover:text-emerald-700 hover:bg-emerald-50"
+        }`}
+      >
+        Create Bounty
+      </Link>
+    );
+  })()}
+</SignedIn>
+
 
             <SignedOut>
               <SignInButton mode="modal">
