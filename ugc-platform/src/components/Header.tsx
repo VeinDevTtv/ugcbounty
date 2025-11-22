@@ -42,7 +42,7 @@ export default function Header() {
   return (
     <>
      {/* HEADER / NAVBAR */}
-<nav className="sticky top-0 z-50 w-full border-b border-[#4A4A4A] bg-[#E5E5E5] backdrop-blur-md shadow-sm">
+<nav className="sticky top-0 z-50 w-full border-b border-[#2A2A2A] bg-[#3A3A3A] backdrop-blur-md shadow-sm">
   <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
     
     {/* LOGO */}
