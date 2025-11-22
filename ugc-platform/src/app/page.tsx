@@ -17,7 +17,8 @@ export default function LandingPage() {
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
 
-  // Redirect authenticated users based on role
+  // Only redirect users without roles to onboarding
+  // Allow authenticated users with roles to view landing page if they navigate to it
   useEffect(() => {
     const checkAndRedirect = async () => {
       if (!isLoaded) {
@@ -30,21 +31,18 @@ export default function LandingPage() {
         return;
       }
 
-      // If user is authenticated, check their role and redirect
+      // If user is authenticated, check if they have a role
+      // Only redirect to onboarding if they don't have a role
+      // Users with roles can view the landing page if they navigate to it explicitly
       try {
         const response = await fetch('/api/sync-user-profile');
         if (response.ok) {
           const result = await response.json();
           const role = result?.data?.role || null;
 
-          if (role === 'creator') {
-            router.push('/feed');
-            return;
-          } else if (role === 'business') {
-            router.push('/dashboard');
-            return;
-          } else {
-            // No role - middleware will redirect to onboarding
+          // Only redirect users without roles to onboarding
+          // Middleware will also handle this, but we do it here for better UX
+          if (!role) {
             router.push('/onboarding');
             return;
           }
@@ -59,9 +57,9 @@ export default function LandingPage() {
     checkAndRedirect();
   }, [user, isLoaded, router]);
 
-  // Show loading state while checking (for authenticated users)
+  // Show loading state while checking (for authenticated users without roles)
   if (isChecking && user) {
-    return null; // Will redirect, so show nothing
+    return null; // Will redirect if no role, so show nothing
   }
 
   const bgGradient = theme === "light"

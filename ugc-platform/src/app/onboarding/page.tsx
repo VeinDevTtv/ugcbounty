@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import RoleSelection from "@/components/onboarding/RoleSelection";
@@ -14,10 +14,16 @@ export default function OnboardingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isSettingRole, setIsSettingRole] = useState(false);
+  const redirectingRef = useRef(false);
 
   // Check if user has a role
   useEffect(() => {
     const checkUserRole = async () => {
+      // Prevent re-running if redirect is already in progress
+      if (redirectingRef.current) {
+        return;
+      }
+
       if (!isLoaded || !user) {
         setIsLoading(false);
         return;
@@ -33,10 +39,12 @@ export default function OnboardingPage() {
 
           // If user already has a role, redirect to appropriate page
           if (role === 'creator') {
-            router.push('/feed');
+            redirectingRef.current = true;
+            router.replace('/feed');
             return;
           } else if (role === 'business') {
-            router.push('/dashboard');
+            redirectingRef.current = true;
+            router.replace('/dashboard');
             return;
           }
         }
@@ -52,6 +60,8 @@ export default function OnboardingPage() {
 
   const handleRoleSelected = async (role: 'creator' | 'business') => {
     setIsSettingRole(true);
+    redirectingRef.current = true;
+    
     try {
       const response = await fetch('/api/onboarding/set-role', {
         method: 'POST',
@@ -66,16 +76,18 @@ export default function OnboardingPage() {
         throw new Error(error.error || 'Failed to set role');
       }
 
-      // Redirect based on role
+      // Redirect based on role using replace to avoid history issues
       if (role === 'creator') {
-        router.push('/feed');
+        router.replace('/feed');
       } else {
-        router.push('/dashboard');
+        router.replace('/dashboard');
       }
+      // Note: isSettingRole will remain true but component will unmount on redirect
     } catch (error) {
       console.error('Error setting role:', error);
       alert(error instanceof Error ? error.message : 'Failed to set role. Please try again.');
       setIsSettingRole(false);
+      redirectingRef.current = false;
     }
   };
 
