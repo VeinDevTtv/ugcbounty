@@ -86,17 +86,32 @@ export default function Header() {
             {isLoaded && (
               <>
                 <SignedIn>
-                  <Button
-                    onClick={() => {
-                      if (!user) return;
-                      setShowCreateModal(true);
-                    }}
-                    size="sm"
-                    className="rounded-full px-5 py-2 text-sm font-semibold"
-                  >
-                    Create Bounty
-                  </Button>
-                </SignedIn>
+  <Button
+    onClick={() => {
+      if (!user) {
+        alert("Please sign in to create a bounty");
+        return;
+      }
+      setShowCreateModal(true);
+    }}
+    size="sm"
+    variant="ghost"
+    className="
+      rounded-full 
+      bg-emerald-600 
+      text-white 
+      px-6 
+      py-2 
+      text-sm 
+      font-semibold 
+      shadow-sm
+      hover:bg-emerald-700
+    "
+  >
+    Create Bounty
+  </Button>
+</SignedIn>
+
 
                 <SignedOut>
                   <SignInButton mode="modal">
