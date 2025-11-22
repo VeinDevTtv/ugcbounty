@@ -148,15 +148,15 @@ export default function Dashboard() {
     return (
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h1 className="text-3xl font-bold text-zinc-900">Dashboard</h1>
+                <h1 className="text-3xl font-bold text-[#F9FAFB]">Dashboard</h1>
 
                 {/* Tab Switcher */}
-                <div className="bg-zinc-100 p-1 rounded-lg inline-flex">
+                <div className="bg-[#1F2933] p-1 rounded-lg inline-flex">
                     <button
                         onClick={() => setActiveTab("submissions")}
                         className={cn(
                             "px-4 py-2 rounded-md text-sm font-medium transition-all",
-                            activeTab === "submissions" ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-900"
+                            activeTab === "submissions" ? "bg-[#111827] text-[#F9FAFB] shadow-sm" : "text-[#9CA3AF] hover:text-[#F9FAFB]"
                         )}
                     >
                         My Submissions
@@ -165,7 +165,7 @@ export default function Dashboard() {
                         onClick={() => setActiveTab("bounties")}
                         className={cn(
                             "px-4 py-2 rounded-md text-sm font-medium transition-all",
-                            activeTab === "bounties" ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-900"
+                            activeTab === "bounties" ? "bg-[#111827] text-[#F9FAFB] shadow-sm" : "text-[#9CA3AF] hover:text-[#F9FAFB]"
                         )}
                     >
                         My Bounties (Brand)
@@ -176,9 +176,9 @@ export default function Dashboard() {
             {/* Conditional Stats Row */}
             {isLoading ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <div className="h-24 bg-zinc-100 rounded-lg animate-pulse" />
-                    <div className="h-24 bg-zinc-100 rounded-lg animate-pulse" />
-                    <div className="h-24 bg-zinc-100 rounded-lg animate-pulse" />
+                    <div className="h-24 bg-[#111827] rounded-2xl animate-pulse" />
+                    <div className="h-24 bg-[#111827] rounded-2xl animate-pulse" />
+                    <div className="h-24 bg-[#111827] rounded-2xl animate-pulse" />
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -224,24 +224,24 @@ export default function Dashboard() {
             )}
 
             {/* Content Table */}
-            <div className="rounded-xl border border-zinc-200 bg-white overflow-hidden min-h-[300px]">
+            <div className="rounded-2xl border border-[#1F2933] bg-[#111827] overflow-hidden min-h-[300px] shadow-[0_12px_30px_rgba(15,23,42,0.6)]">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-zinc-50 border-b border-zinc-200">
+                        <thead className="bg-[#1F2933] border-b border-[#1F2933]">
                             <tr>
                                 {activeTab === "submissions" ? (
                                     <>
-                                        <th className="px-6 py-4 font-medium text-zinc-500">Bounty Campaign</th>
-                                        <th className="px-6 py-4 font-medium text-zinc-500">Status</th>
-                                        <th className="px-6 py-4 font-medium text-zinc-500 text-right">Views</th>
-                                        <th className="px-6 py-4 font-medium text-zinc-500 text-right">Earnings</th>
+                                        <th className="px-6 py-4 font-medium text-[#9CA3AF]">Bounty Campaign</th>
+                                        <th className="px-6 py-4 font-medium text-[#9CA3AF]">Status</th>
+                                        <th className="px-6 py-4 font-medium text-[#9CA3AF] text-right">Views</th>
+                                        <th className="px-6 py-4 font-medium text-[#9CA3AF] text-right">Earnings</th>
                                     </>
                                 ) : (
                                     <>
-                                        <th className="px-6 py-4 font-medium text-zinc-500">Campaign Name</th>
-                                        <th className="px-6 py-4 font-medium text-zinc-500">Budget Used</th>
-                                        <th className="px-6 py-4 font-medium text-zinc-500 text-center">Submissions</th>
-                                        <th className="px-6 py-4 font-medium text-zinc-500 text-right">Actions</th>
+                                        <th className="px-6 py-4 font-medium text-[#9CA3AF]">Campaign Name</th>
+                                        <th className="px-6 py-4 font-medium text-[#9CA3AF]">Budget Used</th>
+                                        <th className="px-6 py-4 font-medium text-[#9CA3AF] text-center">Submissions</th>
+                                        <th className="px-6 py-4 font-medium text-[#9CA3AF] text-right">Actions</th>
                                     </>
                                 )}
                             </tr>
@@ -249,9 +249,9 @@ export default function Dashboard() {
                         <tbody className="divide-y divide-zinc-100">
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={4} className="px-6 py-12 text-center text-zinc-500">
+                                    <td colSpan={4} className="px-6 py-12 text-center text-[#9CA3AF]">
                                         <div className="flex items-center justify-center gap-2">
-                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-zinc-900"></div>
+                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#22C55E]"></div>
                                             <span>Loading...</span>
                                         </div>
                                     </td>
@@ -262,18 +262,18 @@ export default function Dashboard() {
                             {activeTab === "submissions" && (
                                 submissions.length > 0 ? (
                                     submissions.map((sub) => (
-                                        <tr key={sub.id} className="hover:bg-zinc-50/50">
-                                            <td className="px-6 py-4 font-medium text-zinc-900">{sub.campaignName}</td>
+                                        <tr key={sub.id} className="hover:bg-[#1F2933]/50">
+                                            <td className="px-6 py-4 font-medium text-[#F9FAFB]">{sub.campaignName}</td>
                                             <td className="px-6 py-4"><Badge variant={sub.status === 'Approved' ? 'success' : 'warning'}>{sub.status}</Badge></td>
-                                            <td className="px-6 py-4 text-right">{sub.views.toLocaleString()}</td>
-                                            <td className="px-6 py-4 text-right font-medium">${sub.earnings.toFixed(2)}</td>
+                                            <td className="px-6 py-4 text-right text-[#F9FAFB]">{sub.views.toLocaleString()}</td>
+                                            <td className="px-6 py-4 text-right font-medium text-[#F9FAFB]">${sub.earnings.toFixed(2)}</td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={4} className="px-6 py-12 text-center text-zinc-500">
+                                        <td colSpan={4} className="px-6 py-12 text-center text-[#9CA3AF]">
                                             <div className="flex flex-col items-center justify-center gap-2">
-                                                <ListVideo className="h-8 w-8 text-zinc-300" />
+                                                <ListVideo className="h-8 w-8 text-[#9CA3AF]" />
                                                 <p>No submissions yet.</p>
                                                 <Link href="/">
                                                     <Button size="sm" variant="outline" className="mt-2">Browse Bounties</Button>
@@ -288,15 +288,15 @@ export default function Dashboard() {
                             {activeTab === "bounties" && (
                                 bounties.length > 0 ? (
                                     bounties.map((bounty) => (
-                                        <tr key={bounty.id} className="hover:bg-zinc-50/50">
-                                            <td className="px-6 py-4 font-medium text-zinc-900">{bounty.title}</td>
+                                        <tr key={bounty.id} className="hover:bg-[#1F2933]/50">
+                                            <td className="px-6 py-4 font-medium text-[#F9FAFB]">{bounty.title}</td>
                                             <td className="px-6 py-4">
-                                                <div className="w-full max-w-[100px] h-2 bg-zinc-100 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-indigo-600" style={{ width: `${(bounty.budgetSpent / bounty.budgetTotal) * 100}%` }}></div>
+                                                <div className="w-full max-w-[100px] h-2 bg-[#1F2933] rounded-full overflow-hidden">
+                                                    <div className="h-full bg-[#22C55E]" style={{ width: `${(bounty.budgetSpent / bounty.budgetTotal) * 100}%` }}></div>
                                                 </div>
-                                                <span className="text-xs text-zinc-500 mt-1 block">${bounty.budgetSpent} / ${bounty.budgetTotal}</span>
+                                                <span className="text-xs text-[#9CA3AF] mt-1 block">${bounty.budgetSpent} / ${bounty.budgetTotal}</span>
                                             </td>
-                                            <td className="px-6 py-4 text-center">{bounty.submissionCount}</td>
+                                            <td className="px-6 py-4 text-center text-[#F9FAFB]">{bounty.submissionCount}</td>
                                             <td className="px-6 py-4 text-right">
                                                 <Link href={`/bounty/${bounty.id}`}>
                                                     <Button size="sm" variant="outline">Manage</Button>
@@ -306,9 +306,9 @@ export default function Dashboard() {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={4} className="px-6 py-12 text-center text-zinc-500">
+                                        <td colSpan={4} className="px-6 py-12 text-center text-[#9CA3AF]">
                                             <div className="flex flex-col items-center justify-center gap-2">
-                                                <Briefcase className="h-8 w-8 text-zinc-300" />
+                                                <Briefcase className="h-8 w-8 text-[#9CA3AF]" />
                                                 <p>You haven't created any campaigns.</p>
                                                 <Button 
                                                     size="sm" 

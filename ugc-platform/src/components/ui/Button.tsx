@@ -8,10 +8,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = ({ className, variant = "primary", size = "md", ...props }: ButtonProps) => {
     const variants = {
-        primary: "bg-[#E7D0B0] text-[#3B2415] hover:bg-[#D4BA96] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#F7F1E8]",
-        secondary: "bg-[#3A2518] text-[#F7F1E8] hover:bg-[#4A3528]",
-        outline: "border border-[#3A2518] bg-transparent hover:bg-[#25160F] text-[#F7F1E8]",
-        ghost: "bg-transparent hover:bg-[#25160F] text-[#CBB8A4]",
+        primary: "bg-[#22C55E] text-[#FFFFFF] hover:bg-[#16A34A] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#22C55E]/50 font-semibold",
+        secondary: "bg-[#1F2933] text-[#F9FAFB] hover:bg-[#2A3441]",
+        outline: "border border-[#1F2933] bg-transparent hover:bg-[#111827] text-[#F9FAFB]",
+        ghost: "bg-transparent hover:bg-[#111827] text-[#9CA3AF]",
     };
 
     const sizes = {
@@ -23,7 +23,7 @@ export const Button = ({ className, variant = "primary", size = "md", ...props }
     return (
         <button
             className={cn(
-                "inline-flex items-center justify-center rounded-lg font-medium transition-colors disabled:opacity-50 disabled:bg-[#3A2518] disabled:text-[#8F7A65]",
+                "inline-flex items-center justify-center rounded-lg font-medium transition-colors disabled:opacity-50 disabled:bg-[#1F2933] disabled:text-[#6B7280]",
                 variants[variant],
                 sizes[size],
                 className
