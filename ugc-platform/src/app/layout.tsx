@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css"; // Standard Next.js global css
-import Navbar from "@/components/Navbar";
+import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,7 +29,7 @@ export default function RootLayout({
     <ClerkProvider publishableKey={publishableKey}>
       <html lang="en">
         <body className={`${inter.className} bg-zinc-50 min-h-screen`}>
-          <Navbar />
+          <Header />
           <main className="container mx-auto px-4 py-8">
             {children}
           </main>
