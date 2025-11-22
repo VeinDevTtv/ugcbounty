@@ -42,20 +42,122 @@ export default function Header() {
   return (
     <>
       {/* HEADER / NAVBAR */}
-      <nav className="sticky top-0 z-50 w-full border-b border-[#E3D7C3] bg-[#F5EEDC] backdrop-blur-md">
-        <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
-          {/* LOGO */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="relative h-16 w-44 md:h-20 md:w-52">
-              <Image
-                src="/bountea.png"
-                alt="Bountea Logo"
-                fill
-                priority
-                className="object-contain rounded-md"
-              />
-            </div>
+     /*  --- COLOR-UPDATED HEADER ---  */
+
+<nav className="sticky top-0 z-50 w-full border-b border-[#D9CAB3] bg-[#E8DCC5] backdrop-blur-md">
+  <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
+    
+    {/* LOGO */}
+    <Link href="/" className="flex items-center gap-3">
+      <div className="relative h-16 w-44 md:h-20 md:w-52">
+        <Image
+          src="/bountea.png"
+          alt="Bountea Logo"
+          fill
+          priority
+          className="object-contain rounded-md"
+        />
+      </div>
+    </Link>
+
+    {/* NAV TABS */}
+    <div className="hidden md:flex items-center gap-3 bg-[#FAF8F4] px-4 py-1.5 rounded-full shadow-sm border border-[#D9CAB3]">
+      {navItems.map((item) => {
+        const isActive =
+          item.href === "/" ? pathname === "/" : pathname?.startsWith(item.href);
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`px-5 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
+              isActive
+                ? "bg-[#6F8F72] text-white shadow-sm"
+                : "text-[#3A3D3F] hover:text-[#6F8F72] hover:bg-[#E8DCC5]"
+            }`}
+          >
+            {item.label}
           </Link>
+        );
+      })}
+    </div>
+
+    {/* RIGHT SIDE */}
+    <div className="flex items-center gap-3">
+      {isLoaded && (
+        <>
+          {/* CREATE BOUNTY BUTTON */}
+          <SignedIn>
+            <Button
+              onClick={() => {
+                if (!user) return;
+                setShowCreateModal(true);
+              }}
+              size="sm"
+              variant="ghost"
+              className="
+                rounded-full 
+                bg-[#6F8F72]
+                text-white 
+                px-6 
+                py-2 
+                text-sm 
+                font-semibold 
+                shadow-sm
+                hover:bg-[#5A7760]
+              "
+            >
+              Create Bounty
+            </Button>
+          </SignedIn>
+
+          {/* AUTH BUTTONS */}
+          <SignedOut>
+            <SignInButton mode="modal">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="rounded-full text-[#3A3D3F] hover:bg-[#E8DCC5]"
+              >
+                Sign In
+              </Button>
+            </SignInButton>
+
+            <SignUpButton mode="modal">
+              <Button
+                size="sm"
+                className="rounded-full bg-white text-[#3A3D3F] border border-[#D9CAB3] hover:bg-[#FAF8F4]"
+              >
+                Sign Up
+              </Button>
+            </SignUpButton>
+          </SignedOut>
+
+          {/* USER AVATAR */}
+          <SignedIn>
+            <Link href="/profile">
+              <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                {user?.imageUrl ? (
+                  <img
+                    src={user.imageUrl}
+                    alt="Profile"
+                    className="h-9 w-9 rounded-full border-2 border-[#D9CAB3] bg-[#FAF8F4]"
+                  />
+                ) : (
+                  <div className="h-9 w-9 rounded-full bg-[#6F8F72] flex items-center justify-center text-white font-semibold text-sm border-2 border-[#D9CAB3]">
+                    {user?.username?.[0]?.toUpperCase() ||
+                      user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
+                      "U"}
+                  </div>
+                )}
+              </div>
+            </Link>
+          </SignedIn>
+        </>
+      )}
+    </div>
+  </div>
+</nav>
 
           {/* NAV PILLS (desktop) */}
           <div className="hidden md:flex items-center gap-3 bg-[#F8F3E7] px-4 py-1.5 rounded-full shadow-sm border border-[#E7DCCB]">
