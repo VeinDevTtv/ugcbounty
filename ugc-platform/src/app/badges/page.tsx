@@ -342,7 +342,7 @@ export default function BadgesPage() {
           <h1 className={`text-4xl font-bold mb-2 ${
             theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
           }`}>
-            Badges & Achievements
+            Achievements
           </h1>
           <p className={`text-lg ${
             theme === "light" ? "text-[#52677C]" : "text-[#B8C5D6]"
@@ -531,7 +531,7 @@ export default function BadgesPage() {
         </div>
 
         {/* Badges Section */}
-        <div className="mb-8">
+        <div className="mb-8" id="badges">
           <h2 className={`text-2xl font-bold mb-4 ${
             theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
           }`}>
@@ -582,7 +582,7 @@ export default function BadgesPage() {
         </div>
 
         {/* All Levels Section */}
-        <div>
+        <div id="levels">
           <h2 className={`text-2xl font-bold mb-4 ${
             theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
           }`}>
