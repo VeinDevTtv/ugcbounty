@@ -42,7 +42,7 @@ export default function Header() {
   return (
     <>
       {/* HEADER / NAVBAR */}
-      <nav className="sticky top-0 z-50 w-full border-b border-[#E4D5C2] bg-[#F5EFE4] backdrop-blur-md">
+      <nav className="sticky top-0 z-50 w-full border-b border-[#1F2937] bg-[#020617] backdrop-blur-md shadow-sm">
         <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3">
@@ -58,7 +58,7 @@ export default function Header() {
           </Link>
 
           {/* NAV PILLS (desktop) */}
-          <div className="hidden md:flex items-center gap-3 bg-[#FFF8EC]/60 px-3 py-1 rounded-full shadow-sm">
+          <div className="hidden md:flex items-center gap-3 bg-[#111827]/60 px-3 py-1 rounded-full shadow-sm">
             {navItems.map((item) => {
               const isActive =
                 item.href === "/"
@@ -71,8 +71,8 @@ export default function Header() {
                   href={item.href}
                   className={`px-4 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
                     isActive
-                      ? "bg-[#0F9D58] text-white shadow-sm"
-                      : "text-[#2F3A2E] hover:text-[#0F9D58] hover:bg-[#E2F4E8]"
+                      ? "bg-[#10B981] text-white shadow-sm"
+                      : "text-[#F9FAFB] hover:text-[#10B981] hover:bg-[#111827]"
                   }`}
                 >
                   {item.label}
@@ -98,14 +98,14 @@ export default function Header() {
     variant="ghost"
     className="
       rounded-full 
-      bg-[#0F9D58] 
+      bg-[#10B981] 
       text-white 
       px-6 
       py-2 
       text-sm 
       font-semibold 
       shadow-sm
-      hover:bg-[#0C7A44]
+      hover:bg-[#059669]
     "
   >
     Create Bounty
@@ -140,7 +140,7 @@ export default function Header() {
                           className="h-9 w-9 rounded-full border-2 border-zinc-300"
                         />
                       ) : (
-                        <div className="h-9 w-9 rounded-full bg-[#0F9D58] flex items-center justify-center text-white font-semibold text-sm border-2 border-[#E4D5C2]">
+                        <div className="h-9 w-9 rounded-full bg-[#10B981] flex items-center justify-center text-white font-semibold text-sm border-2 border-[#1F2937]">
                           {user?.username?.[0]?.toUpperCase() ||
                             user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
                             "U"}
@@ -158,14 +158,14 @@ export default function Header() {
       {/* CREATE BOUNTY MODAL */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-[#FFF8EC] shadow-2xl max-w-lg w-full rounded-lg border border-[#E4D5C2]">
-            <div className="flex justify-between items-start p-6 border-b border-[#E4D5C2]">
-              <h2 className="text-2xl font-bold text-[#2F3A2E]">
+          <div className="bg-[#111827] shadow-2xl max-w-lg w-full rounded-lg border border-[#1F2937]">
+            <div className="flex justify-between items-start p-6 border-b border-[#1F2937]">
+              <h2 className="text-2xl font-bold text-[#F9FAFB]">
                 Create New Bounty
               </h2>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-[#6B6A5E] hover:text-[#2F3A2E] transition-colors"
+                className="text-[#9CA3AF] hover:text-[#F9FAFB] transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -180,7 +180,7 @@ export default function Header() {
 
               {/* Bounty Name */}
               <div>
-                <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                <label className="block text-sm font-medium text-[#F9FAFB] mb-2">
                   Bounty Name *
                 </label>
                 <input
@@ -188,14 +188,14 @@ export default function Header() {
                   value={bountyName}
                   onChange={(e) => setBountyName(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                  className="w-full px-4 py-2 border border-[#1F2937] bg-[#020617] text-[#F9FAFB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] placeholder:text-[#9CA3AF]"
                   placeholder="e.g., Duo World Voices Campaign"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                <label className="block text-sm font-medium text-[#F9FAFB] mb-2">
                   Description *
                 </label>
                 <textarea
@@ -203,7 +203,7 @@ export default function Header() {
                   onChange={(e) => setBountyDescription(e.target.value)}
                   required
                   rows={4}
-                  className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                  className="w-full px-4 py-2 border border-[#1F2937] bg-[#020617] text-[#F9FAFB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] placeholder:text-[#9CA3AF]"
                   placeholder="Describe what creators should create..."
                 />
               </div>
@@ -211,7 +211,7 @@ export default function Header() {
               {/* Money fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                  <label className="block text-sm font-medium text-[#F9FAFB] mb-2">
                     Total Bounty ($) *
                   </label>
                   <input
@@ -221,12 +221,12 @@ export default function Header() {
                     required
                     min="0"
                     step="0.01"
-                    className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                    className="w-full px-4 py-2 border border-[#1F2937] bg-[#020617] text-[#F9FAFB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] placeholder:text-[#9CA3AF]"
                     placeholder="10000"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                  <label className="block text-sm font-medium text-[#F9FAFB] mb-2">
                     Rate per 1k Views ($) *
                   </label>
                   <input
@@ -236,7 +236,7 @@ export default function Header() {
                     required
                     min="0"
                     step="0.01"
-                    className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                    className="w-full px-4 py-2 border border-[#1F2937] bg-[#020617] text-[#F9FAFB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] placeholder:text-[#9CA3AF]"
                     placeholder="25.00"
                   />
                 </div>
@@ -244,21 +244,21 @@ export default function Header() {
 
               {/* Company Name */}
               <div>
-                <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                <label className="block text-sm font-medium text-[#F9FAFB] mb-2">
                   Company Name (Optional)
                 </label>
                 <input
                   type="text"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                  className="w-full px-4 py-2 border border-[#1F2937] bg-[#020617] text-[#F9FAFB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] placeholder:text-[#9CA3AF]"
                   placeholder="Duolingo"
                 />
               </div>
 
               {/* Logo Upload */}
               <div>
-                <label className="block text-sm font-medium text-[#2F3A2E] mb-2">
+                <label className="block text-sm font-medium text-[#F9FAFB] mb-2">
                   Logo (Optional, max 5MB)
                 </label>
                 <div className="space-y-2">
@@ -266,10 +266,10 @@ export default function Header() {
                     type="file"
                     accept="image/jpeg,image/png,image/gif,image/webp"
                     onChange={handleLogoChange}
-                    className="w-full px-4 py-2 border border-[#E4D5C2] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58]/20 focus:border-[#0F9D58]"
+                    className="w-full px-4 py-2 border border-[#1F2937] bg-[#020617] text-[#F9FAFB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#10B981] file:text-white hover:file:bg-[#059669]"
                   />
                   {logoPreview && (
-                    <div className="relative w-32 h-32 border border-[#E4D5C2] rounded-lg overflow-hidden">
+                    <div className="relative w-32 h-32 border border-[#1F2937] rounded-lg overflow-hidden">
                       <img
                         src={logoPreview}
                         alt="Logo preview"
@@ -291,7 +291,7 @@ export default function Header() {
               </div>
 
               {/* Footer buttons */}
-              <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#E4D5C2]">
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#1F2937]">
                 <Button
                   type="button"
                   variant="outline"

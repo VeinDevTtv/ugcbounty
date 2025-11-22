@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  /* New color palette */
-  --background: #F5EFE4;
-  --card-background: #FFF8EC;
-  --card-border: #E4D5C2;
-  --primary-text: #2F3A2E;
-  --secondary-text: #6B6A5E;
-  --primary-accent: #0F9D58;
-  --primary-accent-hover: #0C7A44;
-  --success-badge-bg: #E2F4E8;
-  --success-badge-text: #0F9D58;
+  /* Dark theme color palette */
+  --background: #020617;
+  --header-background: #020617;
+  --card-background: #111827;
+  --card-border: #1F2937;
+  --primary-accent: #10B981;
+  --primary-accent-hover: #059669;
+  --primary-text: #F9FAFB;
+  --secondary-text: #9CA3AF;
+  --divider: #1F2937;
+  --pill-bg: #064E3B;
+  --pill-text: #FFFFFF;
   
   /* Legacy support */
   --foreground: var(--primary-text);
@@ -18,14 +20,16 @@
 
 @theme inline {
   --color-background: var(--background);
+  --color-header: var(--header-background);
   --color-card: var(--card-background);
   --color-card-border: var(--card-border);
-  --color-primary-text: var(--primary-text);
-  --color-secondary-text: var(--secondary-text);
   --color-primary-accent: var(--primary-accent);
   --color-primary-accent-hover: var(--primary-accent-hover);
-  --color-success-badge-bg: var(--success-badge-bg);
-  --color-success-badge-text: var(--success-badge-text);
+  --color-primary-text: var(--primary-text);
+  --color-secondary-text: var(--secondary-text);
+  --color-divider: var(--divider);
+  --color-pill-bg: var(--pill-bg);
+  --color-pill-text: var(--pill-text);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
