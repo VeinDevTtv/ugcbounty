@@ -26,6 +26,21 @@ export function HeroSection() {
     return () => observer.disconnect()
   }, [])
 
+  // Ensure animation is applied when theme changes
+  useEffect(() => {
+    if (titleRef.current) {
+      // Check if element is already in view (has animation class or is visible)
+      const hasAnimation = titleRef.current.classList.contains("animate-fade-in-up")
+      const rect = titleRef.current.getBoundingClientRect()
+      const isInView = rect.top < window.innerHeight && rect.bottom > 0
+      
+      // If element is in view but doesn't have animation class, add it
+      if (isInView && !hasAnimation) {
+        titleRef.current.classList.add("animate-fade-in-up")
+      }
+    }
+  }, [theme])
+
   const textColor = theme === "light" 
     ? "text-transparent bg-clip-text bg-gradient-to-b from-[#0F1F3A] to-[#1B3C73]"
     : "text-transparent bg-clip-text bg-gradient-to-b from-[#93C5FD] to-[#60A5FA]"

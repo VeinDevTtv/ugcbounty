@@ -3,7 +3,7 @@
 import { ArrowUpRight } from "lucide-react"
 import Link from "next/link"
 import { useTheme } from "@/contexts/ThemeContext"
-import { SignUpButton } from "@clerk/nextjs"
+import { SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs"
 
 export function FooterSection() {
   const { theme } = useTheme()
@@ -25,19 +25,36 @@ export function FooterSection() {
       theme === "light" ? "border-[#C8D1E0]/20" : "border-white/5"
     }`}>
       <div className="flex flex-col md:flex-row items-baseline justify-between gap-8 mb-20">
-        <h2
-          className={`font-serif italic text-6xl md:text-8xl lg:text-[8rem] leading-[1.1] ${headingColor} pb-4`}
-          style={{ lineHeight: "1.1" }}
-        >
-          Get started <br className="hidden md:block" /> today
-        </h2>
-        <SignUpButton mode="modal">
-          <button
-            className={`${buttonBg} rounded-full p-4 md:p-6 hover:scale-110 transition-all duration-300 cursor-pointer hover:rotate-12`}
+        <SignedOut>
+          <h2
+            className={`font-serif italic text-6xl md:text-8xl lg:text-[8rem] leading-[1.1] ${headingColor} pb-4`}
+            style={{ lineHeight: "1.1" }}
           >
-            <ArrowUpRight className="w-8 h-8 md:w-12 md:h-12" />
-          </button>
-        </SignUpButton>
+            Get started <br className="hidden md:block" /> today
+          </h2>
+          <SignUpButton mode="modal">
+            <button
+              className={`${buttonBg} rounded-full p-4 md:p-6 hover:scale-110 transition-all duration-300 cursor-pointer hover:rotate-12`}
+            >
+              <ArrowUpRight className="w-8 h-8 md:w-12 md:h-12" />
+            </button>
+          </SignUpButton>
+        </SignedOut>
+        <SignedIn>
+          <h2
+            className={`font-serif italic text-6xl md:text-8xl lg:text-[8rem] leading-[1.1] ${headingColor} pb-4`}
+            style={{ lineHeight: "1.1" }}
+          >
+            Hunt for <br className="hidden md:block" /> bounties
+          </h2>
+          <Link href="/feed">
+            <button
+              className={`${buttonBg} rounded-full p-4 md:p-6 hover:scale-110 transition-all duration-300 cursor-pointer hover:rotate-12`}
+            >
+              <ArrowUpRight className="w-8 h-8 md:w-12 md:h-12" />
+            </button>
+          </Link>
+        </SignedIn>
       </div>
 
       <div className={`flex flex-col md:flex-row justify-between items-end text-[10px] font-mono tracking-widest uppercase ${footerText}`}>
