@@ -66,12 +66,42 @@ interface Bounty {
 export default function Dashboard() {
     const { user, isLoaded } = useUser();
     const { theme } = useTheme();
+    const [userRole, setUserRole] = useState<'creator' | 'business' | null>(null);
+    // Set default tab based on role: creators see submissions, businesses see bounties
     const [activeTab, setActiveTab] = useState<"submissions" | "bounties">("submissions");
     const [isLoading, setIsLoading] = useState(true);
 
     // STATE: Real data from API
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [bounties, setBounties] = useState<Bounty[]>([]);
+
+    // Fetch user role and set default tab
+    useEffect(() => {
+        const fetchUserRole = async () => {
+            if (!user || !isLoaded) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/sync-user-profile');
+                if (response.ok) {
+                    const result = await response.json();
+                    const role = result?.data?.role || null;
+                    setUserRole(role);
+                    // Set default tab based on role
+                    if (role === 'business') {
+                        setActiveTab('bounties');
+                    } else {
+                        setActiveTab('submissions');
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching user role:', error);
+            }
+        };
+
+        fetchUserRole();
+    }, [user, isLoaded]);
 
     // Fetch data when user is loaded
     useEffect(() => {
@@ -145,41 +175,49 @@ export default function Dashboard() {
                     theme === "light" ? "text-gray-900" : "text-[#F5F8FC]"
                 }`}>Dashboard</h1>
 
-                {/* Tab Switcher */}
-                <div className={`p-1 rounded-lg inline-flex ${
-                    theme === "light" ? "bg-gray-200" : "bg-[#010A12]"
-                }`}>
-                    <button
-                        onClick={() => setActiveTab("submissions")}
-                        className={cn(
-                            "px-4 py-2 rounded-md text-sm font-medium transition-all",
-                            activeTab === "submissions" 
-                                ? theme === "light"
-                                    ? "bg-white text-gray-900 shadow-sm"
-                                    : "bg-[#141B23] text-[#F5F8FC] shadow-sm"
-                                : theme === "light"
-                                ? "text-gray-600 hover:text-gray-900"
-                                : "text-[#B8C5D6] hover:text-[#F5F8FC]"
-                        )}
-                    >
-                        My Submissions
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("bounties")}
-                        className={cn(
-                            "px-4 py-2 rounded-md text-sm font-medium transition-all",
-                            activeTab === "bounties"
-                                ? theme === "light"
-                                    ? "bg-white text-gray-900 shadow-sm"
-                                    : "bg-[#141B23] text-[#F5F8FC] shadow-sm"
-                                : theme === "light"
-                                ? "text-gray-600 hover:text-gray-900"
-                                : "text-[#B8C5D6] hover:text-[#F5F8FC]"
-                        )}
-                    >
-                        My Bounties (Brand)
-                    </button>
-                </div>
+                {/* Tab Switcher - Show only relevant tabs based on role */}
+                {(userRole === 'creator' || userRole === null) && (
+                    <div className={`p-1 rounded-lg inline-flex ${
+                        theme === "light" ? "bg-gray-200" : "bg-[#010A12]"
+                    }`}>
+                        <button
+                            onClick={() => setActiveTab("submissions")}
+                            className={cn(
+                                "px-4 py-2 rounded-md text-sm font-medium transition-all",
+                                activeTab === "submissions" 
+                                    ? theme === "light"
+                                        ? "bg-white text-gray-900 shadow-sm"
+                                        : "bg-[#141B23] text-[#F5F8FC] shadow-sm"
+                                    : theme === "light"
+                                    ? "text-gray-600 hover:text-gray-900"
+                                    : "text-[#B8C5D6] hover:text-[#F5F8FC]"
+                            )}
+                        >
+                            My Submissions
+                        </button>
+                    </div>
+                )}
+                {userRole === 'business' && (
+                    <div className={`p-1 rounded-lg inline-flex ${
+                        theme === "light" ? "bg-gray-200" : "bg-[#010A12]"
+                    }`}>
+                        <button
+                            onClick={() => setActiveTab("bounties")}
+                            className={cn(
+                                "px-4 py-2 rounded-md text-sm font-medium transition-all",
+                                activeTab === "bounties"
+                                    ? theme === "light"
+                                        ? "bg-white text-gray-900 shadow-sm"
+                                        : "bg-[#141B23] text-[#F5F8FC] shadow-sm"
+                                    : theme === "light"
+                                    ? "text-gray-600 hover:text-gray-900"
+                                    : "text-[#B8C5D6] hover:text-[#F5F8FC]"
+                            )}
+                        >
+                            My Bounties (Brand)
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* Conditional Stats Row */}
@@ -197,7 +235,7 @@ export default function Dashboard() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    {activeTab === "submissions" ? (
+                    {(activeTab === "submissions" && (userRole === 'creator' || userRole === null)) ? (
                         <>
                             <StatsWidget 
                                 label="Total Earnings" 
@@ -221,7 +259,7 @@ export default function Dashboard() {
                                 bgColorDark="#141B23"
                             />
                         </>
-                    ) : (
+                    ) : (activeTab === "bounties" && userRole === 'business') ? (
                         <>
                             <StatsWidget 
                                 label="Total Spend" 

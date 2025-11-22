@@ -82,6 +82,7 @@ export default function BountyDetailPage({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [userRole, setUserRole] = useState<'creator' | 'business' | null>(null);
 
   // Calculate progress from submissions
   const [calculatedProgress, setCalculatedProgress] = useState({
@@ -96,6 +97,28 @@ export default function BountyDetailPage({
       fetchSubmissions();
     }
   }, [bountyId]);
+
+  // Fetch user role
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (!user) {
+        setUserRole(null);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/sync-user-profile');
+        if (response.ok) {
+          const result = await response.json();
+          setUserRole(result?.data?.role || null);
+        }
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+      }
+    };
+
+    fetchUserRole();
+  }, [user]);
 
   const fetchBountyDetails = async () => {
     try {
@@ -538,6 +561,12 @@ export default function BountyDetailPage({
                     <div className="p-4 bg-green-50 rounded-xl border border-green-100">
                       <p className="text-sm text-green-900 font-medium text-center">
                         This bounty has been completed
+                      </p>
+                    </div>
+                  ) : userRole === 'business' ? (
+                    <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                      <p className="text-sm text-gray-700 font-medium text-center">
+                        Businesses cannot submit to bounties. Switch to a creator account to submit content.
                       </p>
                     </div>
                   ) : (

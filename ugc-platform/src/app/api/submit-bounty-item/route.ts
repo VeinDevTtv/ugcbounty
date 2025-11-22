@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { supabaseServer } from '@/lib/supabase-server'
+import { requireRole } from '@/lib/role-utils'
 import type {
   SubmitBountyItemRequest,
   SubmitBountyItemResponse,
@@ -75,6 +76,15 @@ export async function POST(
       return NextResponse.json(
         { success: false, error: 'Unauthorized: You must be signed in to submit a bounty item' },
         { status: 401 }
+      )
+    }
+
+    // Check if user is a creator (only creators can submit to bounties)
+    const isCreator = await requireRole('creator', userId)
+    if (!isCreator) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden: Only creators can submit to bounties. Businesses can create bounties.' },
+        { status: 403 }
       )
     }
 

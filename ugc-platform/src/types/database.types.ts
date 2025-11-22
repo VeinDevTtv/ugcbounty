@@ -15,6 +15,7 @@ export interface Database {
           email: string
           username: string
           total_earnings: number
+          role: 'creator' | 'business' | null
           created_at: string
           updated_at: string
         }
@@ -23,6 +24,7 @@ export interface Database {
           email: string
           username: string
           total_earnings?: number
+          role?: 'creator' | 'business' | null
           created_at?: string
           updated_at?: string
         }
@@ -31,6 +33,7 @@ export interface Database {
           email?: string
           username?: string
           total_earnings?: number
+          role?: 'creator' | 'business' | null
           created_at?: string
           updated_at?: string
         }

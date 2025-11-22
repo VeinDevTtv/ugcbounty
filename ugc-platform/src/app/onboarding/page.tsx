@@ -1,0 +1,125 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+import RoleSelection from "@/components/onboarding/RoleSelection";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Loader2 } from "lucide-react";
+
+export default function OnboardingPage() {
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
+  const { theme } = useTheme();
+  const [isLoading, setIsLoading] = useState(true);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [isSettingRole, setIsSettingRole] = useState(false);
+
+  // Check if user has a role
+  useEffect(() => {
+    const checkUserRole = async () => {
+      if (!isLoaded || !user) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        // Use sync-user-profile API to get current user profile
+        const response = await fetch('/api/sync-user-profile');
+        if (response.ok) {
+          const result = await response.json();
+          const role = result?.data?.role || null;
+          setUserRole(role);
+
+          // If user already has a role, redirect to appropriate page
+          if (role === 'creator') {
+            router.push('/feed');
+            return;
+          } else if (role === 'business') {
+            router.push('/dashboard');
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Error checking user role:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkUserRole();
+  }, [user, isLoaded, router]);
+
+  const handleRoleSelected = async (role: 'creator' | 'business') => {
+    setIsSettingRole(true);
+    try {
+      const response = await fetch('/api/onboarding/set-role', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ role }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to set role');
+      }
+
+      // Redirect based on role
+      if (role === 'creator') {
+        router.push('/feed');
+      } else {
+        router.push('/dashboard');
+      }
+    } catch (error) {
+      console.error('Error setting role:', error);
+      alert(error instanceof Error ? error.message : 'Failed to set role. Please try again.');
+      setIsSettingRole(false);
+    }
+  };
+
+  // Show loading state while checking authentication or role
+  if (!isLoaded || isLoading) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${
+        theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
+      }`}>
+        <div className="text-center">
+          <Loader2 className={`h-8 w-8 animate-spin mx-auto mb-4 ${
+            theme === "light" ? "text-[#1B3C73]" : "text-[#60A5FA]"
+          }`} />
+          <p className={theme === "light" ? "text-[#52677C]" : "text-[#B8C5D6]"}>
+            Loading...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is not authenticated, redirect to sign in
+  if (!user) {
+    router.push('/sign-in');
+    return null;
+  }
+
+  // If user already has a role, they shouldn't be here (redirect handled in useEffect)
+  if (userRole) {
+    return null;
+  }
+
+  // Show role selection
+  return (
+    <div className={`min-h-screen flex items-center justify-center py-12 px-4 ${
+      theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
+    }`}>
+      <div className="w-full max-w-4xl">
+        <RoleSelection 
+          onRoleSelected={handleRoleSelected}
+          isLoading={isSettingRole}
+        />
+      </div>
+    </div>
+  );
+}
+

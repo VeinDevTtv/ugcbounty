@@ -1,6 +1,8 @@
 import { ArrowRight, DollarSign, Instagram, Youtube, Twitter, Clock } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 
 interface BountyProps {
   id: string;
@@ -19,10 +21,37 @@ interface BountyProps {
 
 export default function BountyCard({ data }: { data: BountyProps }) {
     const { theme } = useTheme();
+    const { user, isLoaded } = useUser();
+    const [userRole, setUserRole] = useState<'creator' | 'business' | null>(null);
+    
+    // Fetch user role
+    useEffect(() => {
+        const fetchUserRole = async () => {
+            if (!user || !isLoaded) {
+                setUserRole(null);
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/sync-user-profile');
+                if (response.ok) {
+                    const result = await response.json();
+                    setUserRole(result?.data?.role || null);
+                }
+            } catch (error) {
+                console.error('Error fetching user role:', error);
+            }
+        };
+
+        fetchUserRole();
+    }, [user, isLoaded]);
+
     // Check if campaign is sold out
     const isFull = data.filled >= 100;
     const isOwner = data.isOwner || false;
     const isCompleted = data.isCompleted || isFull;
+    // Hide submit button for businesses
+    const canSubmit = userRole === 'creator' || userRole === null; // Allow null for unauthenticated users
 
     return (
         <div
@@ -199,7 +228,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                         >
                             Manage Bounty
                         </button>
-                    ) : data.onClaim ? (
+                    ) : data.onClaim && canSubmit ? (
                         <button
                             onClick={(e) => {
                                 e.preventDefault();

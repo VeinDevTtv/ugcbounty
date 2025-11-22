@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { NarrativeSection } from "@/components/landing/NarrativeSection";
 import { DriverCard } from "@/components/landing/DriverCard";
@@ -10,6 +13,56 @@ import { useTheme } from "@/contexts/ThemeContext";
 
 export default function LandingPage() {
   const { theme } = useTheme();
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true);
+
+  // Redirect authenticated users based on role
+  useEffect(() => {
+    const checkAndRedirect = async () => {
+      if (!isLoaded) {
+        return;
+      }
+
+      // If user is not authenticated, show landing page
+      if (!user) {
+        setIsChecking(false);
+        return;
+      }
+
+      // If user is authenticated, check their role and redirect
+      try {
+        const response = await fetch('/api/sync-user-profile');
+        if (response.ok) {
+          const result = await response.json();
+          const role = result?.data?.role || null;
+
+          if (role === 'creator') {
+            router.push('/feed');
+            return;
+          } else if (role === 'business') {
+            router.push('/dashboard');
+            return;
+          } else {
+            // No role - middleware will redirect to onboarding
+            router.push('/onboarding');
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Error checking user role:', error);
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
+    checkAndRedirect();
+  }, [user, isLoaded, router]);
+
+  // Show loading state while checking (for authenticated users)
+  if (isChecking && user) {
+    return null; // Will redirect, so show nothing
+  }
 
   const bgGradient = theme === "light"
     ? "bg-gradient-to-b from-[#E8ECF3] via-[#E0E8F0] to-[#D9E1EF]"

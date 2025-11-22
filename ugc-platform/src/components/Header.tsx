@@ -35,6 +35,7 @@ export default function Header() {
   const pathname = usePathname();
   const { theme } = useTheme();
   const [bounties, setBounties] = useState<Bounty[]>([]);
+  const [userRole, setUserRole] = useState<'creator' | 'business' | null>(null);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [bountyName, setBountyName] = useState("");
@@ -50,6 +51,28 @@ export default function Header() {
 
   // Lock scroll when modal is open
   useScrollLock(showCreateModal);
+
+  // Fetch user role
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (!user || !isLoaded) {
+        setUserRole(null);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/sync-user-profile');
+        if (response.ok) {
+          const result = await response.json();
+          setUserRole(result?.data?.role || null);
+        }
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+      }
+    };
+
+    fetchUserRole();
+  }, [user, isLoaded]);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -242,8 +265,8 @@ export default function Header() {
             
             {isLoaded && (
               <>
-                {/* CREATE BOUNTY BUTTON - Only show on Feed page */}
-                {pathname === "/feed" && (
+                {/* CREATE BOUNTY BUTTON - Only show on Feed page for businesses */}
+                {pathname === "/feed" && userRole === 'business' && (
                   <SignedIn>
                     <Button
                       onClick={() => {
