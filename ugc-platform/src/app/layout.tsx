@@ -32,7 +32,8 @@ export default function RootLayout({
   return (
     <ClerkProvider 
       publishableKey={publishableKey}
-      fallbackRedirectUrl="/onboarding"
+      signInFallbackRedirectUrl="/onboarding"
+      signUpFallbackRedirectUrl="/onboarding"
     >
       <ThemeProvider>
         <html lang="en">
