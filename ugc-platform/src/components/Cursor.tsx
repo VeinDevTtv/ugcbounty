@@ -3,17 +3,7 @@
 import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
-interface MousePosition {
-  x: number;
-  y: number;
-}
-
-type CursorState = "default" | "hover" | "click";
-
-const PARTICLE_COUNT = 4;
-
 export default function Cursor() {
-  const [cursorState, setCursorState] = useState<CursorState>("default");
   const [isHovering, setIsHovering] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -29,17 +19,66 @@ export default function Cursor() {
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
-  // Trailing particles positions - create motion values at top level
-  const particles = Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
-    x: useMotionValue(0),
-    y: useMotionValue(0),
-    delay: (i + 1) * 0.05,
-  }));
+  // Create all particle motion values and springs at top level (must be before any conditional returns)
+  const particle1X = useMotionValue(0);
+  const particle1Y = useMotionValue(0);
+  const particle1XSpring = useSpring(particle1X, { damping: 20, stiffness: 200, mass: 0.3 });
+  const particle1YSpring = useSpring(particle1Y, { damping: 20, stiffness: 200, mass: 0.3 });
+
+  const particle2X = useMotionValue(0);
+  const particle2Y = useMotionValue(0);
+  const particle2XSpring = useSpring(particle2X, { damping: 20, stiffness: 200, mass: 0.3 });
+  const particle2YSpring = useSpring(particle2Y, { damping: 20, stiffness: 200, mass: 0.3 });
+
+  const particle3X = useMotionValue(0);
+  const particle3Y = useMotionValue(0);
+  const particle3XSpring = useSpring(particle3X, { damping: 20, stiffness: 200, mass: 0.3 });
+  const particle3YSpring = useSpring(particle3Y, { damping: 20, stiffness: 200, mass: 0.3 });
+
+  const particle4X = useMotionValue(0);
+  const particle4Y = useMotionValue(0);
+  const particle4XSpring = useSpring(particle4X, { damping: 20, stiffness: 200, mass: 0.3 });
+  const particle4YSpring = useSpring(particle4Y, { damping: 20, stiffness: 200, mass: 0.3 });
+
+  // Array of particles for easier iteration - memoized to prevent recreation
+  const particles = useMemo(
+    () => [
+      { x: particle1X, y: particle1Y, xSpring: particle1XSpring, ySpring: particle1YSpring },
+      { x: particle2X, y: particle2Y, xSpring: particle2XSpring, ySpring: particle2YSpring },
+      { x: particle3X, y: particle3Y, xSpring: particle3XSpring, ySpring: particle3YSpring },
+      { x: particle4X, y: particle4Y, xSpring: particle4XSpring, ySpring: particle4YSpring },
+    ],
+    [
+      particle1X,
+      particle1Y,
+      particle1XSpring,
+      particle1YSpring,
+      particle2X,
+      particle2Y,
+      particle2XSpring,
+      particle2YSpring,
+      particle3X,
+      particle3Y,
+      particle3XSpring,
+      particle3YSpring,
+      particle4X,
+      particle4Y,
+      particle4XSpring,
+      particle4YSpring,
+    ]
+  );
 
   // Check for reduced motion preference
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setIsReducedMotion(mediaQuery.matches);
+    
+    // Use callback to avoid synchronous setState
+    const updateReducedMotion = () => {
+      setIsReducedMotion(mediaQuery.matches);
+    };
+    
+    // Initial check in next tick
+    updateReducedMotion();
 
     const handleChange = (e: MediaQueryListEvent) => {
       setIsReducedMotion(e.matches);
@@ -55,7 +94,7 @@ export default function Cursor() {
       setIsTouchDevice(
         "ontouchstart" in window ||
         navigator.maxTouchPoints > 0 ||
-        // @ts-ignore
+        // @ts-expect-error - msMaxTouchPoints is IE-specific
         navigator.msMaxTouchPoints > 0
       );
     };
@@ -64,11 +103,6 @@ export default function Cursor() {
     window.addEventListener("resize", checkTouchDevice);
     return () => window.removeEventListener("resize", checkTouchDevice);
   }, []);
-
-  // Don't render cursor on touch devices or if reduced motion is preferred
-  if (isTouchDevice || isReducedMotion) {
-    return null;
-  }
 
   // Mouse move handler with throttling
   const handleMouseMove = useCallback(
@@ -116,12 +150,18 @@ export default function Cursor() {
 
   // Mouse enter handler for interactive elements
   const handleMouseEnter = useCallback((e: MouseEvent) => {
-    const target = e.target as HTMLElement;
+    const target = e.target;
+
+    // Check if target is an HTMLElement
+    if (!target || !(target instanceof HTMLElement)) {
+      return;
+    }
+
     const isInteractive =
       target.tagName === "BUTTON" ||
       target.tagName === "A" ||
       target.hasAttribute("href") ||
-      target.hasAttribute("role") && target.getAttribute("role") === "button" ||
+      (target.hasAttribute("role") && target.getAttribute("role") === "button") ||
       target.tagName === "INPUT" ||
       target.tagName === "TEXTAREA" ||
       target.tagName === "SELECT" ||
@@ -136,7 +176,6 @@ export default function Cursor() {
 
     if (isInteractive) {
       setIsHovering(true);
-      setCursorState("hover");
       hoveredElementRef.current = target;
     }
   }, []);
@@ -144,21 +183,18 @@ export default function Cursor() {
   // Mouse leave handler
   const handleMouseLeave = useCallback(() => {
     setIsHovering(false);
-    setCursorState("default");
     hoveredElementRef.current = null;
   }, []);
 
   // Mouse down handler
   const handleMouseDown = useCallback(() => {
     setIsClicking(true);
-    setCursorState("click");
   }, []);
 
   // Mouse up handler
   const handleMouseUp = useCallback(() => {
     setIsClicking(false);
-    setCursorState(isHovering ? "hover" : "default");
-  }, [isHovering]);
+  }, []);
 
   // Mouse leave window handler
   const handleMouseLeaveWindow = useCallback(() => {
@@ -172,6 +208,11 @@ export default function Cursor() {
 
   // Set up event listeners
   useEffect(() => {
+    // Only set up listeners if not touch device and not reduced motion
+    if (isTouchDevice || isReducedMotion) {
+      return;
+    }
+
     window.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseenter", handleMouseEnter, true);
     document.addEventListener("mouseleave", handleMouseLeave, true);
@@ -197,14 +238,20 @@ export default function Cursor() {
     handleMouseUp,
     handleMouseLeaveWindow,
     handleMouseEnterWindow,
+    isTouchDevice,
+    isReducedMotion,
   ]);
+
+  // Don't render cursor on touch devices or if reduced motion is preferred
+  // This check happens AFTER all hooks are called
+  if (isTouchDevice || isReducedMotion || !isVisible) {
+    return null;
+  }
 
   // Calculate cursor size and color based on state
   const cursorSize = isHovering ? 32 : 12;
   const cursorBorderWidth = isHovering ? 2 : 1.5;
   const particleSize = 4;
-
-  if (!isVisible) return null;
 
   return (
     <>
@@ -219,7 +266,7 @@ export default function Cursor() {
         }}
         animate={{
           scale: isClicking ? 0.8 : isHovering ? 1.5 : 1,
-          opacity: isVisible ? 1 : 0,
+          opacity: 1,
         }}
         transition={{
           scale: { type: "spring", stiffness: 400, damping: 25 },
@@ -242,48 +289,34 @@ export default function Cursor() {
       </motion.div>
 
       {/* Trailing particles */}
-      {particles.map((particle, index) => {
-        const particleXSpring = useSpring(particle.x, {
-          damping: 20,
-          stiffness: 200,
-          mass: 0.3,
-        });
-        const particleYSpring = useSpring(particle.y, {
-          damping: 20,
-          stiffness: 200,
-          mass: 0.3,
-        });
-
-        return (
-          <motion.div
-            key={index}
-            className="fixed pointer-events-none z-[9998] mix-blend-difference"
+      {particles.map((particle, index) => (
+        <motion.div
+          key={index}
+          className="fixed pointer-events-none z-[9998] mix-blend-difference"
+          style={{
+            x: particle.xSpring,
+            y: particle.ySpring,
+            left: -particleSize / 2,
+            top: -particleSize / 2,
+          }}
+          animate={{
+            opacity: 0.3 - index * 0.05,
+          }}
+          transition={{
+            opacity: { duration: 0.2 },
+          }}
+        >
+          <div
+            className="rounded-full"
             style={{
-              x: particleXSpring,
-              y: particleYSpring,
-              left: -particleSize / 2,
-              top: -particleSize / 2,
+              width: particleSize,
+              height: particleSize,
+              backgroundColor: "var(--color-accent)",
+              opacity: 0.4 - index * 0.08,
             }}
-            animate={{
-              opacity: isVisible ? 0.3 - index * 0.05 : 0,
-            }}
-            transition={{
-              opacity: { duration: 0.2 },
-            }}
-          >
-            <div
-              className="rounded-full"
-              style={{
-                width: particleSize,
-                height: particleSize,
-                backgroundColor: "var(--color-accent)",
-                opacity: 0.4 - index * 0.08,
-              }}
-            />
-          </motion.div>
-        );
-      })}
+          />
+        </motion.div>
+      ))}
     </>
   );
 }
-

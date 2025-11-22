@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useUser, UserButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import { Edit2, ExternalLink, DollarSign, Eye, CheckCircle, XCircle, Clock } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 // TypeScript Interfaces
 interface BountyWithProgress {
@@ -75,6 +76,7 @@ const formatCurrency = (amount: number): string => {
 export default function ProfilePage() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const { theme } = useTheme();
   
   // Tab state
   const [activeTab, setActiveTab] = useState<'bounties' | 'submissions'>('bounties');
@@ -212,8 +214,12 @@ export default function ProfilePage() {
   // Show loading spinner
   if (!isLoaded || isLoading) {
     return (
-      <div className="min-h-screen bg-[#E8ECF3] dark:bg-[#020617] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B3C73] dark:border-[#10B981]"></div>
+      <div className={`min-h-screen transition-colors ${
+        theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
+      } flex items-center justify-center`}>
+        <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${
+          theme === "light" ? "border-[#1B3C73]" : "border-[#60A5FA]"
+        }`}></div>
       </div>
     );
   }
@@ -224,45 +230,79 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#E8ECF3] dark:bg-[#020617]">
+    <div className={`min-h-screen transition-colors ${
+      theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* User Profile Header */}
-        <div className="bg-white border border-[#C8D1E0] rounded-lg p-6 mb-8">
-          <div className="flex items-center gap-4">
-            {user?.imageUrl ? (
-              <img
-                src={user.imageUrl}
-                alt={user.username || user.emailAddresses[0]?.emailAddress || "Profile"}
-                className="h-20 w-20 rounded-full border-2 border-[#C8D1E0]"
-              />
-            ) : (
-              <div className="h-20 w-20 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-2xl border-2 border-[#C8D1E0]">
-                {user?.username?.[0]?.toUpperCase() || user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || "U"}
+        <div className={`border rounded-lg p-6 mb-8 ${
+          theme === "light"
+            ? "bg-white border-[#C8D1E0]"
+            : "bg-[#141B23] border-[#1A2332]"
+        }`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              {user?.imageUrl ? (
+                <img
+                  src={user.imageUrl}
+                  alt={user.username || user.emailAddresses[0]?.emailAddress || "Profile"}
+                  className={`h-20 w-20 rounded-full border-2 ${
+                    theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
+                  }`}
+                />
+              ) : (
+                <div className={`h-20 w-20 rounded-full flex items-center justify-center text-white font-bold text-2xl border-2 ${
+                  theme === "light"
+                    ? "bg-emerald-600 border-[#C8D1E0]"
+                    : "bg-emerald-600 border-[#1A2332]"
+                }`}>
+                  {user?.username?.[0]?.toUpperCase() || user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || "U"}
+                </div>
+              )}
+              <div>
+                <h1 className={`text-3xl font-bold ${
+                  theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                }`}>
+                  {user?.username || user?.firstName || user?.lastName || "Profile"}
+                </h1>
+                {user?.emailAddresses?.[0]?.emailAddress && (
+                  <p className={`mt-1 ${
+                    theme === "light" ? "text-[#52677C]" : "text-[#B8C5D6]"
+                  }`}>
+                    {user.emailAddresses[0].emailAddress}
+                  </p>
+                )}
+                {user?.username && user?.emailAddresses?.[0]?.emailAddress && (
+                  <p className={`text-sm mt-1 ${
+                    theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                  }`}>
+                    @{user.username}
+                  </p>
+                )}
               </div>
-            )}
-            <div>
-              <h1 className="text-3xl font-bold text-[#2E3A47]">
-                {user?.username || user?.firstName || user?.lastName || "Profile"}
-              </h1>
-              {user?.emailAddresses?.[0]?.emailAddress && (
-                <p className="text-[#52677C] mt-1">{user.emailAddresses[0].emailAddress}</p>
-              )}
-              {user?.username && user?.emailAddresses?.[0]?.emailAddress && (
-                <p className="text-sm text-[#6B7A8F] mt-1">@{user.username}</p>
-              )}
+            </div>
+            {/* UserButton for sign out and account management */}
+            <div className="flex items-center">
+              <UserButton afterSignOutUrl="/" />
             </div>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex gap-8 border-b border-[#C8D1E0] mb-8">
+        <div className={`flex gap-8 border-b mb-8 ${
+          theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
+        }`}>
           <button
             onClick={() => setActiveTab('bounties')}
             className={cn(
               "pb-4 px-2 text-sm font-medium transition-colors",
               activeTab === 'bounties'
-                ? "border-b-2 border-[#1B3C73] text-black"
-                : "text-[#6B7A8F] hover:text-[#2E3A47]"
+                ? theme === "light"
+                  ? "border-b-2 border-[#1B3C73] text-black"
+                  : "border-b-2 border-[#60A5FA] text-[#F5F8FC]"
+                : theme === "light"
+                  ? "text-[#6B7A8F] hover:text-[#2E3A47]"
+                  : "text-[#B8C5D6] hover:text-[#F5F8FC]"
             )}
           >
             My Bounties ({bounties.length})
@@ -272,8 +312,12 @@ export default function ProfilePage() {
             className={cn(
               "pb-4 px-2 text-sm font-medium transition-colors",
               activeTab === 'submissions'
-                ? "border-b-2 border-[#1B3C73] text-black"
-                : "text-[#6B7A8F] hover:text-[#2E3A47]"
+                ? theme === "light"
+                  ? "border-b-2 border-[#1B3C73] text-black"
+                  : "border-b-2 border-[#60A5FA] text-[#F5F8FC]"
+                : theme === "light"
+                  ? "text-[#6B7A8F] hover:text-[#2E3A47]"
+                  : "text-[#B8C5D6] hover:text-[#F5F8FC]"
             )}
           >
             My Submissions ({submissions.length})
@@ -284,8 +328,14 @@ export default function ProfilePage() {
         {activeTab === 'bounties' && (
           <div className="space-y-6">
             {bounties.length === 0 ? (
-              <div className="bg-white border border-[#1B3C73] rounded-lg p-12 text-center">
-                <p className="text-[#52677C] text-lg mb-4">
+              <div className={`border rounded-lg p-12 text-center ${
+                theme === "light"
+                  ? "bg-white border-[#C8D1E0]"
+                  : "bg-[#141B23] border-[#1A2332]"
+              }`}>
+                <p className={`text-lg mb-4 ${
+                  theme === "light" ? "text-[#52677C]" : "text-gray-400"
+                }`}>
                   You haven't created any bounties yet.
                 </p>
                 <Link href="/">
@@ -296,45 +346,69 @@ export default function ProfilePage() {
               bounties.map((bounty) => (
                 <div
                   key={bounty.id}
-                  className="bg-white border border-[#1B3C73] rounded-lg p-6 space-y-4"
+                  className={`border rounded-lg p-6 space-y-4 ${
+                    theme === "light"
+                      ? "bg-white border-[#C8D1E0]"
+                      : "bg-[#141B23] border-[#1A2332]"
+                  }`}
                 >
                   {editingBountyId === bounty.id ? (
                     // Edit Mode
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-[#2E3A47] mb-2">
+                        <label className={`block text-sm font-medium mb-2 ${
+                          theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                        }`}>
                           Name
                         </label>
                         <input
                           type="text"
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
-                          className="w-full px-4 py-2 border border-[#C8D1E0] rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                          className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                            theme === "light"
+                              ? "border-[#C8D1E0] bg-white text-[#2E3A47] focus:ring-black"
+                              : "border-[#1A2332] bg-[#1F2937] text-[#F5F8FC] focus:ring-[#60A5FA]"
+                          }`}
                           placeholder="Bounty name"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[#2E3A47] mb-2">
+                        <label className={`block text-sm font-medium mb-2 ${
+                          theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                        }`}>
                           Description
                         </label>
                         <textarea
                           value={editDescription}
                           onChange={(e) => setEditDescription(e.target.value)}
-                          className="w-full px-4 py-2 border border-[#C8D1E0] rounded-lg focus:outline-none focus:ring-2 focus:ring-black min-h-[100px]"
+                          className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 min-h-[100px] ${
+                            theme === "light"
+                              ? "border-[#C8D1E0] bg-white text-[#2E3A47] focus:ring-black"
+                              : "border-[#1A2332] bg-[#1F2937] text-[#F5F8FC] focus:ring-[#60A5FA]"
+                          }`}
                           placeholder="Bounty description"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[#2E3A47] mb-2">
+                        <label className={`block text-sm font-medium mb-2 ${
+                          theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                        }`}>
                           Instructions 
                         </label>
                         <textarea
                           value={editInstructions}
                           onChange={(e) => setEditInstructions(e.target.value)}
-                          className="w-full px-4 py-2 border border-[#C8D1E0] rounded-lg focus:outline-none focus:ring-2 focus:ring-black min-h-[100px]"
+                          className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 min-h-[100px] ${
+                            theme === "light"
+                              ? "border-[#C8D1E0] bg-white text-[#2E3A47] focus:ring-black"
+                              : "border-[#1A2332] bg-[#1F2937] text-[#F5F8FC] focus:ring-[#60A5FA]"
+                          }`}
                           placeholder="Exact requirements that submitted videos must meet to be accepted..."
                         />
-                        <p className="text-xs text-[#6B7A8F] mt-1">
+                        <p className={`text-xs mt-1 ${
+                          theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                        }`}>
                           These instructions will be used for video validation. If left empty, the description will be used.
                         </p>
                       </div>
@@ -355,10 +429,16 @@ export default function ProfilePage() {
                     <>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h2 className="text-2xl font-bold text-[#2E3A47] mb-2">
+                          <h2 className={`text-2xl font-bold mb-2 ${
+                            theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                          }`}>
                             {bounty.name}
                           </h2>
-                          <p className="text-[#52677C] mb-4">{bounty.description}</p>
+                          <p className={`mb-4 ${
+                            theme === "light" ? "text-[#52677C]" : "text-[#B8C5D6]"
+                          }`}>
+                            {bounty.description}
+                          </p>
                         </div>
                         <Button
                           variant="outline"
@@ -372,28 +452,54 @@ export default function ProfilePage() {
                       </div>
 
                       {/* Stats Grid */}
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-[#C8D1E0]">
+                      <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t ${
+                        theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
+                      }`}>
                         <div>
-                          <p className="text-sm text-[#6B7A8F] mb-1">Total Bounty</p>
-                          <p className="text-lg font-bold text-[#2E3A47]">
+                          <p className={`text-sm mb-1 ${
+                            theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                          }`}>
+                            Total Bounty
+                          </p>
+                          <p className={`text-lg font-bold ${
+                            theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                          }`}>
                             {formatCurrency(bounty.total_bounty)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-[#6B7A8F] mb-1">Rate per 1k Views</p>
-                          <p className="text-lg font-bold text-[#2E3A47]">
+                          <p className={`text-sm mb-1 ${
+                            theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                          }`}>
+                            Rate per 1k Views
+                          </p>
+                          <p className={`text-lg font-bold ${
+                            theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                          }`}>
                             {formatCurrency(bounty.rate_per_1k_views)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-[#6B7A8F] mb-1">Claimed Bounty</p>
-                          <p className="text-lg font-bold text-[#2E3A47]">
+                          <p className={`text-sm mb-1 ${
+                            theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                          }`}>
+                            Claimed Bounty
+                          </p>
+                          <p className={`text-lg font-bold ${
+                            theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                          }`}>
                             {formatCurrency(bounty.calculated_claimed_bounty)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-[#6B7A8F] mb-1">Remaining</p>
-                          <p className="text-lg font-bold text-[#2E3A47]">
+                          <p className={`text-sm mb-1 ${
+                            theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                          }`}>
+                            Remaining
+                          </p>
+                          <p className={`text-lg font-bold ${
+                            theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                          }`}>
                             {formatCurrency(
                               bounty.total_bounty - bounty.calculated_claimed_bounty
                             )}
@@ -401,10 +507,16 @@ export default function ProfilePage() {
                         </div>
                       </div>
 
-                      <div className="pt-4 border-t border-[#C8D1E0]">
+                      <div className={`pt-4 border-t ${
+                        theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
+                      }`}>
                         <Link
                           href={`/bounty/${bounty.id}`}
-                          className="text-indigo-600 hover:text-indigo-800 font-medium text-sm inline-flex items-center gap-1"
+                          className={`font-medium text-sm inline-flex items-center gap-1 ${
+                            theme === "light"
+                              ? "text-indigo-600 hover:text-indigo-800"
+                              : "text-[#60A5FA] hover:text-[#3B82F6]"
+                          }`}
                         >
                           View Bounty Details →
                         </Link>
@@ -422,35 +534,81 @@ export default function ProfilePage() {
           <div className="space-y-6">
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              <div className="bg-white border border-[#1B3C73] rounded-lg p-4">
-                <p className="text-sm text-[#6B7A8F] mb-1">Total Earnings</p>
-                <p className="text-2xl font-bold text-[#2E3A47]">
+              <div className={`border rounded-lg p-4 ${
+                theme === "light"
+                  ? "bg-white border-[#C8D1E0]"
+                  : "bg-[#141B23] border-[#1A2332]"
+              }`}>
+                <p className={`text-sm mb-1 ${
+                  theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                }`}>
+                  Total Earnings
+                </p>
+                <p className={`text-2xl font-bold ${
+                  theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                }`}>
                   {formatCurrency(submissionStats.totalEarnings)}
                 </p>
               </div>
-              <div className="bg-white border border-[#1B3C73] rounded-lg p-4">
-                <p className="text-sm text-[#6B7A8F] mb-1">Total Views</p>
-                <p className="text-2xl font-bold text-[#2E3A47]">
+              <div className={`border rounded-lg p-4 ${
+                theme === "light"
+                  ? "bg-white border-[#C8D1E0]"
+                  : "bg-[#141B23] border-[#1A2332]"
+              }`}>
+                <p className={`text-sm mb-1 ${
+                  theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                }`}>
+                  Total Views
+                </p>
+                <p className={`text-2xl font-bold ${
+                  theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                }`}>
                   {submissionStats.totalViews.toLocaleString()}
                 </p>
               </div>
-              <div className="bg-white border border-[#1B3C73] rounded-lg p-4">
-                <p className="text-sm text-[#6B7A8F] mb-1">Approved</p>
-                <p className="text-2xl font-bold text-[#2E3A47]">
+              <div className={`border rounded-lg p-4 ${
+                theme === "light"
+                  ? "bg-white border-[#C8D1E0]"
+                  : "bg-[#141B23] border-[#1A2332]"
+              }`}>
+                <p className={`text-sm mb-1 ${
+                  theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                }`}>
+                  Approved
+                </p>
+                <p className={`text-2xl font-bold ${
+                  theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                }`}>
                   {submissionStats.approvedCount}
                 </p>
               </div>
-              <div className="bg-white border border-[#1B3C73] rounded-lg p-4">
-                <p className="text-sm text-[#6B7A8F] mb-1">Pending</p>
-                <p className="text-2xl font-bold text-[#2E3A47]">
+              <div className={`border rounded-lg p-4 ${
+                theme === "light"
+                  ? "bg-white border-[#C8D1E0]"
+                  : "bg-[#141B23] border-[#1A2332]"
+              }`}>
+                <p className={`text-sm mb-1 ${
+                  theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                }`}>
+                  Pending
+                </p>
+                <p className={`text-2xl font-bold ${
+                  theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                }`}>
                   {submissionStats.pendingCount}
                 </p>
               </div>
             </div>
 
             {submissions.length === 0 ? (
-              <div className="bg-white border border-[#1B3C73] rounded-lg p-12 text-center">
-                <p className="text-[#52677C] text-lg mb-4">
+              <div className={`border rounded-lg p-12 text-center ${
+                theme === "light"
+                  ? "bg-white border-[#C8D1E0]"
+                  : "bg-[#141B23] border-[#1A2332]"
+              }`}>
+                <p className={`text-lg mb-4 ${
+                  theme === "light" ? "text-[#52677C]" : "text-gray-400"
+                }`}>
                   You haven't submitted to any bounties yet.
                 </p>
                 <Link href="/">
@@ -469,13 +627,21 @@ export default function ProfilePage() {
                 return (
                   <div
                     key={submission.id}
-                    className="bg-white border border-[#1B3C73] rounded-lg p-6 space-y-4"
+                    className={`border rounded-lg p-6 space-y-4 ${
+                      theme === "light"
+                        ? "bg-white border-[#C8D1E0]"
+                        : "bg-[#141B23] border-[#1A2332]"
+                    }`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <Link
                           href={`/bounty/${submission.bounty_id}`}
-                          className="text-xl font-bold text-[#2E3A47] hover:text-[#4F6FA8] mb-2 block"
+                          className={`text-xl font-bold mb-2 block ${
+                            theme === "light"
+                              ? "text-[#2E3A47] hover:text-[#4F6FA8]"
+                              : "text-[#F5F8FC] hover:text-[#60A5FA]"
+                          }`}
                         >
                           {submission.bounties?.name || 'Unknown Bounty'}
                         </Link>
@@ -483,7 +649,9 @@ export default function ProfilePage() {
                           <Badge variant={getStatusBadgeVariant(submission.status)}>
                             {submission.status}
                           </Badge>
-                          <span className="text-sm text-[#6B7A8F]">
+                          <span className={`text-sm ${
+                            theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                          }`}>
                             {formatDate(submission.created_at)}
                           </span>
                         </div>
@@ -491,7 +659,11 @@ export default function ProfilePage() {
                           href={submission.video_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-indigo-600 hover:text-indigo-800 font-medium text-sm inline-flex items-center gap-1 mb-4"
+                          className={`font-medium text-sm inline-flex items-center gap-1 mb-4 ${
+                            theme === "light"
+                              ? "text-indigo-600 hover:text-indigo-800"
+                              : "text-[#60A5FA] hover:text-[#3B82F6]"
+                          }`}
                         >
                           {submission.video_url}
                           <ExternalLink className="h-3 w-3" />
@@ -500,48 +672,86 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-[#C8D1E0]">
+                    <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t ${
+                      theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
+                    }`}>
                       <div>
-                        <p className="text-sm text-[#6B7A8F] mb-1">Views</p>
-                        <p className="text-lg font-bold text-[#2E3A47]">
+                        <p className={`text-sm mb-1 ${
+                          theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                        }`}>
+                          Views
+                        </p>
+                        <p className={`text-lg font-bold ${
+                          theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                        }`}>
                           {submission.view_count.toLocaleString()}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-[#6B7A8F] mb-1">Rate per 1k</p>
-                        <p className="text-lg font-bold text-[#2E3A47]">
+                        <p className={`text-sm mb-1 ${
+                          theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                        }`}>
+                          Rate per 1k
+                        </p>
+                        <p className={`text-lg font-bold ${
+                          theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                        }`}>
                           {submission.bounties
                             ? formatCurrency(submission.bounties.rate_per_1k_views)
                             : 'N/A'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-[#6B7A8F] mb-1">Earned</p>
-                        <p className="text-lg font-bold text-[#2E3A47]">
+                        <p className={`text-sm mb-1 ${
+                          theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                        }`}>
+                          Earned
+                        </p>
+                        <p className={`text-lg font-bold ${
+                          theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                        }`}>
                           {formatCurrency(submission.earned_amount)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-[#6B7A8F] mb-1">Potential Earnings</p>
-                        <p className="text-lg font-bold text-[#2E3A47]">
+                        <p className={`text-sm mb-1 ${
+                          theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
+                        }`}>
+                          Potential Earnings
+                        </p>
+                        <p className={`text-lg font-bold ${
+                          theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
+                        }`}>
                           {formatCurrency(potentialEarnings)}
                         </p>
                       </div>
                     </div>
 
                     {submission.validation_explanation && (
-                      <div className="mt-4 p-3 bg-[#F7FAFC] rounded-lg border border-[#C8D1E0]">
-                        <p className="text-xs text-[#52677C]">
+                      <div className={`mt-4 p-3 rounded-lg border ${
+                        theme === "light"
+                          ? "bg-[#F7FAFC] border-[#C8D1E0]"
+                          : "bg-[#0D1419] border-[#1A2332]"
+                      }`}>
+                        <p className={`text-xs ${
+                          theme === "light" ? "text-[#52677C]" : "text-[#B8C5D6]"
+                        }`}>
                           <span className="font-semibold">Note: </span>
                           {submission.validation_explanation}
                         </p>
                       </div>
                     )}
 
-                    <div className="pt-4 border-t border-[#C8D1E0]">
+                    <div className={`pt-4 border-t ${
+                      theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
+                    }`}>
                       <Link
                         href={`/bounty/${submission.bounty_id}`}
-                        className="text-indigo-600 hover:text-indigo-800 font-medium text-sm inline-flex items-center gap-1"
+                        className={`font-medium text-sm inline-flex items-center gap-1 ${
+                          theme === "light"
+                            ? "text-indigo-600 hover:text-indigo-800"
+                            : "text-[#60A5FA] hover:text-[#3B82F6]"
+                        }`}
                       >
                         View Bounty Details →
                       </Link>
