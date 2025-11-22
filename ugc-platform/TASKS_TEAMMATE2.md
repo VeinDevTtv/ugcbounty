@@ -8,124 +8,79 @@
 
 ### Home Page
 
-1. **Replace hardcoded bounties with API fetch**
-   - Remove hardcoded `BOUNTIES` array
-   - Fetch from `/api/bounties` or use `getBountiesAction()` server action
-   - Map API response fields (snake_case → camelCase)
+1. **Add Header component to page**
+   - Import Header component (currently in layout, needs to be in page like og/)
+   - Remove Header from layout.tsx
+   - Match og/ structure: Header at top, then grid
 
-2. **Match reference implementation structure**
-   - Use Client Component with `useState` and `useEffect`
-   - Implement data fetching on component mount
-   - Handle API response mapping to frontend format
+2. **Update BountyCard usage to match og/ props**
+   - Change from `data={bountyCardData}` to `bounty={bounty}`, `onClaim={handleClaimBounty}`, `isOwner={isOwner}`
+   - Update BountyCard component to accept these props (see BountyCard tasks)
 
-3. **Add loading states**
-   - Show centered spinner while fetching
-   - Display loading before rendering any content
+3. **Fix grid styling to match og/**
+   - Add seamless borders: `md:[&:not(:nth-child(2n+1))]:ml-[-1px]`
+   - Match og/ grid structure exactly
 
-4. **Display bounties in grid with BountyCard**
-   - Responsive grid: 1 col mobile, 2 cols tablet, 3 cols desktop
-   - Use existing `BountyCard` component or update to match data structure
-   - Pass `isOwner` prop based on `creator_id` comparison
-
-5. **Handle empty state**
-   - Show message when no bounties available
-   - Center the empty state message
-
-6. **Connect ClaimBountyDialog**
+4. **Connect ClaimBountyDialog**
+   - Add state for selected bounty
+   - Implement `handleClaimBounty` function
+   - Pass bounty data and `isCompleted` flag to dialog
    - Handle dialog open/close state
-   - Pass selected bounty data to dialog
-   - Pass `isCompleted` prop to prevent submissions for completed bounties
+
+5. **Ensure UUID handling**
+   - Verify all IDs are strings (UUIDs), not numbers
+   - Update any number ID references to string
 
 ---
 
 ### Bounty Detail Page /bounty/[id]
 
-1. **Rewrite to match reference structure**
+1. **Move page from /[id] to /bounty/[id]**
    - Create `src/app/bounty/[id]/page.tsx`
+   - Copy structure from `og/app/bounty/[id]/page.tsx`
+   - Delete old `src/app/[id]/page.tsx`
    - Use `use()` hook for params (Next.js 15+)
-   - Implement Client Component with proper state management
 
-2. **Fetch bounty details from API**
-   - Fetch from `/api/bounties` and filter by ID
-   - Map database fields to frontend format
-   - Handle 404 case (bounty not found)
+2. **Update to use UUID format**
+   - Change all `id: number` to `id: string` (UUID)
+   - Remove `parseInt(id)` - use string directly
+   - Update all type definitions
 
-3. **Fetch submissions for bounty**
-   - Fetch from `/api/bounties/[id]/submissions`
-   - Display all submissions with full details:
-     - Status badge (pending/approved/rejected)
-     - Video URL, view count, earned amount
-     - Creator info, submission date
-     - Validation explanation (if present)
-     - Cover image (if available)
+3. **Match og/ styling exactly**
+   - Border: `border-gray-300`
+   - Background: `bg-[#F5F1E8]`
+   - Match all section layouts and spacing
 
-4. **Calculate progress from submissions**
-   - Calculate from approved submissions only:
-     - Sum `view_count` from approved submissions
-     - Formula: `usedBounty = (totalViews / 1000) * ratePer1kViews`
-     - Cap at total: `cappedUsedBounty = Math.min(usedBounty, totalBounty)`
-     - Percentage: `progressPercentage = Math.min((usedBounty / totalBounty) * 100, 100)`
-     - Completed if: `usedBounty >= totalBounty`
-   - Display in progress bar
+4. **Verify progress calculation**
+   - Ensure it calculates from submissions (already implemented)
+   - Display matches og/ format
 
-5. **Display submissions list**
-   - Vertical list with all submission details
-   - Empty state: "No submissions yet. Be the first to submit!"
-   - Show thumbnail, status, creator, views, earnings
-
-6. **Show owner vs non-owner states**
-   - **Owner**: "This is your bounty. Creators will submit their content here."
-   - **Non-owner**: 
-     - If completed: "This bounty has been completed"
-     - If not: Show submission button
-   - Detect by comparing `creator_id` with Clerk user ID
-
-7. **Connect submission button**
-   - Opens `ClaimBountyDialog`
-   - Pass bounty data and `isCompleted` flag
-   - Handle dialog state
+5. **Update ClaimBountyDialog integration**
+   - Use correct props format
+   - Pass bounty with correct type (Bounty from data/bounties.ts)
 
 ---
 
 ### Profile Page /profile
 
 1. **Create /app/profile/page.tsx matching reference**
+   - Copy from `og/app/profile/page.tsx`
+   - Update to use UUID format (id: string, not number)
    - Client Component with Clerk authentication
    - Redirect to home if not logged in
-   - Use `useUser()` from Clerk
 
-2. **Tabs: "My Bounties" and "My Submissions"**
-   - State-managed tab switching
-   - Display counts: "My Bounties (3)", "My Submissions (5)"
-   - Active tab styling: black border-bottom
+2. **Update API calls**
+   - Change `/api/submissions` to `/api/user-submissions` (needs to be created)
+   - Ensure UUID handling in all API calls
 
-3. **Fetch user's bounties (creator_id filter)**
-   - Use `/api/bounties` and filter by `creator_id === user.id`
-   - OR use `getBountiesAction({ creator_id: user.id })`
-   - Display in vertical list (not grid)
-   - Each shows: name, description, stats, edit button, link to detail
+3. **Update type definitions**
+   - Change all `id: number` to `id: string`
+   - Update Bounty and Submission interfaces
 
-4. **Fetch user's submissions**
-   - Fetch from `/api/submissions` or use `getSubmissionsAction({ user_id: user.id })`
-   - Display in vertical list with:
-     - Bounty name (link)
-     - Video URL (clickable)
-     - Status badge
-     - Views, rate, earned, potential earnings
-     - Submission date
-     - Validation explanation
-
-5. **Edit bounty functionality (name/description)**
-   - Click "Edit Details" → enter edit mode
-   - Input for name, textarea for description
-   - PUT to `/api/bounties` with `{ id, name, description }`
-   - Update local state after save
-   - Show loading while saving
-
-6. **Display earnings/stats**
-   - In submissions tab: total earnings, total views
-   - Count of approved/pending/rejected submissions
-   - Optional: stats section at top of profile
+4. **Match og/ styling exactly**
+   - Border: `border-black`
+   - Background: `bg-[#F5F1E8]`
+   - Tab styling: black border-bottom when active
 
 ---
 
@@ -148,15 +103,13 @@
 
 ## API Endpoints
 
-- `GET /api/bounties` - All bounties with calculated progress
-- `GET /api/bounties/[id]/submissions` - Submissions for a bounty
-- `GET /api/submissions` - Current user's submissions
-- `PUT /api/bounties` - Update bounty (name/description)
-- `POST /api/submit-bounty-item` - Submit content
+- `GET /api/bounties` - All bounties with calculated progress ✅ EXISTS
+- `GET /api/bounties/[id]/submissions` - Submissions for a bounty ✅ EXISTS
+- `GET /api/user-submissions` - Current user's submissions ❌ NEEDS CREATION
+- `PUT /api/bounties` - Update bounty (name/description) ❌ NEEDS CREATION
+- `POST /api/submit-bounty-item` - Submit content ✅ EXISTS (needs link-preview, youtube-views, tiktok-views)
 
-**Or use Server Actions:**
-- `getBountiesAction({ creator_id?: string })`
-- `getSubmissionsAction({ user_id?: string, bounty_id?: string })`
+**Note:** `/api/user-submissions` needs to be created. Currently profile page tries to use `/api/submissions` which doesn't exist.
 
 ---
 

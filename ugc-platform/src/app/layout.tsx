@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
-import "./globals.css"; // Standard Next.js global css
+import "./globals.css";
 import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BountyHunted | UGC Platform",
+  title: "Bount-tea | UGC Bounty Platform",
   description: "Find and create content for brands.",
 };
 
@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <ClerkProvider publishableKey={publishableKey}>
       <html lang="en">
-        <body className={`${inter.className} bg-zinc-50 min-h-screen`}>
+        <body className={`${inter.className} antialiased bg-zinc-50`}>
           <Header />
           <main className="container mx-auto px-4 py-8">
             {children}

@@ -162,7 +162,7 @@ export default function Header() {
               />
             </div>
             <span className="text-xl font-bold tracking-tight text-zinc-900">
-              Bount-tea
+              Bountea
             </span>
           </Link>
 
@@ -180,6 +180,14 @@ export default function Header() {
             >
               Dashboard
             </Link>
+            {isLoaded && user && (
+              <Link
+                href="/profile"
+                className="text-sm font-medium text-zinc-600 hover:text-emerald-600"
+              >
+                My Profile
+              </Link>
+            )}
           </div>
 
           {/* Actions */}
@@ -274,9 +282,11 @@ export default function Header() {
                 />
                 {logoPreview && (
                   <div className="mt-2">
-                    <img
+                    <Image
                       src={logoPreview}
                       alt="Logo preview"
+                      width={80}
+                      height={80}
                       className="h-20 w-20 object-contain border border-zinc-300 rounded-lg"
                     />
                   </div>

@@ -8,171 +8,92 @@
 
 ### Header Component
 
-1. **Create app/components/Header.tsx matching reference structure**
-   - Client Component with Clerk authentication hooks
-   - Use `useUser()` and `useRouter()` from Next.js/Clerk
-   - Implement state management for modal and form fields
+1. **Update existing Header.tsx to match og/ styling**
+   - Currently uses zinc colors and different structure
+   - Change to match og/ exactly:
+     - Border: `border-b border-gray-300`
+     - Background: `bg-[#F5F1E8]` (inherited from body)
+     - Logo title: `font-[family-name:var(--font-dancing-script)]`
+     - Button styling: `border-l border-r border-gray-300 hover:border-b-4 hover:border-b-black`
+     - Remove zinc/emerald colors, use black/gray
 
-2. **Create bounty modal with form**
-   - Modal opens when "Create Bounty" button is clicked
-   - Check if user is authenticated, show alert if not
-   - Form fields:
-     - Bounty Name (required)
-     - Company Name (optional)
-     - Company Logo (file upload, optional)
-     - Description (required, textarea)
-     - Total Bounty in $ (required, number)
-     - Rate per 1k Views in $ (required, number, step 0.01)
-   - Form validation before submission
-   - Loading state during creation
+2. **Update create bounty modal styling**
+   - Background: `bg-[#F5F1E8]` (not white)
+   - Border: `border border-black` (not zinc-200)
+   - Input styling: `border border-black bg-white` (not zinc-300)
+   - Remove rounded corners, match og/ square borders
 
-3. **Logo upload functionality**
-   - File input accepts image files (image/*)
-   - Preview uploaded logo before submission
-   - Upload to `/api/upload-logo` endpoint
-   - Use FormData to send file
-   - Get URL back from API and include in bounty creation
-   - Handle upload errors gracefully
+3. **Update Header layout structure**
+   - Left: Logo/title with Dancing Script font, tagline
+   - Right: Navigation buttons with border styling
+   - Add "My Profile" link for authenticated users
+   - Match og/ button layout exactly
 
-4. **Connect to /api/bounties POST**
-   - Submit form data to `/api/bounties` POST endpoint
-   - Include logo URL if uploaded
-   - Handle success: clear form, close modal, redirect to home
-   - Handle errors: show alert with error message
-   - Disable submit button during creation
-
-5. **Replace current Navbar with Header**
-   - Remove existing Navbar component from layout
-   - Import and use new Header component
-   - Ensure Header is rendered in layout
-
-6. **Match styling (#F5F1E8 background, borders, etc.)**
-   - Background: `bg-[#F5F1E8]`
-   - Header border: `border-b border-gray-300`
-   - Black text on light background
-   - Button hover effects with border-bottom animation
-   - Link styling with hover states
-   - Modal styling with black borders and matching background
-
-7. **Header layout and navigation**
-   - Left side: Logo/title with tagline, links to home
-   - Right side: 
-     - "Create Bounty" button (authenticated users)
-     - "My Profile" link (authenticated users)
-     - Sign Up / Login buttons (unauthenticated users)
-     - UserButton component (authenticated users)
-   - All buttons/links have consistent border styling
-   - Hover effects: `hover:border-b-4 hover:border-b-black`
+4. **Remove Header from layout.tsx**
+   - Header should be in page.tsx (like og/)
+   - Remove from layout, add to home page
 
 ---
 
 ### BountyCard Component
 
-1. **Update existing to match reference structure**
-   - Review current BountyCard component
-   - Update props interface to match Bounty type from data/bounties.ts
-   - Ensure all fields are properly typed and used
+1. **Rewrite to match og/ structure exactly**
+   - Current component uses different props (`data` object)
+   - Change to: `bounty: Bounty`, `onClaim: (e) => void`, `isOwner?: boolean`
+   - Copy structure from `og/app/components/BountyCard.tsx`
 
-2. **Add progress bar display**
-   - Show progress bar with percentage
-   - Display claimed amount and remaining amount
-   - Show total views from submissions (if available)
-   - Use calculated `progressPercentage` if available, otherwise calculate from `claimedBounty`
-   - Progress bar fills from 0-100% based on progress
+2. **Update props interface**
+   - Use Bounty type from `src/app/data/bounties.ts` (needs to be created)
+   - Remove current `BountyProps` interface
+   - Match og/ props exactly
 
-3. **Add isOwner logic**
-   - Accept `isOwner` prop (boolean, optional, default false)
-   - Show "Your Bounty" badge/text when `isOwner` is true
-   - Hide "Submit for this Bounty" button when owner
-   - Different styling or message for owned bounties
-
-4. **Match styling (borders, colors, hover effects)**
+3. **Match og/ styling exactly**
    - Border: `border border-gray-300`
-   - Hover: `hover:border-black` with z-index increase
-   - Grid items should connect visually (negative margins for borders)
-   - Consistent spacing and padding
-   - Black text, gray accents
-   - Background: white cards on `#F5F1E8` background
+   - Hover: `hover:border-black` with z-index
+   - Progress bar: `border border-black h-3`
+   - Completed: `bg-green-500` (not black)
+   - Remove all zinc/indigo colors
 
-5. **Handle completed state (green bar)**
-   - Check `isCompleted` prop or calculate from progress
-   - Progress bar turns green when `isCompleted === true`
-   - Show "$0 remaining" when completed
-   - Disable claim button when completed
-   - Show "Bounty Completed" message
-
-6. **Card structure and content**
-   - Company logo and name (if available) at top
+4. **Update card content structure**
+   - Company logo/name at top (if available)
    - Bounty name as heading
-   - Total bounty and rate display
-   - Progress bar section
-   - Description (line-clamp-2 for truncation)
-   - Action button at bottom (Submit/Your Bounty/Completed)
+   - Total bounty & rate display
+   - Progress bar section with claimed/remaining
+   - Description (line-clamp-2)
+   - Action button at bottom
    - Fixed height: `h-[400px]` with flex layout
 
 ---
 
 ### ClaimBountyDialog Component
 
-1. **Create app/components/ClaimBountyDialog.tsx matching reference**
-   - Client Component with state management
-   - Props: `bounty`, `isOpen`, `onClose`, `isCompleted` (optional)
-   - Modal overlay with backdrop blur
-   - Centered modal with max width
+1. **Complete existing ClaimBountyDialog.tsx**
+   - Currently has basic structure but incomplete
+   - Copy full implementation from `og/app/components/ClaimBountyDialog.tsx`
+   - Update props to match: `bounty: Bounty`, `isOpen: boolean`, `onClose: () => void`, `isCompleted?: boolean`
 
-2. **URL validation and preview**
-   - Validate URL format
-   - Check if URL is from supported platforms (YouTube, Instagram, TikTok)
-   - Show error message for invalid URLs
-   - Show success indicator when valid URL is detected
-   - Disable submission until valid URL entered
+2. **Implement link preview fetching**
+   - Currently missing link preview functionality
+   - Fetch from `/api/link-preview` (needs to be created)
+   - Display preview with image, title, description
+   - Debounce API calls (1 second after typing stops)
 
-3. **Platform detection UI**
-   - Detect platform from URL:
-     - YouTube: youtube.com, youtu.be
-     - Instagram: instagram.com
-     - TikTok: tiktok.com
-   - Display platform name/icon when detected
-   - Show platform-specific validation messages
+3. **Update styling to match og/**
+   - Background: `bg-[#F5F1E8]` (not slate colors)
+   - Border: `border border-black`
+   - Input styling: `border border-black` (not slate)
+   - Remove dark mode classes, use light theme only
 
-4. **Link preview display**
-   - Fetch preview data from `/api/link-preview` endpoint
-   - Display while loading: spinner with "Loading preview..."
-   - Show preview card with:
-     - Thumbnail image (if available)
-     - Title
-     - Description (if available)
-     - URL
-   - Handle preview errors gracefully
-   - Debounce API calls (wait 1 second after typing stops)
+4. **Fix submission flow**
+   - Currently has placeholder TODO
+   - Connect to `/api/submit-bounty-item` properly
+   - Handle YouTube validation (if `/api/validate-bounty` exists)
+   - For other platforms: submit directly
+   - Show proper success/error states
 
-5. **Submit to /api/submit-bounty-item**
-   - For YouTube: Validate video first via `/api/validate-bounty`
-   - For other platforms: Submit directly
-   - Show validation state while processing
-   - Display success/error messages
-   - Close dialog on successful submission
-
-6. **Loading states**
-   - Show loading spinner while fetching preview
-   - Show "Validating..." message during validation
-   - Disable submit button during processing
-   - Loading indicators with appropriate styling
-
-7. **Error handling**
-   - Display validation errors clearly
-   - Show API error messages
-   - Handle network errors
-   - Provide user-friendly error messages
-   - Allow retry after errors
-
-8. **Dialog UI and interactions**
-   - Modal overlay: `bg-black/50 backdrop-blur-sm`
-   - Modal container: `bg-[#F5F1E8] border border-black`
-   - Close button (X) in top right
-   - Form inputs with black borders
-   - Submit button disabled when form invalid or processing
-   - Success/error messages with color-coded styling
+5. **Update type imports**
+   - Use Bounty type from `src/app/data/bounties.ts`
+   - Remove placeholder types
 
 ---
 
@@ -243,15 +164,15 @@
 
 ---
 
-## API Endpoints Needed
+## API Endpoints Status
 
-- `POST /api/bounties` - Create new bounty (should already exist)
-- `POST /api/upload-logo` - Upload logo file (may need to be created)
-- `POST /api/link-preview` - Get link preview data (may need to be created)
-- `POST /api/validate-bounty` - Validate YouTube video (may need to be created)
-- `POST /api/submit-bounty-item` - Submit content to bounty (may need to be created)
+- `POST /api/bounties` - Create new bounty ✅ EXISTS
+- `POST /api/upload-logo` - Upload logo file ✅ EXISTS
+- `POST /api/link-preview` - Get link preview data ❌ NEEDS CREATION (required for ClaimBountyDialog)
+- `POST /api/validate-bounty` - Validate YouTube video ❌ MAY NOT EXIST (check if needed)
+- `POST /api/submit-bounty-item` - Submit content to bounty ✅ EXISTS (but needs link-preview, youtube-views, tiktok-views)
 
-**Note:** Verify which endpoints exist and which need to be created. Coordinate with team for API routes.
+**Note:** `/api/link-preview` is critical for ClaimBountyDialog to work. Coordinate with Team Member 1 to create it.
 
 ---
 
