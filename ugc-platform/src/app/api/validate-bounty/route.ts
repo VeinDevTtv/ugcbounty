@@ -19,7 +19,7 @@ const validationSchema: Schema = {
   properties: {
     valid: {
       type: SchemaType.BOOLEAN,
-      description: 'Whether the video meets all the specified bounty requirements'
+      description: 'Whether the video meets ALL specified bounty requirements with 100% exact matching of every detail. Must be false if ANY specific detail is missing, incorrect, or replaced with something similar.'
     },
     explanation: {
       type: SchemaType.STRING,
@@ -107,22 +107,43 @@ export async function POST(request: NextRequest) {
     })
 
     const prompt = `
-You are a content moderator reviewing a YouTube video submission for a UGC bounty program. Your job is to ensure high-quality UGC content that truly serves the brand's marketing goals.
+You are a strict content moderator reviewing a YouTube video submission for a UGC bounty program. Your job is to ensure that the video meets EVERY SINGLE requirement with 100% accuracy. You must verify that ALL specific details match EXACTLY as described in the requirements.
 
 BOUNTY REQUIREMENTS: ${requirements}
 
-CRITICAL ANALYSIS FRAMEWORK:
-1. **Core Purpose Analysis**: What is the main purpose/focus of this video? Is the bounty requirement the central theme or just a brief mention?
-2. **Content Quality Assessment**: Does this video provide genuine value to viewers while meeting the brand requirements?
-3. **Requirement Fulfillment**: Does the video actually fulfill the specific requirements, not just show them briefly?
+CRITICAL: EXACT MATCHING REQUIREMENT
+You MUST verify that EVERY specific detail mentioned in the requirements appears EXACTLY as described. This includes:
+- Specific product names, brands, or items (e.g., "clerk builder mode hat" means EXACTLY that hat, not a similar hat)
+- Colors, designs, logos, or visual elements
+- Text, slogans, or phrases that must appear
+- Actions, demonstrations, or behaviors required
+- Any other specific details mentioned
+
+STRICT VALIDATION PROCESS:
+1. **Extract All Specific Details**: First, identify EVERY specific detail mentioned in the requirements (products, colors, brands, text, actions, etc.)
+2. **Visual Examination**: Carefully examine ALL visual elements in the video:
+   - Products shown (are they the EXACT items mentioned?)
+   - Clothing/accessories (do they match EXACTLY what's required?)
+   - Colors, logos, branding (are they EXACTLY as specified?)
+   - Text or phrases (do they appear EXACTLY as written?)
+   - Actions or demonstrations (are they performed EXACTLY as required?)
+3. **Exact Match Verification**: For each specific detail, verify it appears EXACTLY as described:
+   - If requirements say "clerk builder mode hat", the video MUST show that EXACT hat, not a different hat
+   - If requirements mention a specific color, brand, or design, it MUST match EXACTLY
+   - Similar items are NOT acceptable - only exact matches
+4. **Completeness Check**: Ensure ALL requirements are met, not just some
 
 VALIDATION CRITERIA - The video must meet ALL of these:
-- **Primary Focus**: The bounty requirement must be a CORE element of the video, not just a brief appearance
-- **Meaningful Engagement**: The product/requirement should be actively used, demonstrated, or prominently featured
-- **Content Value**: The video should provide genuine entertainment or educational value to viewers
-- **Brand Alignment**: The content should positively represent the brand and product
+- **100% Exact Matching**: EVERY specific detail from requirements appears EXACTLY as described (not similar, not approximate - EXACT)
+- **Primary Focus**: The bounty requirement must be a CORE element of the video, prominently featured throughout
+- **Meaningful Engagement**: Required items/products are actively used, demonstrated, or prominently featured
+- **Content Value**: The video provides genuine entertainment or educational value to viewers
+- **Brand Alignment**: The content positively represents the brand and product
 
-REJECTION CRITERIA - Reject if any of these apply:
+MANDATORY REJECTION CRITERIA - Reject if ANY of these apply:
+- ANY specific detail from requirements is missing, incorrect, or replaced with something similar
+- Product/item shown is similar but not the EXACT item mentioned in requirements
+- Required colors, logos, text, or visual elements don't match EXACTLY
 - Product shown for less than 10% of video duration without meaningful context
 - Requirement mentioned only briefly without demonstration or explanation
 - Video's main purpose is unrelated to the bounty requirement
@@ -130,17 +151,34 @@ REJECTION CRITERIA - Reject if any of these apply:
 - Content feels forced or inauthentic
 - Video lacks genuine value beyond showing the required item
 
-For the validation response:
-- If the video meets ALL criteria: Set valid=true and explain what the video did correctly
-- If the video does NOT meet criteria: Set valid=false and provide specific, actionable feedback
+EXAMPLES OF EXACT VS. APPROXIMATE MATCHING:
+- Requirement: "wearing a clerk builder mode hat"
+  - EXACT MATCH: Video shows the exact "clerk builder mode hat" ✓
+  - REJECT: Video shows a different hat, even if similar ✗
+  - REJECT: Video shows a hat but not the specific "clerk builder mode hat" ✗
+
+- Requirement: "using Product X in blue color"
+  - EXACT MATCH: Video shows Product X in blue ✓
+  - REJECT: Video shows Product X but in a different color ✗
+  - REJECT: Video shows a similar product in blue ✗
+
+- Requirement: "displaying the brand logo prominently"
+  - EXACT MATCH: Video shows the exact brand logo clearly visible ✓
+  - REJECT: Video shows a similar logo or no logo ✗
+
+VALIDATION RESPONSE RULES:
+- Set valid=true ONLY if ALL criteria are met AND every specific detail matches EXACTLY
+- Set valid=false if ANY detail doesn't match exactly, even if the video is otherwise good
+- When rejecting, specify EXACTLY which detail(s) don't match and what was shown instead
+- Provide clear, actionable feedback that helps creators understand what needs to be exact
 
 Example feedback format for creators:
-- "The video needs to make the [product] the main focus, not just show it briefly in the background"
-- "Your video should actively demonstrate or use the [product] throughout the content"
-- "The [requirement] should be central to your video's story, not just mentioned in passing"
-- "Focus your entire video around showcasing the [product] features and benefits"
+- "The video shows a hat, but it's not the required 'clerk builder mode hat'. You must wear the EXACT hat specified in the requirements."
+- "The video shows Product X, but it's in red instead of the required blue color. The color must match EXACTLY."
+- "The video needs to display the brand logo prominently as required. Currently, the logo is not visible or is different from what's specified."
+- "The video shows a similar product, but the requirements specify Product X. You must use the EXACT product mentioned."
 
-Provide direct, actionable feedback that helps creators understand how to create better UGC content.
+Remember: Similar is NOT good enough. Only EXACT matches are acceptable. Be strict and thorough in your verification.
 `
 
     console.log('Calling Gemini with video analysis for URL:', url)
