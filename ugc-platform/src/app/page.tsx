@@ -94,9 +94,7 @@ export default function Home() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors ${
-      theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
-    }`}>
+    <div className="min-h-screen">
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (

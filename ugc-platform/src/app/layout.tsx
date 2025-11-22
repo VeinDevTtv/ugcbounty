@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css"; // Standard Next.js global css
 import Header from "@/components/Header";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { GradientBackground } from "@/components/GradientBackground";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +31,8 @@ export default function RootLayout({
     <ClerkProvider publishableKey={publishableKey}>
       <ThemeProvider>
         <html lang="en">
-          <body className={`${inter.className} min-h-screen`}>
+          <body className={`${inter.className} min-h-screen relative`}>
+            <GradientBackground />
             <Header />
             <main className="container mx-auto px-4 py-8">
               {children}

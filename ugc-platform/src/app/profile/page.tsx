@@ -212,7 +212,7 @@ export default function ProfilePage() {
   // Show loading spinner
   if (!isLoaded || isLoading) {
     return (
-      <div className="min-h-screen bg-[#E8ECF3] dark:bg-[#020617] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B3C73] dark:border-[#10B981]"></div>
       </div>
     );
@@ -224,7 +224,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#E8ECF3] dark:bg-[#020617]">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* User Profile Header */}
         <div className="bg-white border border-[#C8D1E0] rounded-lg p-6 mb-8">
