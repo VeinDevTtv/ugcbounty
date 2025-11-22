@@ -39,7 +39,7 @@ export function HeroSection() {
     : "text-[#F5F8FC]"
 
   return (
-    <section className="relative pt-20 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
+    <section className="relative pt-28 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
       <div className="max-w-4xl">
         <h1
           ref={titleRef}
