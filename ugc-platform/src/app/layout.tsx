@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css"; // Standard Next.js global css
-import Header from "@/components/Header";
+import ConditionalHeader from "@/components/ConditionalHeader";
+import ConditionalMain from "@/components/ConditionalMain";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import CursorWrapper from "@/components/CursorWrapper";
 
@@ -33,10 +34,10 @@ export default function RootLayout({
         <html lang="en">
           <body className={`${inter.className} min-h-screen`}>
             <CursorWrapper />
-            <Header />
-            <main className="container mx-auto px-4 py-8">
+            <ConditionalHeader />
+            <ConditionalMain>
               {children}
-            </main>
+            </ConditionalMain>
           </body>
         </html>
       </ThemeProvider>

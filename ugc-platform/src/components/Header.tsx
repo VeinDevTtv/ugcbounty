@@ -170,7 +170,7 @@ export default function Header() {
   }, []);
 
   const navItems = [
-    { href: "/", label: "Feed" },
+    { href: "/feed", label: "Feed" },
     { href: "/dashboard", label: "Dashboard" },
     { href: "/profile", label: "My Profile" },
   ];
@@ -185,7 +185,7 @@ export default function Header() {
       }`}>
         <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
           {/* LOGO */}
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/feed" className="flex items-center gap-3">
             <div className="relative h-20 w-48 md:h-24 md:w-56">
               <Image
                 src="/bountea.png" 
@@ -204,10 +204,7 @@ export default function Header() {
               : "bg-[#141B23]/60"
           }`}>
             {navItems.map((item) => {
-              const isActive =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname?.startsWith(item.href);
+              const isActive = pathname?.startsWith(item.href);
 
               return (
                 <Link
