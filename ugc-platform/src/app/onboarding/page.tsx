@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import RoleSelection from "@/components/onboarding/RoleSelection";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function OnboardingPage() {
   const { user, isLoaded } = useUser();
@@ -14,6 +15,7 @@ export default function OnboardingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isSettingRole, setIsSettingRole] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const redirectingRef = useRef(false);
 
   // Check if user has a role
@@ -50,6 +52,8 @@ export default function OnboardingPage() {
         }
       } catch (error) {
         console.error('Error checking user role:', error);
+        // Don't show error for role check - just allow user to proceed
+        // The set-role API will handle profile creation if needed
       } finally {
         setIsLoading(false);
       }
@@ -60,6 +64,7 @@ export default function OnboardingPage() {
 
   const handleRoleSelected = async (role: 'creator' | 'business') => {
     setIsSettingRole(true);
+    setError(null);
     redirectingRef.current = true;
     
     try {
@@ -67,7 +72,7 @@ export default function OnboardingPage() {
       const timeoutId = setTimeout(() => {
         setIsSettingRole(false);
         redirectingRef.current = false;
-        alert('Request timed out. Please try again.');
+        setError('Request timed out. Please check your connection and try again.');
       }, 10000); // 10 second timeout
 
       const response = await fetch('/api/onboarding/set-role', {
@@ -106,7 +111,7 @@ export default function OnboardingPage() {
     } catch (error) {
       console.error('Error setting role:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to set role. Please try again.';
-      alert(errorMessage);
+      setError(errorMessage);
       setIsSettingRole(false);
       redirectingRef.current = false;
     }
@@ -147,6 +152,29 @@ export default function OnboardingPage() {
       theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
     }`}>
       <div className="w-full max-w-4xl">
+        {error && (
+          <div className={cn(
+            "mb-6 p-4 rounded-lg border flex items-start gap-3",
+            theme === "light" 
+              ? "bg-red-50 border-red-200 text-red-800" 
+              : "bg-red-900/20 border-red-800 text-red-300"
+          )}>
+            <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="font-medium">Error</p>
+              <p className="text-sm mt-1">{error}</p>
+            </div>
+            <button
+              onClick={() => setError(null)}
+              className={cn(
+                "text-sm underline",
+                theme === "light" ? "text-red-600" : "text-red-400"
+              )}
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
         <RoleSelection 
           onRoleSelected={handleRoleSelected}
           isLoading={isSettingRole}
