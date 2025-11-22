@@ -24,13 +24,12 @@ export default function Header() {
     <>
       {/* NAVBAR */}
       <nav className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-[#F5EEDC] backdrop-blur-md">
-        {/* use min-h instead of fixed h so logo can breathe */}
-        <div className="container mx-auto flex min-h-20 items-center justify-between px-4 py-2">
-
+        {/* Taller header so logo never gets clipped */}
+        <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3">
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3">
-            {/* Wrapper controls logo size responsively */}
-            <div className="relative h-12 w-36 md:h-14 md:w-40">
+            {/* Wrapper controls logo size and keeps it inside the header */}
+            <div className="relative h-16 w-44 md:h-20 md:w-52">
               <Image
                 src="/bountea.png"
                 alt="Bountea Logo"
@@ -88,7 +87,7 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* MODAL — unchanged */}
+      {/* MODAL */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white shadow-2xl max-w-lg w-full rounded-lg border border-zinc-200">
@@ -104,7 +103,7 @@ export default function Header() {
               </button>
             </div>
 
-            {/* form continues… (unchanged) */}
+            {/* form continues… */}
           </div>
         </div>
       )}
