@@ -247,9 +247,11 @@ export default function BountyDetailPage({
               <div className="flex items-start justify-between gap-4">
                 <div>
                   {isCompleted && (
-                    <Badge variant="success" className="mb-2">
-                      Completed
-                    </Badge>
+                    <div className="mb-2">
+                      <Badge variant="success">
+                        Completed
+                      </Badge>
+                    </div>
                   )}
                   {!isCompleted && (
                     <Badge variant="warning">
