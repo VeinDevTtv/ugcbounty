@@ -3,7 +3,6 @@
 import {
   SignInButton,
   SignUpButton,
-  UserButton,
   useUser,
   SignedIn,
   SignedOut,
@@ -85,24 +84,19 @@ export default function Header() {
           {/* Right Side */}
           <div className="flex items-center gap-4">
             <SignedIn>
-  {(() => {
-    const isActive = pathname.startsWith("/create-bounty");
-
-    return (
-      <Link
-        href="/create-bounty"
-        className={`text-sm lg:text-base font-semibold px-4 py-2 rounded-full transition-all
-        ${
-          isActive
-            ? "bg-emerald-600 text-white shadow-sm"
-            : "text-zinc-700 hover:text-emerald-700 hover:bg-emerald-50"
-        }`}
-      >
-        Create Bounty
-      </Link>
-    );
-  })()}
-</SignedIn>
+              <Button
+                onClick={() => {
+                  if (!user) {
+                    alert("Please sign in to create a bounty");
+                    return;
+                  }
+                  setShowCreateModal(true);
+                }}
+                size="sm"
+              >
+                Create Bounty
+              </Button>
+            </SignedIn>
 
 
             <SignedOut>
@@ -118,7 +112,21 @@ export default function Header() {
             </SignedOut>
 
             <SignedIn>
-              <UserButton />
+              <Link href="/profile">
+                <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                  {user?.imageUrl ? (
+                    <img
+                      src={user.imageUrl}
+                      alt={user.username || user.emailAddresses[0]?.emailAddress || "Profile"}
+                      className="h-8 w-8 rounded-full border-2 border-zinc-300"
+                    />
+                  ) : (
+                    <div className="h-8 w-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-semibold text-sm border-2 border-zinc-300">
+                      {user?.username?.[0]?.toUpperCase() || user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || "U"}
+                    </div>
+                  )}
+                </div>
+              </Link>
             </SignedIn>
           </div>
         </div>
@@ -384,9 +392,8 @@ export default function Header() {
       resetForm();
       setShowCreateModal(false);
       
-      // Refresh page to show new bounty
-      router.refresh();
-      window.location.href = '/';
+      // Redirect to home page to show new bounty (like og/)
+      router.push('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred while creating the bounty');
     } finally {
