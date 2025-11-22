@@ -105,12 +105,12 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { name, description, totalBounty, ratePer1kViews, companyName, logoUrl } = body
+    const { name, description, instructions, totalBounty, ratePer1kViews, companyName, logoUrl } = body
 
     // Validate required fields
     if (!name || !description || totalBounty === undefined || ratePer1kViews === undefined) {
       return NextResponse.json(
-        { error: 'Missing required fields. Required: name, description, totalBounty, ratePer1kViews' },
+        { error: 'Missing required fields. Required: name, description, totalBounty, ratePer1kViews. Instructions is optional.' },
         { status: 400 }
       )
     }
@@ -168,7 +168,7 @@ export async function POST(request: Request) {
             { status: 400 }
           )
         }
-      } catch (error) {
+      } catch {
         return NextResponse.json(
           { error: 'Invalid logo URL format' },
           { status: 400 }
@@ -177,8 +177,8 @@ export async function POST(request: Request) {
     }
 
     // Prepare insert data - map camelCase to snake_case
-    // Note: company_name and logo_url may not exist in schema yet
-    // If they don't exist, they'll be ignored by Supabase
+    // Note: company_name, logo_url, and instructions are optional
+    // If they don't exist in schema, they'll be ignored by Supabase
     const insertData: Database['public']['Tables']['bounties']['Insert'] = {
       name,
       description,
@@ -189,6 +189,8 @@ export async function POST(request: Request) {
       // Only include optional fields if they're provided
       ...(companyName && { company_name: companyName }),
       ...(logoUrl && { logo_url: logoUrl }),
+      // Instructions is optional - include if provided, otherwise null
+      instructions: instructions && instructions.trim() ? instructions.trim() : null,
     }
 
     // Insert bounty into database with creator_id
@@ -246,7 +248,7 @@ export async function POST(request: Request) {
 
 /**
  * PUT /api/bounties
- * Update a bounty (only name and description, only by owner)
+ * Update a bounty (name, description, and instructions, only by owner)
  */
 export async function PUT(request: Request) {
   try {
@@ -261,12 +263,12 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json()
-    const { id, name, description } = body
+    const { id, name, description, instructions } = body
 
     // Validate required fields
-    if (!id || (!name && !description)) {
+    if (!id || (!name && !description && instructions === undefined)) {
       return NextResponse.json(
-        { error: 'Missing required fields. Need bounty id and at least name or description.' },
+        { error: 'Missing required fields. Need bounty id and at least name, description, or instructions.' },
         { status: 400 }
       )
     }
@@ -292,10 +294,14 @@ export async function PUT(request: Request) {
       )
     }
 
-    // Update only name and description
-    const updateData: { name?: string; description?: string } = {}
+    // Update name, description, and/or instructions
+    const updateData: { name?: string; description?: string; instructions?: string | null } = {}
     if (name) updateData.name = name
     if (description) updateData.description = description
+    // Instructions can be explicitly set to null (empty string means null)
+    if (instructions !== undefined) {
+      updateData.instructions = instructions && instructions.trim() ? instructions.trim() : null
+    }
 
     const { data, error } = await supabaseServer
       .from('bounties')

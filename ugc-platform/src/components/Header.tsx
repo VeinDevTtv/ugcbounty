@@ -26,6 +26,7 @@ export default function Header() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [bountyName, setBountyName] = useState("");
   const [bountyDescription, setBountyDescription] = useState("");
+  const [bountyInstructions, setBountyInstructions] = useState("");
   const [totalBounty, setTotalBounty] = useState("");
   const [ratePer1k, setRatePer1k] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -96,6 +97,7 @@ export default function Header() {
         body: JSON.stringify({
           name: bountyName.trim(),
           description: bountyDescription.trim(),
+          instructions: bountyInstructions.trim() || null,
           totalBounty: parseFloat(totalBounty),
           ratePer1kViews: parseFloat(ratePer1k),
           companyName: companyName.trim() || null,
@@ -110,6 +112,7 @@ export default function Header() {
 
       setBountyName("");
       setBountyDescription("");
+      setBountyInstructions("");
       setTotalBounty("");
       setRatePer1k("");
       setCompanyName("");
@@ -378,6 +381,31 @@ export default function Header() {
                 />
               </div>
 
+              {/* Instructions */}
+              <div>
+                <label className={`block text-sm font-medium mb-2 ${
+                  theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
+                }`}>
+                  Instructions (Optional)
+                </label>
+                <textarea
+                  value={bountyInstructions}
+                  onChange={(e) => setBountyInstructions(e.target.value)}
+                  rows={3}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    theme === "light"
+                      ? "border-[#C8D1E0] bg-white text-[#2E3A47] placeholder:text-[#6B7A8F] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
+                      : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF] focus:ring-[#1F2937]/20 focus:border-[#1F2937]"
+                  }`}
+                  placeholder="Exact requirements that submitted videos must meet to be accepted..."
+                />
+                <p className={`text-xs mt-1 ${
+                  theme === "light" ? "text-[#6B7A8F]" : "text-[#CFCFCF]"
+                }`}>
+                  These instructions will be used for video validation. If left empty, the description will be used.
+                </p>
+              </div>
+
               {/* Money fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -497,6 +525,7 @@ export default function Header() {
                     setShowCreateModal(false);
                     setBountyName("");
                     setBountyDescription("");
+                    setBountyInstructions("");
                     setTotalBounty("");
                     setRatePer1k("");
                     setCompanyName("");
