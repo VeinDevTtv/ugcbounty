@@ -211,17 +211,23 @@ export default function Dashboard() {
                             <StatsWidget 
                                 label="Total Earnings" 
                                 value={`$${submissionStats.totalEarnings.toFixed(2)}`} 
-                                icon={DollarSign} 
+                                icon={DollarSign}
+                                bgColorLight="#1B3C73"
+                                bgColorDark="#141B23"
                             />
                             <StatsWidget 
                                 label="Total Views" 
                                 value={submissionStats.totalViews.toLocaleString()} 
-                                icon={Eye} 
+                                icon={Eye}
+                                bgColorLight="#1B3C73"
+                                bgColorDark="#141B23"
                             />
                             <StatsWidget 
                                 label="Active Submissions" 
                                 value={submissionStats.activeSubmissions.toString()} 
-                                icon={ListVideo} 
+                                icon={ListVideo}
+                                bgColorLight="#1B3C73"
+                                bgColorDark="#141B23"
                             />
                         </>
                     ) : (

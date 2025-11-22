@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import ClaimBountyDialog from "@/components/ClaimBountyDialog";
-import { ArrowLeft, CheckCircle, Clock, DollarSign, FileText, Eye, User } from "lucide-react";
+import { ArrowLeft, CheckCircle, Clock, DollarSign, FileText, Eye, User, RefreshCw } from "lucide-react";
 
 interface BountyWithCreator {
   id: string;
@@ -79,6 +79,7 @@ export default function BountyDetailPage({
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Calculate progress from submissions
   const [calculatedProgress, setCalculatedProgress] = useState({
@@ -147,6 +148,41 @@ export default function BountyDetailPage({
       }
     } catch (error) {
       console.error("Error fetching submissions:", error);
+    }
+  };
+
+  const refreshViewCounts = async () => {
+    if (!bountyId || isRefreshing) return;
+
+    try {
+      setIsRefreshing(true);
+      const response = await fetch("/api/update-submission-views", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ bountyId }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("View counts updated:", result);
+        
+        // Refresh submissions to show updated view counts
+        await fetchSubmissions();
+        
+        // Also refresh bounty details to update progress
+        await fetchBountyDetails();
+      } else {
+        const error = await response.json();
+        console.error("Failed to refresh view counts:", error);
+        alert("Failed to refresh view counts. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error refreshing view counts:", error);
+      alert("An error occurred while refreshing view counts.");
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -337,9 +373,21 @@ export default function BountyDetailPage({
 
               {/* Submissions List */}
               <section className="mt-8 space-y-4">
-                <h3 className="text-lg font-bold text-[#2E3A47]">
-                  Submissions ({submissions.length})
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-[#2E3A47]">
+                    Submissions ({submissions.length})
+                  </h3>
+                  {submissions.length > 0 && (
+                    <button
+                      onClick={refreshViewCounts}
+                      disabled={isRefreshing}
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 rounded-lg border border-indigo-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                      {isRefreshing ? 'Refreshing...' : 'Refresh Views'}
+                    </button>
+                  )}
+                </div>
                 {submissions.length === 0 ? (
                   <div className="text-center py-12 bg-[#F7FAFC] rounded-xl border border-[#C8D1E0]">
                     <p className="text-[#52677C] text-lg">
