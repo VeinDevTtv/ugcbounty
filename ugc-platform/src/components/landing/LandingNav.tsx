@@ -36,29 +36,29 @@ export function LandingNav() {
       </Link>
 
       <div className="flex items-center gap-4">
-        {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-4">
-          <Link
-            href="/feed"
-            className={`text-sm font-medium transition-colors ${
-              theme === "light"
-                ? "text-[#2E3A47] hover:text-[#1B3C73]"
-                : "text-[#B8C5D6] hover:text-[#60A5FA]"
-            }`}
-          >
-            Feed
-          </Link>
-          <Link
-            href="/dashboard"
-            className={`text-sm font-medium transition-colors ${
-              theme === "light"
-                ? "text-[#2E3A47] hover:text-[#1B3C73]"
-                : "text-[#B8C5D6] hover:text-[#60A5FA]"
-            }`}
-          >
-            Dashboard
-          </Link>
-          <SignedIn>
+        {/* Navigation Links - Only show when signed in */}
+        <SignedIn>
+          <nav className="hidden md:flex items-center gap-4">
+            <Link
+              href="/feed"
+              className={`text-sm font-medium transition-colors ${
+                theme === "light"
+                  ? "text-[#2E3A47] hover:text-[#1B3C73]"
+                  : "text-[#B8C5D6] hover:text-[#60A5FA]"
+              }`}
+            >
+              Feed
+            </Link>
+            <Link
+              href="/dashboard"
+              className={`text-sm font-medium transition-colors ${
+                theme === "light"
+                  ? "text-[#2E3A47] hover:text-[#1B3C73]"
+                  : "text-[#B8C5D6] hover:text-[#60A5FA]"
+              }`}
+            >
+              Dashboard
+            </Link>
             <Link
               href="/profile"
               className={`text-sm font-medium transition-colors ${
@@ -69,35 +69,35 @@ export function LandingNav() {
             >
               Profile
             </Link>
-          </SignedIn>
-        </nav>
+          </nav>
+        </SignedIn>
 
         {/* Theme Toggle */}
         <ThemeToggle />
 
         {/* Auth Buttons */}
         <SignedOut>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <SignInButton mode="modal">
               <button
-                className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                className={`px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
                   theme === "light"
-                    ? "text-[#1B3C73] hover:bg-white/60"
-                    : "text-[#60A5FA] hover:bg-[#141B23]/60"
+                    ? "border border-[#1B3C73] text-[#1B3C73] bg-transparent hover:bg-[#1B3C73] hover:text-white hover:shadow-md"
+                    : "border border-[#60A5FA] text-[#60A5FA] bg-transparent hover:bg-[#60A5FA] hover:text-white hover:shadow-md"
                 }`}
               >
-                Sign In
+                Log In
               </button>
             </SignInButton>
             <SignUpButton mode="modal">
               <button
-                className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                className={`px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 shadow-sm ${
                   theme === "light"
-                    ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
-                    : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
+                    ? "bg-[#1B3C73] text-white hover:bg-[#102B52] hover:shadow-md"
+                    : "bg-[#60A5FA] text-white hover:bg-[#3B82F6] hover:shadow-md"
                 }`}
               >
-                Get Started
+                Sign Up
               </button>
             </SignUpButton>
           </div>
