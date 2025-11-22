@@ -158,9 +158,48 @@ Provide direct, actionable feedback that helps creators understand how to create
     return NextResponse.json(parsedResponse as ValidationResponse)
   } catch (error) {
     console.error('Error validating bounty:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    
+    // Type guard for error with status property
+    const hasStatus = (e: unknown): e is { status?: number; message?: string } => {
+      return typeof e === 'object' && e !== null && ('status' in e || 'message' in e)
+    }
+    
+    const errorObj = hasStatus(error) ? error : { message: String(error) }
+    
+    // Handle specific Gemini API errors
+    if (errorObj.status === 503 || 
+        errorObj.message?.includes('overloaded') || 
+        errorObj.message?.includes('Service Unavailable')) {
+      return NextResponse.json({
+        valid: false,
+        explanation: 'The AI validation service is currently overloaded. Please try again in a few moments.'
+      } as ValidationResponse)
+    }
+    
+    if (errorObj.status === 429 || 
+        errorObj.message?.includes('rate limit') || 
+        errorObj.message?.includes('quota')) {
+      return NextResponse.json({
+        valid: false,
+        explanation: 'Too many validation requests. Please wait a moment and try again.'
+      } as ValidationResponse)
+    }
+    
+    if (errorObj.message?.includes('API key') || 
+        errorObj.status === 401 || 
+        errorObj.status === 403) {
+      console.error('Gemini API authentication error:', error)
+      return NextResponse.json(
+        { error: 'AI validation service configuration error. Please contact support.' },
+        { status: 500 }
+      )
+    }
+    
+    // For other errors, return a user-friendly validation response
+    // This ensures the frontend can display the error properly
+    return NextResponse.json({
+      valid: false,
+      explanation: 'Unable to validate video at this time. Please try again later or contact support if the issue persists.'
+    } as ValidationResponse)
   }
 }

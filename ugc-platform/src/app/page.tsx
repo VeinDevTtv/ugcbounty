@@ -95,20 +95,20 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen transition-colors ${
-      theme === "light" ? "bg-gray-50" : "bg-[#1F2937]"
+      theme === "light" ? "bg-[#E8ECF3]" : "bg-[#1F2937]"
     }`}>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${
-              theme === "light" ? "border-[#1F2937]" : "border-[#10B981]"
+              theme === "light" ? "border-[#1B3C73]" : "border-[#10B981]"
             }`}></div>
           </div>
         ) : bounties.length === 0 ? (
           <div className="text-center py-20">
             <p className={`text-lg ${
-              theme === "light" ? "text-gray-600" : "text-gray-400"
+              theme === "light" ? "text-[#52677C]" : "text-gray-400"
             }`}>
               No bounties available yet. Create one to get started!
             </p>

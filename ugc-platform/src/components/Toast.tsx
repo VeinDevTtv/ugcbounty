@@ -14,9 +14,9 @@ export default function Toast({ message, show, onClose }: { message: string, sho
     if (!show) return null;
 
     return (
-        <div className="fixed bottom-6 right-6 z-[200] flex items-center gap-3 rounded-2xl bg-[#020617] border border-[#010A12] px-4 py-3 text-[#FFFFFF] shadow-xl animate-in slide-in-from-bottom-5">
-            <CheckCircle className="h-5 w-5 text-[#10B981]" />
-            <span className="text-sm font-medium">{message}</span>
+        <div className="fixed bottom-6 right-6 z-[200] flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-medium shadow-xl animate-in slide-in-from-bottom-5 dark:bg-[#020617] dark:border-[#010A12] dark:text-[#FFFFFF] bg-white border-[#C8D1E0] text-[#2E3A47]">
+            <CheckCircle className="h-5 w-5 dark:text-[#10B981] text-[#4F6FA8]" />
+            <span>{message}</span>
         </div>
     );
 }

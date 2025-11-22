@@ -24,8 +24,6 @@ export default function Header() {
   const { theme } = useTheme();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  // Form state
   const [bountyName, setBountyName] = useState("");
   const [bountyDescription, setBountyDescription] = useState("");
   const [totalBounty, setTotalBounty] = useState("");
@@ -35,6 +33,103 @@ export default function Header() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      setError("Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.");
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      setError("File too large. Maximum size is 5MB.");
+      return;
+    }
+
+    setLogoFile(file);
+    setError(null);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setLogoPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCreateBounty = async () => {
+    if (!bountyName.trim() || !bountyDescription.trim() || !totalBounty || !ratePer1k) {
+      setError("Please fill in all required fields.");
+      return;
+    }
+
+    try {
+      setIsCreating(true);
+      setError(null);
+
+      let logoUrl = null;
+      if (logoFile) {
+        const formData = new FormData();
+        formData.append('file', logoFile);
+        
+        const uploadResponse = await fetch('/api/upload-logo', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          const uploadError = await uploadResponse.json();
+          throw new Error(uploadError.error || "Failed to upload logo");
+        }
+
+        const uploadResult = await uploadResponse.json();
+        logoUrl = uploadResult.url;
+      }
+
+      const response = await fetch("/api/bounties", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: bountyName.trim(),
+          description: bountyDescription.trim(),
+          totalBounty: parseFloat(totalBounty),
+          ratePer1kViews: parseFloat(ratePer1k),
+          companyName: companyName.trim() || null,
+          logoUrl: logoUrl,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create bounty");
+      }
+
+      setBountyName("");
+      setBountyDescription("");
+      setTotalBounty("");
+      setRatePer1k("");
+      setCompanyName("");
+      setLogoFile(null);
+      setLogoPreview(null);
+      setError(null);
+      setShowCreateModal(false);
+      
+      router.push("/");
+      router.refresh();
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while creating the bounty"
+      );
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   const navItems = [
     { href: "/", label: "Feed" },
@@ -47,15 +142,15 @@ export default function Header() {
       {/* HEADER / NAVBAR */}
       <nav className={`sticky top-0 z-50 w-full backdrop-blur-md shadow-sm transition-colors ${
         theme === "light" 
-          ? "border-b border-gray-200 bg-white" 
+          ? "border-b border-[#C8D1E0] bg-[#E8ECF3]" 
           : "border-b border-[#1F2937] bg-[#1F2937]"
       }`}>
         <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3">
-            <div className="relative h-16 w-44 md:h-20 md:w-52">
+            <div className="relative h-20 w-48 md:h-24 md:w-56">
               <Image
-                src="/bountea.png"
+                src="/bountea.png" 
                 alt="Bountea Logo"
                 fill
                 priority
@@ -67,7 +162,7 @@ export default function Header() {
           {/* NAV PILLS (desktop) */}
           <div className={`hidden md:flex items-center gap-3 px-3 py-1 rounded-full shadow-sm ${
             theme === "light" 
-              ? "bg-gray-100/60" 
+              ? "bg-white/60 border border-[#D9E1EF]" 
               : "bg-[#1F2937]/60"
           }`}>
             {navItems.map((item) => {
@@ -82,9 +177,11 @@ export default function Header() {
                   href={item.href}
                   className={`px-5 py-2 text-sm lg:text-base font-semibold rounded-full transition-all ${
                     isActive
-                      ? "bg-[#1F2937] text-white shadow-sm"
+                      ? theme === "light"
+                        ? "bg-[#1B3C73] text-white shadow border border-[#102B52]"
+                        : "bg-[#1F2937] text-white shadow-sm"
                       : theme === "light"
-                      ? "text-gray-700 hover:text-[#1F2937] hover:bg-gray-200"
+                      ? "text-[#2E3A47] hover:text-[#4F6FA8] hover:bg-[#DDE5F2]"
                       : "text-[#FFFFFF] hover:text-[#10B981] hover:bg-[#1F2937]"
                   }`}
                 >
@@ -112,18 +209,11 @@ export default function Header() {
                       setShowCreateModal(true);
                     }}
                     size="sm"
-                    variant="ghost"
-                    className="
-                      rounded-full 
-                      bg-[#1F2937] 
-                      text-white 
-                      px-6 
-                      py-2 
-                      text-sm 
-                      font-semibold 
-                      shadow-sm
-                      hover:bg-[#2A3441]
-                    "
+                    className={`rounded-full px-6 py-2 text-sm font-semibold shadow-sm ${
+                      theme === "light"
+                        ? "bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
+                        : "bg-[#1F2937] text-white hover:bg-[#2A3441]"
+                    }`}
                   >
                     Create Bounty
                   </Button>
@@ -137,7 +227,7 @@ export default function Header() {
                       size="sm"
                       className={`rounded-full ${
                         theme === "light"
-                          ? "text-gray-700 hover:bg-gray-100"
+                          ? "text-[#2E3A47] hover:text-[#1B3C73] hover:bg-[#DDE5F2]"
                           : "text-[#FFFFFF] hover:bg-[#1F2937]"
                       }`}
                     >
@@ -148,7 +238,11 @@ export default function Header() {
                   <SignUpButton mode="modal">
                     <Button
                       size="sm"
-                      className="rounded-full bg-[#1F2937] text-white border border-[#1F2937] hover:bg-[#2A3441]"
+                      className={`rounded-full ${
+                        theme === "light"
+                          ? "bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
+                          : "bg-[#1F2937] text-white border border-[#1F2937] hover:bg-[#2A3441]"
+                      }`}
                     >
                       Sign Up
                     </Button>
@@ -169,14 +263,14 @@ export default function Header() {
                           }
                           className={`h-9 w-9 rounded-full border-2 ${
                             theme === "light"
-                              ? "border-gray-200 bg-gray-50"
+                              ? "border-[#C8D1E0] bg-white"
                               : "border-[#1F2937] bg-[#1F2937]"
                           }`}
                         />
                       ) : (
                         <div className={`h-9 w-9 rounded-full flex items-center justify-center text-white font-semibold text-sm border-2 ${
                           theme === "light"
-                            ? "bg-[#1F2937] border-gray-200"
+                            ? "bg-[#1B3C73] border-[#C8D1E0]"
                             : "bg-[#1F2937] border-[#1F2937]"
                         }`}>
                           {user?.username?.[0]?.toUpperCase() ||
@@ -195,17 +289,27 @@ export default function Header() {
 
       {/* CREATE BOUNTY MODAL */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className={`shadow-2xl max-w-lg w-full rounded-lg border ${
-            theme === "light"
-              ? "bg-white border-gray-200"
-              : "bg-[#1F2937] border-[#1F2937]"
-          }`}>
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowCreateModal(false);
+            }
+          }}
+        >
+          <div 
+            className={`shadow-2xl max-w-lg w-full rounded-lg border ${
+              theme === "light"
+                ? "bg-white border-[#C8D1E0]"
+                : "bg-[#1F2937] border-[#1F2937]"
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className={`flex justify-between items-start p-6 border-b ${
-              theme === "light" ? "border-gray-200" : "border-[#1F2937]"
+              theme === "light" ? "border-[#C8D1E0]" : "border-[#1F2937]"
             }`}>
               <h2 className={`text-2xl font-bold ${
-                theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                theme === "light" ? "text-[#2E3A47]" : "text-[#FFFFFF]"
               }`}>
                 Create New Bounty
               </h2>
@@ -213,7 +317,7 @@ export default function Header() {
                 onClick={() => setShowCreateModal(false)}
                 className={`transition-colors ${
                   theme === "light"
-                    ? "text-gray-500 hover:text-gray-900"
+                    ? "text-[#52677C] hover:text-[#2E3A47]"
                     : "text-[#CFCFCF] hover:text-[#FFFFFF]"
                 }`}
               >
@@ -221,9 +325,13 @@ export default function Header() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateBounty} className="p-6 space-y-4">
+            <form onSubmit={(e) => { e.preventDefault(); handleCreateBounty(); }} className="p-6 space-y-4">
               {error && (
-                <div className="rounded-md bg-red-900/30 px-3 py-2 text-sm text-red-400">
+                <div className={`rounded-md px-3 py-2 text-sm ${
+                  theme === "light"
+                    ? "bg-red-50 text-red-600 border border-red-200"
+                    : "bg-red-900/30 text-red-400"
+                }`}>
                   {error}
                 </div>
               )}
@@ -231,7 +339,7 @@ export default function Header() {
               {/* Bounty Name */}
               <div>
                 <label className={`block text-sm font-medium mb-2 ${
-                  theme === "light" ? "text-gray-700" : "text-[#FFFFFF]"
+                  theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
                 }`}>
                   Bounty Name *
                 </label>
@@ -240,10 +348,10 @@ export default function Header() {
                   value={bountyName}
                   onChange={(e) => setBountyName(e.target.value)}
                   required
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F2937]/20 focus:border-[#1F2937] ${
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                     theme === "light"
-                      ? "border-gray-300 bg-white text-gray-900 placeholder:text-gray-500"
-                      : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF]"
+                      ? "border-[#C8D1E0] bg-white text-[#2E3A47] placeholder:text-[#6B7A8F] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
+                      : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF] focus:ring-[#1F2937]/20 focus:border-[#1F2937]"
                   }`}
                   placeholder="e.g., Duo World Voices Campaign"
                 />
@@ -252,7 +360,7 @@ export default function Header() {
               {/* Description */}
               <div>
                 <label className={`block text-sm font-medium mb-2 ${
-                  theme === "light" ? "text-gray-700" : "text-[#FFFFFF]"
+                  theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
                 }`}>
                   Description *
                 </label>
@@ -261,10 +369,10 @@ export default function Header() {
                   onChange={(e) => setBountyDescription(e.target.value)}
                   required
                   rows={4}
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F2937]/20 focus:border-[#1F2937] ${
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                     theme === "light"
-                      ? "border-gray-300 bg-white text-gray-900 placeholder:text-gray-500"
-                      : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF]"
+                      ? "border-[#C8D1E0] bg-white text-[#2E3A47] placeholder:text-[#6B7A8F] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
+                      : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF] focus:ring-[#1F2937]/20 focus:border-[#1F2937]"
                   }`}
                   placeholder="Describe what creators should create..."
                 />
@@ -274,7 +382,7 @@ export default function Header() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${
-                    theme === "light" ? "text-gray-700" : "text-[#FFFFFF]"
+                    theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
                   }`}>
                     Total Bounty ($) *
                   </label>
@@ -285,17 +393,17 @@ export default function Header() {
                     required
                     min="0"
                     step="0.01"
-                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F2937]/20 focus:border-[#1F2937] ${
+                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                       theme === "light"
-                        ? "border-gray-300 bg-white text-gray-900 placeholder:text-gray-500"
-                        : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF]"
+                        ? "border-[#C8D1E0] bg-white text-[#2E3A47] placeholder:text-[#6B7A8F] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
+                        : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF] focus:ring-[#1F2937]/20 focus:border-[#1F2937]"
                     }`}
                     placeholder="10000"
                   />
                 </div>
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${
-                    theme === "light" ? "text-gray-700" : "text-[#FFFFFF]"
+                    theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
                   }`}>
                     Rate per 1k Views ($) *
                   </label>
@@ -306,10 +414,10 @@ export default function Header() {
                     required
                     min="0"
                     step="0.01"
-                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F2937]/20 focus:border-[#1F2937] ${
+                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                       theme === "light"
-                        ? "border-gray-300 bg-white text-gray-900 placeholder:text-gray-500"
-                        : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF]"
+                        ? "border-[#C8D1E0] bg-white text-[#2E3A47] placeholder:text-[#6B7A8F] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
+                        : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF] focus:ring-[#1F2937]/20 focus:border-[#1F2937]"
                     }`}
                     placeholder="25.00"
                   />
@@ -319,7 +427,7 @@ export default function Header() {
               {/* Company Name */}
               <div>
                 <label className={`block text-sm font-medium mb-2 ${
-                  theme === "light" ? "text-gray-700" : "text-[#FFFFFF]"
+                  theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
                 }`}>
                   Company Name (Optional)
                 </label>
@@ -327,10 +435,10 @@ export default function Header() {
                   type="text"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F2937]/20 focus:border-[#1F2937] ${
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                     theme === "light"
-                      ? "border-gray-300 bg-white text-gray-900 placeholder:text-gray-500"
-                      : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF]"
+                      ? "border-[#C8D1E0] bg-white text-[#2E3A47] placeholder:text-[#6B7A8F] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
+                      : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF] focus:ring-[#1F2937]/20 focus:border-[#1F2937]"
                   }`}
                   placeholder="Duolingo"
                 />
@@ -339,7 +447,7 @@ export default function Header() {
               {/* Logo Upload */}
               <div>
                 <label className={`block text-sm font-medium mb-2 ${
-                  theme === "light" ? "text-gray-700" : "text-[#FFFFFF]"
+                  theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
                 }`}>
                   Logo (Optional, max 5MB)
                 </label>
@@ -348,15 +456,15 @@ export default function Header() {
                     type="file"
                     accept="image/jpeg,image/png,image/gif,image/webp"
                     onChange={handleLogoChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F2937]/20 focus:border-[#1F2937] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#1F2937] file:text-white hover:file:bg-[#2A3441] ${
+                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold ${
                       theme === "light"
-                        ? "border-gray-300 bg-white text-gray-900"
-                        : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF]"
+                        ? "border-[#C8D1E0] bg-white text-[#2E3A47] file:bg-[#7A8CB3] file:text-white hover:file:bg-[#6A7AA0] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
+                        : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] file:bg-[#1F2937] file:text-white hover:file:bg-[#2A3441] focus:ring-[#1F2937]/20 focus:border-[#1F2937]"
                     }`}
                   />
                   {logoPreview && (
                     <div className={`relative w-32 h-32 border rounded-lg overflow-hidden ${
-                      theme === "light" ? "border-gray-300" : "border-[#1F2937]"
+                      theme === "light" ? "border-[#C8D1E0]" : "border-[#1F2937]"
                     }`}>
                       <img
                         src={logoPreview}
@@ -380,19 +488,26 @@ export default function Header() {
 
               {/* Footer buttons */}
               <div className={`flex items-center justify-end gap-2 pt-4 border-t ${
-                theme === "light" ? "border-gray-200" : "border-[#1F2937]"
+                theme === "light" ? "border-[#C8D1E0]" : "border-[#1F2937]"
               }`}>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => {
                     setShowCreateModal(false);
-                    resetForm();
+                    setBountyName("");
+                    setBountyDescription("");
+                    setTotalBounty("");
+                    setRatePer1k("");
+                    setCompanyName("");
+                    setLogoFile(null);
+                    setLogoPreview(null);
+                    setError(null);
                   }}
                   disabled={isCreating}
                   className={`rounded-full ${
                     theme === "light"
-                      ? "border-gray-300 text-gray-700 hover:bg-gray-100"
+                      ? "border-[#C8D1E0] text-[#2E3A47] hover:bg-[#DDE5F2]"
                       : "border-[#1F2937] text-[#FFFFFF] hover:bg-[#1F2937]"
                   }`}
                 >
@@ -409,7 +524,11 @@ export default function Header() {
                     Number(totalBounty) <= 0 ||
                     Number(ratePer1k) <= 0
                   }
-                  className="rounded-full px-6 bg-[#1F2937] text-white hover:bg-[#2A3441]"
+                  className={`rounded-full px-6 ${
+                    theme === "light"
+                      ? "bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
+                      : "bg-[#1F2937] text-white hover:bg-[#2A3441]"
+                  }`}
                 >
                   {isCreating ? "Creating..." : "Create Bounty"}
                 </Button>
@@ -420,105 +539,4 @@ export default function Header() {
       )}
     </>
   );
-
-  // === helpers ===
-
-  function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
-      setError(
-        "Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed."
-      );
-      return;
-    }
-
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      setError("File too large. Maximum size is 5MB.");
-      return;
-    }
-
-    setLogoFile(file);
-    setError(null);
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setLogoPreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function resetForm() {
-    setBountyName("");
-    setBountyDescription("");
-    setTotalBounty("");
-    setRatePer1k("");
-    setCompanyName("");
-    setLogoFile(null);
-    setLogoPreview(null);
-    setError(null);
-  }
-
-  async function handleCreateBounty(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setIsCreating(true);
-
-    try {
-      let logoUrl: string | null = null;
-
-      if (logoFile) {
-        const formData = new FormData();
-        formData.append("file", logoFile);
-
-        const uploadResponse = await fetch("/api/upload-logo", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!uploadResponse.ok) {
-          const uploadError = await uploadResponse.json();
-          throw new Error(uploadError.error || "Failed to upload logo");
-        }
-
-        const uploadData = await uploadResponse.json();
-        logoUrl = uploadData.url;
-      }
-
-      const response = await fetch("/api/bounties", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: bountyName.trim(),
-          description: bountyDescription.trim(),
-          totalBounty: Number(totalBounty),
-          ratePer1kViews: Number(ratePer1k),
-          companyName: companyName.trim() || undefined,
-          logoUrl: logoUrl || undefined,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to create bounty");
-      }
-
-      resetForm();
-      setShowCreateModal(false);
-      router.push("/");
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while creating the bounty"
-      );
-    } finally {
-      setIsCreating(false);
-    }
-  }
 }

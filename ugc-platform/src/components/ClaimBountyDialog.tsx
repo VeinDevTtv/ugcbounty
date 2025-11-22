@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
 
 type Bounty = {
@@ -65,6 +64,74 @@ export default function ClaimBountyDialog({
     }
   }, [open]);
 
+  // Helper functions
+  const isValidUrl = (urlString: string): boolean => {
+    try {
+      new URL(urlString);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const getPlatformFromUrl = (urlString: string): 'youtube' | 'tiktok' | 'instagram' | 'other' => {
+    try {
+      const hostname = new URL(urlString).hostname.toLowerCase();
+      if (hostname.includes('youtube.com') || hostname.includes('youtu.be')) {
+        return 'youtube';
+      }
+      if (hostname.includes('tiktok.com')) {
+        return 'tiktok';
+      }
+      if (hostname.includes('instagram.com')) {
+        return 'instagram';
+      }
+      return 'other';
+    } catch {
+      return 'other';
+    }
+  };
+
+  const isValidSupportedUrl = (urlString: string): boolean => {
+    return getPlatformFromUrl(urlString) !== 'other';
+  };
+
+  const fetchPreviewData = useCallback(async (urlString: string) => {
+    // Check if supported platform (inline check to avoid dependency)
+    const platform = getPlatformFromUrl(urlString);
+    if (platform === 'other') {
+      return;
+    }
+
+    setIsLoadingPreview(true);
+    setPreviewError(null);
+
+    try {
+      const response = await fetch('/api/link-preview', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: urlString }),
+      });
+
+      if (response.ok) {
+        const data: LinkPreviewData = await response.json();
+        setPreviewData(data);
+      } else {
+        const error = await response.json();
+        setPreviewError(error.error || 'Failed to load preview');
+        setPreviewData(null);
+      }
+    } catch (error) {
+      console.error('Error fetching preview:', error);
+      setPreviewError('Failed to load preview');
+      setPreviewData(null);
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  }, []);
+
   // Debounced preview fetching
   useEffect(() => {
     if (!open || !url.trim()) {
@@ -97,72 +164,7 @@ export default function ClaimBountyDialog({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [url, open]);
-
-  const isValidUrl = (urlString: string): boolean => {
-    try {
-      new URL(urlString);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const getPlatformFromUrl = (urlString: string): 'youtube' | 'tiktok' | 'instagram' | 'other' => {
-    try {
-      const hostname = new URL(urlString).hostname.toLowerCase();
-      if (hostname.includes('youtube.com') || hostname.includes('youtu.be')) {
-        return 'youtube';
-      }
-      if (hostname.includes('tiktok.com')) {
-        return 'tiktok';
-      }
-      if (hostname.includes('instagram.com')) {
-        return 'instagram';
-      }
-      return 'other';
-    } catch {
-      return 'other';
-    }
-  };
-
-  const isValidSupportedUrl = (urlString: string): boolean => {
-    return getPlatformFromUrl(urlString) !== 'other';
-  };
-
-  const fetchPreviewData = async (urlString: string) => {
-    if (!isValidSupportedUrl(urlString)) {
-      return;
-    }
-
-    setIsLoadingPreview(true);
-    setPreviewError(null);
-
-    try {
-      const response = await fetch('/api/link-preview', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: urlString }),
-      });
-
-      if (response.ok) {
-        const data: LinkPreviewData = await response.json();
-        setPreviewData(data);
-      } else {
-        const error = await response.json();
-        setPreviewError(error.error || 'Failed to load preview');
-        setPreviewData(null);
-      }
-    } catch (error) {
-      console.error('Error fetching preview:', error);
-      setPreviewError('Failed to load preview');
-      setPreviewData(null);
-    } finally {
-      setIsLoadingPreview(false);
-    }
-  };
+  }, [url, open, fetchPreviewData]);
 
   const handleUrlChange = (newUrl: string) => {
     setUrl(newUrl);
@@ -172,7 +174,7 @@ export default function ClaimBountyDialog({
     setSubmitSuccess(false);
   };
 
-  const validateYouTubeVideo = async (urlString: string): Promise<ValidationResult | null> => {
+  const validateYouTubeVideo = async (urlString: string): Promise<ValidationResult> => {
     try {
       const response = await fetch('/api/validate-bounty', {
         method: 'POST',
@@ -194,7 +196,11 @@ export default function ClaimBountyDialog({
       }
     } catch (error) {
       console.error('Error validating YouTube video:', error);
-      return null;
+      // Return error result instead of null (matching og pattern)
+      return {
+        valid: false,
+        explanation: error instanceof Error ? error.message : 'Failed to validate video. Please try again.',
+      };
     }
   };
 
@@ -228,47 +234,70 @@ export default function ClaimBountyDialog({
       return;
     }
 
-    setIsSubmitting(true);
-    setSubmitError(null);
-    setSubmitSuccess(false);
+    const detectedPlatform = getPlatformFromUrl(url);
 
-    try {
-      // For YouTube: validate first
-      if (platform === 'youtube') {
-        setIsValidating(true);
+    if (detectedPlatform === 'youtube') {
+      // For YouTube: validate first, then submit if valid (matching og pattern)
+      setIsValidating(true);
+      setValidationResult(null);
+      setSubmitError(null);
+
+      try {
+        // First validate the video
         const validation = await validateYouTubeVideo(url);
-        setIsValidating(false);
-
-        if (!validation) {
-          setSubmitError('Failed to validate video. Please try again.');
-          setIsSubmitting(false);
-          return;
-        }
-
-        if (!validation.valid) {
-          setValidationResult(validation);
-          setIsSubmitting(false);
-          return;
-        }
-
         setValidationResult(validation);
+
+        // If validation is successful, submit the bounty item immediately
+        if (validation.valid) {
+          await submitBountyItem(url);
+          setSubmitSuccess(true);
+          
+          // Close dialog after 2 seconds
+          setTimeout(() => {
+            onOpenChange(false);
+            // Refresh page to show new submission
+            window.location.reload();
+          }, 2000);
+        }
+      } catch (error) {
+        setValidationResult({
+          valid: false,
+          explanation: error instanceof Error ? error.message : 'Failed to validate video. Please try again.',
+        });
+      } finally {
+        setIsValidating(false);
       }
+    } else {
+      // For non-YouTube platforms, submit directly without validation (matching og pattern)
+      setIsSubmitting(true);
+      setSubmitError(null);
+      setSubmitSuccess(false);
 
-      // Submit the bounty item
-      await submitBountyItem(url);
-      setSubmitSuccess(true);
+      try {
+        setIsValidating(true);
+        await submitBountyItem(url);
+        setValidationResult({
+          valid: true,
+          explanation: `Successfully submitted your ${detectedPlatform} content to the bounty!`,
+        });
+        setSubmitSuccess(true);
 
-      // Close dialog after 2 seconds
-      setTimeout(() => {
-        onOpenChange(false);
-        // Refresh page to show new submission
-        window.location.reload();
-      }, 2000);
-    } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : 'Failed to submit. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-      setIsValidating(false);
+        // Close dialog after 2 seconds
+        setTimeout(() => {
+          onOpenChange(false);
+          // Refresh page to show new submission
+          window.location.reload();
+        }, 2000);
+      } catch (error) {
+        setValidationResult({
+          valid: false,
+          explanation: error instanceof Error ? error.message : 'Failed to submit. Please try again.',
+        });
+        setSubmitError(error instanceof Error ? error.message : 'Failed to submit. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+        setIsValidating(false);
+      }
     }
   };
 
@@ -280,46 +309,46 @@ export default function ClaimBountyDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl bg-[#020617] p-6 shadow-lg border border-[#010A12]">
+      <div className="w-full max-w-md rounded-2xl p-6 shadow-lg border dark:bg-[#020617] dark:border-[#010A12] bg-white border-[#C8D1E0]">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-[#FFFFFF]">
-              Claim "{bounty.title}"
+            <h2 className="text-lg font-semibold dark:text-[#FFFFFF] text-[#2E3A47]">
+              Claim &quot;{bounty.title}&quot;
             </h2>
-            <p className="mt-1 text-sm text-[#CFCFCF]">
+            <p className="mt-1 text-sm dark:text-[#CFCFCF] text-[#52677C]">
               Brand: {bounty.brand} · Payout: ${bounty.payout}
             </p>
           </div>
           <button
             onClick={handleClose}
-            className="text-[#CFCFCF] hover:text-[#FFFFFF] transition-colors"
+            className="dark:text-[#CFCFCF] dark:hover:text-[#FFFFFF] text-[#52677C] hover:text-[#2E3A47] transition-colors"
           >
             <XCircle className="h-5 w-5" />
           </button>
         </div>
 
         {isCompleted && (
-          <div className="mt-3 rounded-md bg-[#010A12] px-3 py-2 text-xs text-[#CFCFCF]">
+          <div className="mt-3 rounded-md dark:bg-[#010A12] dark:text-[#CFCFCF] bg-[#DDE5F2] px-3 py-2 text-xs text-[#52677C]">
             This bounty has been marked as completed. New submissions are disabled.
           </div>
         )}
 
         {submitSuccess && (
-          <div className="mt-3 rounded-md bg-[rgba(16,185,129,0.12)] px-3 py-2 text-xs text-[#FFFFFF] flex items-center gap-2 border border-[#10B981]">
+          <div className="mt-3 rounded-md dark:bg-[rgba(16,185,129,0.12)] dark:text-[#FFFFFF] dark:border-[#10B981] bg-green-50 px-3 py-2 text-xs text-green-700 flex items-center gap-2 border border-green-200">
             <CheckCircle className="h-4 w-4" />
             Submission successful! Redirecting...
           </div>
         )}
 
         {submitError && (
-          <div className="mt-3 rounded-md bg-red-900/30 px-3 py-2 text-xs text-red-400">
+          <div className="mt-3 rounded-md bg-red-50 px-3 py-2 text-xs text-red-600 border border-red-200">
             {submitError}
           </div>
         )}
 
         <div className="mt-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#FFFFFF] mb-2">
+            <label className="block text-sm font-medium dark:text-[#FFFFFF] text-[#2E3A47] mb-2">
               Content URL (YouTube, Instagram, or TikTok)
             </label>
             <input
@@ -327,14 +356,14 @@ export default function ClaimBountyDialog({
               value={url}
               onChange={(e) => handleUrlChange(e.target.value)}
               placeholder="https://youtube.com/watch?v=... or https://tiktok.com/@user/video/..."
-              className="w-full px-4 py-2 border border-[#010A12] bg-[#020617] text-[#FFFFFF] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] disabled:bg-[#010A12] disabled:cursor-not-allowed placeholder:text-[#CFCFCF]"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 disabled:cursor-not-allowed dark:border-[#010A12] dark:bg-[#020617] dark:text-[#FFFFFF] dark:focus:ring-[#10B981]/20 dark:focus:border-[#10B981] dark:disabled:bg-[#010A12] dark:placeholder:text-[#CFCFCF] border-[#C8D1E0] bg-white text-[#2E3A47] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3] disabled:bg-[#D9E1EF] placeholder:text-[#6B7A8F]"
               disabled={isCompleted || isSubmitting}
             />
             {urlError && (
-              <p className="mt-1 text-xs text-red-400">{urlError}</p>
+              <p className="mt-1 text-xs text-red-600">{urlError}</p>
             )}
             {platform && platform !== 'other' && !urlError && (
-              <p className="mt-1 text-xs text-[#10B981] flex items-center gap-1">
+              <p className="mt-1 text-xs dark:text-[#10B981] text-[#4F6FA8] flex items-center gap-1">
                 <CheckCircle className="h-3 w-3" />
                 {platform.charAt(0).toUpperCase() + platform.slice(1)} URL detected
               </p>
@@ -343,7 +372,7 @@ export default function ClaimBountyDialog({
 
           {/* Preview Loading */}
           {isLoadingPreview && (
-            <div className="flex items-center gap-2 text-sm text-[#CFCFCF]">
+            <div className="flex items-center gap-2 text-sm dark:text-[#CFCFCF] text-[#52677C]">
               <Loader2 className="h-4 w-4 animate-spin" />
               Loading preview...
             </div>
@@ -351,14 +380,14 @@ export default function ClaimBountyDialog({
 
           {/* Preview Error */}
           {previewError && (
-            <div className="rounded-md bg-yellow-900/30 px-3 py-2 text-xs text-yellow-400">
+            <div className="rounded-md bg-yellow-50 px-3 py-2 text-xs text-yellow-700 border border-yellow-200">
               {previewError}
             </div>
           )}
 
           {/* Preview Card */}
           {previewData && !previewError && (
-            <div className="border border-[#010A12] rounded-lg p-4 bg-[#020617]">
+            <div className="border rounded-lg p-4 dark:border-[#010A12] dark:bg-[#020617] border-[#C8D1E0] bg-[#F7FAFC]">
               {previewData.image && (
                 <img
                   src={previewData.image}
@@ -366,11 +395,11 @@ export default function ClaimBountyDialog({
                   className="w-full h-32 object-cover rounded mb-3"
                 />
               )}
-              <h4 className="font-semibold text-sm text-[#FFFFFF] mb-1 line-clamp-2">
+              <h4 className="font-semibold text-sm dark:text-[#FFFFFF] text-[#2E3A47] mb-1 line-clamp-2">
                 {previewData.title}
               </h4>
               {previewData.description && (
-                <p className="text-xs text-[#CFCFCF] line-clamp-2 mb-2">
+                <p className="text-xs dark:text-[#CFCFCF] text-[#52677C] line-clamp-2 mb-2">
                   {previewData.description}
                 </p>
               )}
@@ -378,7 +407,7 @@ export default function ClaimBountyDialog({
                 href={previewData.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[#10B981] hover:text-[#059669] inline-flex items-center gap-1"
+                className="text-xs dark:text-[#10B981] dark:hover:text-[#059669] text-[#4F6FA8] hover:text-[#1B3C73] inline-flex items-center gap-1"
               >
                 {previewData.url}
                 <ExternalLink className="h-3 w-3" />
@@ -390,8 +419,8 @@ export default function ClaimBountyDialog({
           {validationResult && (
             <div className={`rounded-md px-3 py-2 text-xs ${
               validationResult.valid
-                ? 'bg-[rgba(16,185,129,0.12)] text-[#FFFFFF] border border-[#10B981]'
-                : 'bg-red-900/30 text-red-400'
+                ? 'dark:bg-[rgba(16,185,129,0.12)] dark:text-[#FFFFFF] dark:border-[#10B981] bg-green-50 text-green-700 border border-green-200'
+                : 'dark:bg-red-900/30 dark:text-red-400 bg-red-50 text-red-600 border border-red-200'
             }`}>
               <div className="font-semibold mb-1">
                 {validationResult.valid ? '✓ Validation Passed' : '✗ Validation Failed'}

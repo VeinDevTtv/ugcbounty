@@ -2,17 +2,17 @@
 
 :root {
   /* Light theme (default) */
-  --color-bg: #F9FAFB;
-  --color-header: #FFFFFF;
+  --color-bg: #E8ECF3;
+  --color-header: #E8ECF3;
   --color-card: #FFFFFF;
-  --color-border: #E5E7EB;
-  --color-text: #111827;
-  --color-text-muted: #6B7280;
-  --color-accent: #1F2937;
-  --color-accent-hover: #374151;
+  --color-border: #C8D1E0;
+  --color-text: #2E3A47;
+  --color-text-muted: #52677C;
+  --color-accent: #1B3C73;
+  --color-accent-hover: #102B52;
   --color-button-text: #FFFFFF;
-  --color-disabled-bg: #E5E7EB;
-  --color-disabled-text: #9CA3AF;
+  --color-disabled-bg: #D9E1EF;
+  --color-disabled-text: #8B9BB0;
   
   /* Legacy support */
   --background: var(--color-bg);

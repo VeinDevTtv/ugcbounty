@@ -13,10 +13,10 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-900/50 backdrop-blur-sm">
-            <div className="w-full max-w-lg rounded-2xl bg-[#020617] shadow-2xl animate-in fade-in zoom-in duration-200 border border-[#010A12]">
-                <div className="flex items-center justify-between border-b border-[#010A12] p-4">
-                    <h2 className="text-lg font-semibold text-[#FFFFFF]">{title}</h2>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div className="w-full max-w-lg rounded-2xl shadow-2xl animate-in fade-in zoom-in duration-200 border dark:bg-[#020617] dark:border-[#010A12] bg-white border-[#C8D1E0]">
+                <div className="flex items-center justify-between border-b p-4 dark:border-[#010A12] border-[#C8D1E0]">
+                    <h2 className="text-lg font-semibold dark:text-[#FFFFFF] text-[#2E3A47]">{title}</h2>
                     <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0 rounded-full">
                         <X className="h-4 w-4" />
                     </Button>

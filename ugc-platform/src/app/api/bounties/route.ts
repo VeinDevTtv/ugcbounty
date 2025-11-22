@@ -130,6 +130,52 @@ export async function POST(request: Request) {
       )
     }
 
+    // Validate logoUrl if provided - ensure it's from Supabase storage
+    if (logoUrl) {
+      if (typeof logoUrl !== 'string') {
+        return NextResponse.json(
+          { error: 'logoUrl must be a string' },
+          { status: 400 }
+        )
+      }
+
+      try {
+        const url = new URL(logoUrl)
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+        if (!supabaseUrl) {
+          return NextResponse.json(
+            { error: 'Server configuration error' },
+            { status: 500 }
+          )
+        }
+
+        // Ensure logoUrl is from Supabase storage
+        const supabaseHostname = new URL(supabaseUrl).hostname
+        const logoHostname = url.hostname
+        
+        // Check if URL is from Supabase storage (storage.supabase.co or project's Supabase URL)
+        if (!logoHostname.includes('supabase.co') && logoHostname !== supabaseHostname) {
+          return NextResponse.json(
+            { error: 'Invalid logo URL. Logo must be uploaded through the platform.' },
+            { status: 400 }
+          )
+        }
+
+        // Ensure it's using HTTPS
+        if (url.protocol !== 'https:') {
+          return NextResponse.json(
+            { error: 'Logo URL must use HTTPS' },
+            { status: 400 }
+          )
+        }
+      } catch (error) {
+        return NextResponse.json(
+          { error: 'Invalid logo URL format' },
+          { status: 400 }
+        )
+      }
+    }
+
     // Prepare insert data - map camelCase to snake_case
     // Note: company_name and logo_url may not exist in schema yet
     // If they don't exist, they'll be ignored by Supabase
