@@ -73,9 +73,9 @@ export function HeroSection() {
                 backgroundSize: "200% 200%",
               }}
             >
-              User
+              User Generated Content
             </span>{" "}
-            Generated Content Platform
+            Platform
           </span>
         </h1>
 
