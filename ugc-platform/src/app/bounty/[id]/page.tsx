@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import ClaimBountyDialog from "@/components/ClaimBountyDialog";
 import { ArrowLeft, CheckCircle, Clock, DollarSign, FileText, Eye, User, RefreshCw } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface BountyWithCreator {
   id: string;
@@ -71,6 +72,7 @@ export default function BountyDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { user } = useUser();
+  const { theme } = useTheme();
   const resolvedParams = use(params);
   const bountyId = resolvedParams.id;
 
@@ -245,15 +247,21 @@ export default function BountyDetailPage({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#E8ECF3] dark:bg-[#0A0F17] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B3C73] dark:border-[#10B981]"></div>
+      <div className={`min-h-screen transition-colors flex items-center justify-center ${
+        theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
+      }`}>
+        <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${
+          theme === "light" ? "border-[#1B3C73]" : "border-[#10B981]"
+        }`}></div>
       </div>
     );
   }
 
   if (notFound || !bounty) {
     return (
-      <div className="min-h-screen bg-[#E8ECF3] dark:bg-[#0A0F17]">
+      <div className={`min-h-screen transition-colors ${
+        theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
+      }`}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Link
             href="/"
@@ -275,7 +283,9 @@ export default function BountyDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#E8ECF3] dark:bg-[#0A0F17]">
+    <div className={`min-h-screen transition-colors ${
+      theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
+    }`}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link
           href="/"
