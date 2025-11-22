@@ -482,26 +482,19 @@ export async function getOrCreateUserProfile(
   username?: string
 ) {
   try {
-    // Try to get existing profile
-    const { data: existingProfile } = await supabaseServer
-      .from('user_profiles')
-      .select('*')
-      .eq('user_id', userId)
-      .single()
+    // Use upsert to create or update user profile (like og implementation)
+    // Generate default username if not provided for better UX
+    const profileEmail = email || `user_${userId.slice(0, 8)}@example.com`
+    const profileUsername = username || `user_${userId.slice(0, 8)}`
 
-    if (existingProfile) {
-      return { data: existingProfile, error: null }
-    }
-
-    // Create new profile if doesn't exist
     const { data, error } = await supabaseServer
       .from('user_profiles')
-      .insert({
+      .upsert({
         user_id: userId,
-        email: email || null,
-        username: username || null,
+        email: profileEmail,
+        username: profileUsername,
         total_earnings: 0
-      })
+      } as UserProfileInsert)
       .select()
       .single()
 
