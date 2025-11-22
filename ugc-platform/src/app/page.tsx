@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { NarrativeSection } from "@/components/landing/NarrativeSection";
@@ -10,13 +8,9 @@ import { VarianceCard } from "@/components/landing/VarianceCard";
 import { ScenarioCard } from "@/components/landing/ScenarioCard";
 import { FooterSection } from "@/components/landing/FooterSection";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Trophy, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/Button";
 
 export default function LandingPage() {
   const { theme } = useTheme();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const bgGradient = theme === "light"
     ? "bg-gradient-to-b from-[#E8ECF3] via-[#E0E8F0] to-[#D9E1EF]"
@@ -34,23 +28,6 @@ export default function LandingPage() {
   const orbColor4 = theme === "light"
     ? "bg-[#1B3C73]/8"
     : "bg-[#60A5FA]/15";
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    if (isDropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isDropdownOpen]);
 
   return (
     <main className={`min-h-screen selection:bg-[#1B3C73]/30 relative overflow-hidden ${bgGradient}`}>
@@ -70,80 +47,6 @@ export default function LandingPage() {
           ? "from-[#1B3C73]/10 via-transparent to-transparent"
           : "from-black/20 via-transparent to-[#60A5FA]/5"
       }`} />
-
-      {/* Right Sidebar */}
-      <aside className="hidden lg:block fixed right-6 top-24 w-64 z-30">
-        <div className={`sticky top-24 border rounded-lg p-6 ${
-          theme === "light"
-            ? "bg-white border-[#C8D1E0]"
-            : "bg-[#141B23] border-[#1A2332]"
-        }`}>
-          <h2 className={`text-lg font-bold mb-4 ${
-            theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
-          }`}>
-            Your Progress
-          </h2>
-          <div className="relative" ref={dropdownRef}>
-            <Button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className={`w-full justify-between gap-2 ${
-                theme === "light"
-                  ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
-                  : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Trophy className="h-5 w-5" />
-                Achievements
-              </div>
-              <ChevronDown className={`h-4 w-4 transition-transform ${
-                isDropdownOpen ? "rotate-180" : ""
-              }`} />
-            </Button>
-            {isDropdownOpen && (
-              <div className={`absolute top-full left-0 right-0 mt-2 z-50 border rounded-lg shadow-lg ${
-                theme === "light"
-                  ? "bg-white border-[#C8D1E0]"
-                  : "bg-[#141B23] border-[#1A2332]"
-              }`}>
-                <Link
-                  href="/badges"
-                  onClick={() => setIsDropdownOpen(false)}
-                  className={`block px-4 py-3 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
-                    theme === "light"
-                      ? "text-[#2E3A47] hover:bg-[#E8ECF3]"
-                      : "text-[#F5F8FC] hover:bg-[#1A2332]"
-                  }`}
-                >
-                  View All
-                </Link>
-                <Link
-                  href="/badges#levels"
-                  onClick={() => setIsDropdownOpen(false)}
-                  className={`block px-4 py-3 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg border-t ${
-                    theme === "light"
-                      ? "text-[#2E3A47] hover:bg-[#E8ECF3] border-[#C8D1E0]"
-                      : "text-[#F5F8FC] hover:bg-[#1A2332] border-[#1A2332]"
-                  }`}
-                >
-                  Levels
-                </Link>
-                <Link
-                  href="/badges#badges"
-                  onClick={() => setIsDropdownOpen(false)}
-                  className={`block px-4 py-3 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg border-t ${
-                    theme === "light"
-                      ? "text-[#2E3A47] hover:bg-[#E8ECF3] border-[#C8D1E0]"
-                      : "text-[#F5F8FC] hover:bg-[#1A2332] border-[#1A2332]"
-                  }`}
-                >
-                  Badges
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </aside>
 
       <LandingNav />
 
