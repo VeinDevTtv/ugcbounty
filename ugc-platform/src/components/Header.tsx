@@ -32,14 +32,23 @@ export default function Header() {
       <nav className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-[#F5EEDC] backdrop-blur-md">
         <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3">
           {/* LOGO */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="relative h-16 w-44 md:h-20 md:w-52">
+          <Link href="/" className="flex items-center gap-3 flex-shrink-0 min-w-0 max-w-[45%] sm:max-w-[50%]">
+            <div 
+              className="relative flex-shrink-0" 
+              style={{ 
+                height: 'clamp(3.5rem, min(8vw, 6rem), 5.5rem)',
+                width: 'clamp(9rem, min(22vw, 16rem), 14rem)',
+                maxHeight: 'calc(100vh - 2rem)',
+                maxWidth: '100%',
+              }}
+            >
               <Image
                 src="/bountea.png"
                 alt="Bountea Logo"
                 fill
                 priority
                 className="object-contain rounded-md"
+                sizes="(max-width: 640px) 9rem, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, 14rem"
               />
             </div>
           </Link>
