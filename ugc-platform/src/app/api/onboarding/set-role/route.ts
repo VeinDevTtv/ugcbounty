@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { supabaseServer } from '@/lib/supabase-server'
+import type { Database } from '@/types/database.types'
+
+type UserProfileInsert = Database['public']['Tables']['user_profiles']['Insert']
 
 /**
  * POST /api/onboarding/set-role
@@ -30,18 +33,37 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Update user profile with role
+    // Ensure user profile exists first (in case webhook hasn't fired yet)
+    const user = await currentUser()
+    const email = user?.emailAddresses[0]?.emailAddress || null
+    const username = user?.username || `user_${userId.slice(0, 8)}`
+
+    // Use upsert to ensure profile exists, then update role
+    // Supabase automatically uses the primary key (user_id) for conflict resolution
     const { data, error } = await supabaseServer
       .from('user_profiles')
-      .update({ role })
-      .eq('user_id', userId)
+      .upsert({
+        user_id: userId,
+        email: email,
+        username: username,
+        role: role,
+        total_earnings: 0,
+      } as UserProfileInsert)
       .select()
       .single()
 
     if (error) {
-      console.error('Error updating user role:', error)
+      console.error('Error upserting user role:', error)
       return NextResponse.json(
-        { error: 'Failed to update user role', details: error.message },
+        { error: 'Failed to set user role', details: error.message },
+        { status: 500 }
+      )
+    }
+
+    if (!data) {
+      console.error('No data returned after upsert')
+      return NextResponse.json(
+        { error: 'Failed to set user role - no data returned' },
         { status: 500 }
       )
     }

@@ -63,6 +63,13 @@ export default function OnboardingPage() {
     redirectingRef.current = true;
     
     try {
+      // Add timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        setIsSettingRole(false);
+        redirectingRef.current = false;
+        alert('Request timed out. Please try again.');
+      }, 10000); // 10 second timeout
+
       const response = await fetch('/api/onboarding/set-role', {
         method: 'POST',
         headers: {
@@ -71,10 +78,23 @@ export default function OnboardingPage() {
         body: JSON.stringify({ role }),
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to set role');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        const errorMessage = errorData.error || errorData.details || 'Failed to set role';
+        throw new Error(errorMessage);
       }
+
+      const result = await response.json();
+      
+      // Verify the role was set successfully
+      if (!result.success || !result.data) {
+        throw new Error('Role was not set successfully. Please try again.');
+      }
+
+      // Small delay to ensure state is updated before redirect
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Redirect based on role using replace to avoid history issues
       if (role === 'creator') {
@@ -85,7 +105,8 @@ export default function OnboardingPage() {
       // Note: isSettingRole will remain true but component will unmount on redirect
     } catch (error) {
       console.error('Error setting role:', error);
-      alert(error instanceof Error ? error.message : 'Failed to set role. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to set role. Please try again.';
+      alert(errorMessage);
       setIsSettingRole(false);
       redirectingRef.current = false;
     }
