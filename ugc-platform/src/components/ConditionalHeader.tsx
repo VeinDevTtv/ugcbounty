@@ -1,9 +1,17 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import Header from "./Header";
+import { LandingNav } from "./landing/LandingNav";
 
 export default function ConditionalHeader() {
-  // Show Header on all pages including landing page
+  const pathname = usePathname();
+  
+  // Show LandingNav on landing page, Header on all other pages
+  if (pathname === "/") {
+    return <LandingNav />;
+  }
+  
   return <Header />;
 }
 

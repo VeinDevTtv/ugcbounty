@@ -170,7 +170,7 @@ export default function Header() {
   }, []);
 
   const navItems = [
-    { href: "/", label: "Feed" },
+    { href: "/feed", label: "Feed" },
     { href: "/dashboard", label: "Dashboard" },
     { href: "/profile", label: "My Profile" },
   ];
@@ -194,8 +194,8 @@ export default function Header() {
               : "bg-[#141B23]/60"
           }`}>
             {navItems.map((item) => {
-              const isActive = item.href === "/"
-                ? pathname === "/"
+              const isActive = item.href === "/feed"
+                ? pathname === "/feed"
                 : pathname?.startsWith(item.href);
 
               return (
@@ -220,34 +220,38 @@ export default function Header() {
 
           {/* RIGHT SIDE */}
           <div className="flex items-center gap-3">
-            {/* SEARCH BAR */}
-            <BountySearchBar bounties={bounties} compact={true} />
+            {/* SEARCH BAR - Only show on Feed page */}
+            {pathname === "/feed" && (
+              <BountySearchBar bounties={bounties} compact={true} />
+            )}
             
             {/* THEME TOGGLE */}
             <ThemeToggle />
             
             {isLoaded && (
               <>
-                {/* CREATE BOUNTY BUTTON */}
-                <SignedIn>
-                  <Button
-                    onClick={() => {
-                      if (!user) {
-                        alert("Please sign in to create a bounty");
-                        return;
-                      }
-                      setShowCreateModal(true);
-                    }}
-                    size="sm"
-                    className={`rounded-full px-6 py-2 text-sm font-semibold shadow-sm ${
-                      theme === "light"
-                        ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
-                        : "bg-[#141B23] text-white hover:bg-[#1A2332]"
-                    }`}
-                  >
-                    Create Bounty
-                  </Button>
-                </SignedIn>
+                {/* CREATE BOUNTY BUTTON - Only show on Feed page */}
+                {pathname === "/feed" && (
+                  <SignedIn>
+                    <Button
+                      onClick={() => {
+                        if (!user) {
+                          alert("Please sign in to create a bounty");
+                          return;
+                        }
+                        setShowCreateModal(true);
+                      }}
+                      size="sm"
+                      className={`rounded-full px-6 py-2 text-sm font-semibold shadow-sm ${
+                        theme === "light"
+                          ? "bg-[#1B3C73] text-white hover:bg-[#102B52]"
+                          : "bg-[#141B23] text-white hover:bg-[#1A2332]"
+                      }`}
+                    >
+                      Create Bounty
+                    </Button>
+                  </SignedIn>
+                )}
 
                 {/* AUTH BUTTONS */}
                 <SignedOut>
