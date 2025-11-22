@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
 import { CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
 
 type Bounty = {
   id: string;
@@ -50,6 +51,9 @@ export default function ClaimBountyDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  // Lock scroll when dialog is open
+  useScrollLock(open);
 
   // Reset state when dialog closes
   useEffect(() => {
@@ -310,7 +314,7 @@ export default function ClaimBountyDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl p-6 shadow-lg border dark:bg-[#141B23] dark:border-[#1A2332] bg-white border-[#C8D1E0]">
+      <div className="w-full max-w-md rounded-2xl p-6 shadow-lg border max-h-[90vh] overflow-y-auto dark:bg-[#141B23] dark:border-[#1A2332] bg-white border-[#C8D1E0]">
         <div className="flex justify-between items-start mb-4">
           <div>
             <h2 className="text-lg font-semibold dark:text-[#F5F8FC] text-[#2E3A47]">

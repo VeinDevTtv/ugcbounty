@@ -127,7 +127,7 @@ function BountySearchBar({ bounties, compact = false }: BountySearchBarProps) {
         <AnimatePresence>
           {isFocused && filteredBounties.length > 0 && (
             <motion.div
-              className="border rounded-md shadow-lg overflow-hidden border-border bg-card max-h-[400px] overflow-y-auto"
+              className="border rounded-md shadow-lg overflow-hidden border-border bg-card/95 backdrop-blur-lg max-h-[400px] overflow-y-auto"
               variants={container}
               initial="hidden"
               animate="show"

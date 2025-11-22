@@ -9,6 +9,7 @@ export default function Cursor() {
   const [isVisible, setIsVisible] = useState(false);
   const [isReducedMotion, setIsReducedMotion] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isInModal, setIsInModal] = useState(false);
   const hoveredElementRef = useRef<HTMLElement | null>(null);
   const magneticOffsetRef = useRef({ x: 0, y: 0 });
   const cursorPathRef = useRef<Array<{ x: number; y: number; timestamp: number }>>([]);
@@ -194,10 +195,46 @@ export default function Cursor() {
     return () => window.removeEventListener("resize", checkTouchDevice);
   }, []);
 
+  // Check if cursor is over a modal/menu
+  const checkIfInModal = useCallback((x: number, y: number): boolean => {
+    const element = document.elementFromPoint(x, y);
+    if (!element) return false;
+
+    // Check if element or any parent has high z-index (modals typically have z-50+)
+    let current: Element | null = element;
+    while (current) {
+      const style = window.getComputedStyle(current);
+      const zIndex = parseInt(style.zIndex, 10);
+      
+      // Check for modal indicators
+      if (
+        zIndex >= 50 ||
+        current.hasAttribute('data-modal') ||
+        current.hasAttribute('data-clerk-modal') ||
+        current.classList.contains('cl-modal') ||
+        current.closest('[data-modal]') ||
+        current.closest('[data-clerk-modal]') ||
+        current.closest('[class*="clerk"]') ||
+        current.closest('[class*="cl-rootBox"]') ||
+        current.closest('[class*="cl-modalContent"]')
+      ) {
+        return true;
+      }
+      
+      current = current.parentElement;
+    }
+    
+    return false;
+  }, []);
+
   // Mouse move handler with throttling
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if (!isVisible) setIsVisible(true);
+      const inModal = checkIfInModal(e.clientX, e.clientY);
+      setIsInModal(inModal);
+      
+      // Always show cursor when in modal, or when moving
+      if (!isVisible || inModal) setIsVisible(true);
 
       let x = e.clientX;
       let y = e.clientY;
@@ -298,7 +335,7 @@ export default function Cursor() {
         });
       }
     },
-    [cursorX, cursorY, isVisible, particles, isHovering, sparkles]
+    [cursorX, cursorY, isVisible, particles, isHovering, sparkles, checkIfInModal]
   );
 
   // Mouse enter handler for interactive elements
@@ -308,6 +345,12 @@ export default function Cursor() {
     // Check if target is an HTMLElement
     if (!target || !(target instanceof HTMLElement)) {
       return;
+    }
+
+    // Check if we're in a modal - if so, always show cursor
+    const inModal = checkIfInModal(e.clientX, e.clientY);
+    if (inModal) {
+      setIsVisible(true);
     }
 
     const isInteractive =
@@ -325,13 +368,14 @@ export default function Cursor() {
       target.closest("textarea") ||
       target.closest("select") ||
       target.style.cursor === "pointer" ||
-      window.getComputedStyle(target).cursor === "pointer";
+      window.getComputedStyle(target).cursor === "pointer" ||
+      inModal; // Always treat modal areas as interactive for cursor visibility
 
     if (isInteractive) {
       setIsHovering(true);
       hoveredElementRef.current = target;
     }
-  }, []);
+  }, [checkIfInModal]);
 
   // Mouse leave handler
   const handleMouseLeave = useCallback(() => {
@@ -397,7 +441,8 @@ export default function Cursor() {
 
   // Don't render cursor on touch devices or if reduced motion is preferred
   // This check happens AFTER all hooks are called
-  if (isTouchDevice || isReducedMotion || !isVisible) {
+  // Always show cursor when in modal, even if not visible yet
+  if (isTouchDevice || isReducedMotion || (!isVisible && !isInModal)) {
     return null;
   }
 

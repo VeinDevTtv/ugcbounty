@@ -17,6 +17,7 @@ import ThemeToggle from "./ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
 import BountySearchBar from "./action-search-bar";
 import Logo from "./Logo";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
 
 interface Bounty {
   id: string;
@@ -45,6 +46,9 @@ export default function Header() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Lock scroll when modal is open
+  useScrollLock(showCreateModal);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -152,7 +156,14 @@ export default function Header() {
         const response = await fetch("/api/bounties");
         if (response.ok) {
           const data = await response.json();
-          const mappedBounties: Bounty[] = data.map((bounty: any) => ({
+          const mappedBounties: Bounty[] = data.map((bounty: {
+            id: string;
+            name: string;
+            description: string;
+            company_name?: string | null;
+            rate_per_1k_views: number | string;
+            total_bounty: number | string;
+          }) => ({
             id: bounty.id,
             name: bounty.name,
             description: bounty.description,
@@ -332,7 +343,7 @@ export default function Header() {
           }}
         >
           <div 
-            className={`shadow-2xl max-w-lg w-full rounded-lg border ${
+            className={`shadow-2xl max-w-lg w-full rounded-lg border max-h-[90vh] overflow-y-auto ${
               theme === "light"
                 ? "bg-white border-[#C8D1E0]"
                 : "bg-[#141B23] border-[#1A2332]"

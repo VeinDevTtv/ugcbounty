@@ -6,6 +6,7 @@ import ConditionalHeader from "@/components/ConditionalHeader";
 import ConditionalMain from "@/components/ConditionalMain";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import CursorWrapper from "@/components/CursorWrapper";
+import ClerkModalDetector from "@/components/ClerkModalDetector";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,6 +35,7 @@ export default function RootLayout({
         <html lang="en">
           <body className={`${inter.className} min-h-screen`}>
             <CursorWrapper />
+            <ClerkModalDetector />
             <ConditionalHeader />
             <ConditionalMain>
               {children}
