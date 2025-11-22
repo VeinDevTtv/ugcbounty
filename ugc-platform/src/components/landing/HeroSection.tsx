@@ -92,15 +92,12 @@ export function HeroSection() {
                 AI
               </span>
               <span 
-                className={`absolute top-full left-0 mt-1 text-xs md:text-sm font-serif italic whitespace-nowrap opacity-0 animate-fade-in-up ${
+                className={`absolute top-full left-0 mt-2 text-xs md:text-sm whitespace-nowrap sharpie-text animate-sharpie-draw ${
                   theme === "light"
-                    ? "text-[#3B82F6]"
-                    : "text-[#93C5FD]"
+                    ? "text-[#1B3C73]"
+                    : "text-[#60A5FA]"
                 }`}
-                style={{ 
-                  animationDelay: "0.6s",
-                  opacity: 0
-                }}
+                data-text="Powered by intelligent automation"
               >
                 Powered by intelligent automation
               </span>
