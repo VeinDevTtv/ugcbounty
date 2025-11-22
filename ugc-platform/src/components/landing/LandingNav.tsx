@@ -71,50 +71,51 @@ export function LandingNav() {
               })}
             </div>
           </SignedIn>
-
-          {/* Signed Out: Auth Buttons in Pill Container */}
-          <SignedOut>
-            <div className={`hidden md:flex items-center gap-3 px-3 py-1 rounded-full shadow-sm ${
-              theme === "light" 
-                ? "bg-white/60 border border-[#D9E1EF]" 
-                : "bg-[#141B23]/60"
-            }`}>
-              <SignInButton mode="modal">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`rounded-full ${
-                    theme === "light"
-                      ? "text-[#2E3A47] hover:text-[#1B3C73] hover:bg-[#DDE5F2]"
-                      : "text-[#F5F8FC] hover:bg-[#141B23]"
-                  }`}
-                >
-                  Sign In
-                </Button>
-              </SignInButton>
-
-              <SignUpButton mode="modal">
-                <Button
-                  size="sm"
-                  className={`rounded-full ${
-                    theme === "light"
-                      ? "bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
-                      : "bg-[#141B23] text-white border border-[#1A2332] hover:bg-[#1F2937]"
-                  }`}
-                >
-                  Sign Up
-                </Button>
-              </SignUpButton>
-            </div>
-          </SignedOut>
         </div>
 
-        {/* RIGHT: THEME TOGGLE + USER BUTTON */}
+        {/* RIGHT: THEME TOGGLE + AUTH BUTTONS / USER BUTTON */}
         <div className="flex items-center justify-end gap-3">
           <ThemeToggle />
           
           {isLoaded && (
             <>
+              {/* Signed Out: Auth Buttons */}
+              <SignedOut>
+                <div className={`hidden md:flex items-center gap-3 px-3 py-1 rounded-full shadow-sm ${
+                  theme === "light" 
+                    ? "bg-white/60 border border-[#D9E1EF]" 
+                    : "bg-[#141B23]/60"
+                }`}>
+                  <SignInButton mode="modal">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`rounded-full ${
+                        theme === "light"
+                          ? "text-[#2E3A47] hover:text-[#1B3C73] hover:bg-[#DDE5F2]"
+                          : "text-[#F5F8FC] hover:bg-[#141B23]"
+                      }`}
+                    >
+                      Sign In
+                    </Button>
+                  </SignInButton>
+
+                  <SignUpButton mode="modal">
+                    <Button
+                      size="sm"
+                      className={`rounded-full ${
+                        theme === "light"
+                          ? "bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
+                          : "bg-[#141B23] text-white border border-[#1A2332] hover:bg-[#1F2937]"
+                      }`}
+                    >
+                      Sign Up
+                    </Button>
+                  </SignUpButton>
+                </div>
+              </SignedOut>
+
+              {/* Signed In: User Avatar */}
               <SignedIn>
                 <Link href="/profile">
                   <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
