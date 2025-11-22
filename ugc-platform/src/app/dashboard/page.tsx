@@ -284,7 +284,7 @@ export default function Dashboard() {
                                 bgColorDark="#141B23"
                             />
                         </>
-                    )}
+                    ) : null}
                 </div>
             )}
 
