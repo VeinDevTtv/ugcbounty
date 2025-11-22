@@ -10,6 +10,7 @@ interface BountyProps {
   budget: string;
   deadline: string;
   filled: number;
+  logoUrl?: string | null;
   isOwner?: boolean;
   isCompleted?: boolean;
   onClaim?: (e: React.MouseEvent) => void;
@@ -35,9 +36,29 @@ export default function BountyCard({ data }: { data: BountyProps }) {
           <div className="flex gap-3 flex-1 min-w-0">
 
             {/* Avatar */}
-            <div className="h-10 w-10 rounded-full bg-[#D9E2EC] flex items-center justify-center text-xs font-semibold text-[#1B263B]">
-              {data.brand.substring(0, 2).toUpperCase()}
-            </div>
+            {data.logoUrl ? (
+              <div className="h-10 w-10 rounded-full bg-white border border-[#D9E2EC] flex items-center justify-center overflow-hidden flex-shrink-0">
+                <img
+                  src={data.logoUrl}
+                  alt={data.brand}
+                  className="w-full h-full object-contain p-1"
+                  onError={(e) => {
+                    // Fallback to initials if image fails to load
+                    const target = e.currentTarget;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.className = 'h-10 w-10 rounded-full bg-[#D9E2EC] flex items-center justify-center text-xs font-semibold text-[#1B263B] flex-shrink-0';
+                      parent.textContent = data.brand.substring(0, 2).toUpperCase();
+                    }
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="h-10 w-10 rounded-full bg-[#D9E2EC] flex items-center justify-center text-xs font-semibold text-[#1B263B] flex-shrink-0">
+                {data.brand.substring(0, 2).toUpperCase()}
+              </div>
+            )}
 
             {/* Title + brand */}
             <div className="flex-1 min-w-0">
