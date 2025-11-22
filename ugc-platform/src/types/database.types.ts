@@ -45,6 +45,8 @@ export interface Database {
           rate_per_1k_views: number
           claimed_bounty: number
           creator_id: string | null
+          logo_url: string | null
+          company_name: string | null
           created_at: string
           updated_at: string
         }
@@ -56,6 +58,8 @@ export interface Database {
           rate_per_1k_views: number
           claimed_bounty?: number
           creator_id?: string | null
+          logo_url?: string | null
+          company_name?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -67,6 +71,8 @@ export interface Database {
           rate_per_1k_views?: number
           claimed_bounty?: number
           creator_id?: string | null
+          logo_url?: string | null
+          company_name?: string | null
           created_at?: string
           updated_at?: string
         }
