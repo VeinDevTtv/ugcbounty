@@ -20,18 +20,18 @@
 }
 
 .dark {
-  /* Dark Navy theme */
-  --color-bg: #1F2937;
-  --color-header: #1F2937;
-  --color-card: #1F2937;
-  --color-border: #010A12;
-  --color-text: #FFFFFF;
-  --color-text-muted: #CFCFCF;
-  --color-accent: #10B981;
-  --color-accent-hover: #059669;
+  /* Dark theme - inverted from light theme */
+  --color-bg: #0A0F17;
+  --color-header: #0D1419;
+  --color-card: #141B23;
+  --color-border: #1A2332;
+  --color-text: #F5F8FC;
+  --color-text-muted: #B8C5D6;
+  --color-accent: #60A5FA;
+  --color-accent-hover: #3B82F6;
   --color-button-text: #FFFFFF;
-  --color-disabled-bg: #1F2937;
-  --color-disabled-text: #6B7280;
+  --color-disabled-bg: #1A2332;
+  --color-disabled-text: #64748B;
 }
 
 @theme inline {

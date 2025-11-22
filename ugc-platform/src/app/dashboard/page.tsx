@@ -151,7 +151,7 @@ export default function Dashboard() {
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h1 className={`text-3xl font-bold ${
-                    theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                    theme === "light" ? "text-gray-900" : "text-[#F5F8FC]"
                 }`}>Dashboard</h1>
 
                 {/* Tab Switcher */}
@@ -165,10 +165,10 @@ export default function Dashboard() {
                             activeTab === "submissions" 
                                 ? theme === "light"
                                     ? "bg-white text-gray-900 shadow-sm"
-                                    : "bg-[#1F2937] text-[#FFFFFF] shadow-sm"
+                                    : "bg-[#141B23] text-[#F5F8FC] shadow-sm"
                                 : theme === "light"
                                 ? "text-gray-600 hover:text-gray-900"
-                                : "text-[#CFCFCF] hover:text-[#FFFFFF]"
+                                : "text-[#B8C5D6] hover:text-[#F5F8FC]"
                         )}
                     >
                         My Submissions
@@ -180,10 +180,10 @@ export default function Dashboard() {
                             activeTab === "bounties"
                                 ? theme === "light"
                                     ? "bg-white text-gray-900 shadow-sm"
-                                    : "bg-[#1F2937] text-[#FFFFFF] shadow-sm"
+                                    : "bg-[#141B23] text-[#F5F8FC] shadow-sm"
                                 : theme === "light"
                                 ? "text-gray-600 hover:text-gray-900"
-                                : "text-[#CFCFCF] hover:text-[#FFFFFF]"
+                                : "text-[#B8C5D6] hover:text-[#F5F8FC]"
                         )}
                     >
                         My Bounties (Brand)
@@ -195,13 +195,13 @@ export default function Dashboard() {
             {isLoading ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <div className={`h-24 rounded-2xl animate-pulse ${
-                        theme === "light" ? "bg-gray-200" : "bg-[#1F2937]"
+                        theme === "light" ? "bg-gray-200" : "bg-[#141B23]"
                     }`} />
                     <div className={`h-24 rounded-2xl animate-pulse ${
-                        theme === "light" ? "bg-gray-200" : "bg-[#1F2937]"
+                        theme === "light" ? "bg-gray-200" : "bg-[#141B23]"
                     }`} />
                     <div className={`h-24 rounded-2xl animate-pulse ${
-                        theme === "light" ? "bg-gray-200" : "bg-[#1F2937]"
+                        theme === "light" ? "bg-gray-200" : "bg-[#141B23]"
                     }`} />
                 </div>
             ) : (
@@ -251,42 +251,42 @@ export default function Dashboard() {
             <div className={`rounded-2xl border overflow-hidden min-h-[300px] ${
                 theme === "light"
                     ? "border-gray-200 bg-white shadow-sm"
-                    : "border-[#010A12] bg-[#1F2937] shadow-[0_12px_30px_rgba(15,23,42,0.6)]"
+                    : "border-[#1A2332] bg-[#141B23] shadow-[0_12px_30px_rgba(0,0,0,0.4)]"
             }`}>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
                         <thead className={`border-b ${
-                            theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#010A12] border-[#010A12]"
+                            theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#0A0F17] border-[#1A2332]"
                         }`}>
                             <tr>
                                 {activeTab === "submissions" ? (
                                     <>
                                         <th className={`px-6 py-4 font-medium ${
-                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                            theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                         }`}>Bounty Campaign</th>
                                         <th className={`px-6 py-4 font-medium ${
-                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                            theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                         }`}>Status</th>
                                         <th className={`px-6 py-4 font-medium text-right ${
-                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                            theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                         }`}>Views</th>
                                         <th className={`px-6 py-4 font-medium text-right ${
-                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                            theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                         }`}>Earnings</th>
                                     </>
                                 ) : (
                                     <>
                                         <th className={`px-6 py-4 font-medium ${
-                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                            theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                         }`}>Campaign Name</th>
                                         <th className={`px-6 py-4 font-medium ${
-                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                            theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                         }`}>Budget Used</th>
                                         <th className={`px-6 py-4 font-medium text-center ${
-                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                            theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                         }`}>Submissions</th>
                                         <th className={`px-6 py-4 font-medium text-right ${
-                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                            theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                         }`}>Actions</th>
                                     </>
                                 )}
@@ -296,11 +296,11 @@ export default function Dashboard() {
                             {isLoading ? (
                                 <tr>
                                     <td colSpan={4} className={`px-6 py-12 text-center ${
-                                        theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                                    theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                     }`}>
                                         <div className="flex items-center justify-center gap-2">
                                             <div className={`animate-spin rounded-full h-5 w-5 border-b-2 ${
-                                                theme === "light" ? "border-[#1F2937]" : "border-[#10B981]"
+                                                theme === "light" ? "border-[#1F2937]" : "border-[#60A5FA]"
                                             }`}></div>
                                             <span>Loading...</span>
                                         </div>
@@ -312,27 +312,27 @@ export default function Dashboard() {
                             {activeTab === "submissions" && (
                                 submissions.length > 0 ? (
                                     submissions.map((sub) => (
-                                        <tr key={sub.id} className={theme === "light" ? "hover:bg-gray-50" : "hover:bg-[#010A12]/50"}>
+                                        <tr key={sub.id} className={theme === "light" ? "hover:bg-gray-50" : "hover:bg-[#0A0F17]/50"}>
                                             <td className={`px-6 py-4 font-medium ${
-                                                theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                                                theme === "light" ? "text-gray-900" : "text-[#F5F8FC]"
                                             }`}>{sub.campaignName}</td>
                                             <td className="px-6 py-4"><Badge variant={sub.status === 'Approved' ? 'success' : 'warning'}>{sub.status}</Badge></td>
                                             <td className={`px-6 py-4 text-right ${
-                                                theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                                                theme === "light" ? "text-gray-900" : "text-[#F5F8FC]"
                                             }`}>{sub.views.toLocaleString()}</td>
                                             <td className={`px-6 py-4 text-right font-medium ${
-                                                theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                                                theme === "light" ? "text-gray-900" : "text-[#F5F8FC]"
                                             }`}>${sub.earnings.toFixed(2)}</td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
                                         <td colSpan={4} className={`px-6 py-12 text-center ${
-                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                            theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                         }`}>
                                             <div className="flex flex-col items-center justify-center gap-2">
                                                 <ListVideo className={`h-8 w-8 ${
-                                                    theme === "light" ? "text-gray-400" : "text-[#CFCFCF]"
+                                                    theme === "light" ? "text-gray-400" : "text-[#B8C5D6]"
                                                 }`} />
                                                 <p>No submissions yet.</p>
                                                 <Link href="/">
@@ -348,24 +348,24 @@ export default function Dashboard() {
                             {activeTab === "bounties" && (
                                 bounties.length > 0 ? (
                                     bounties.map((bounty) => (
-                                        <tr key={bounty.id} className={theme === "light" ? "hover:bg-gray-50" : "hover:bg-[#010A12]/50"}>
+                                        <tr key={bounty.id} className={theme === "light" ? "hover:bg-gray-50" : "hover:bg-[#0A0F17]/50"}>
                                             <td className={`px-6 py-4 font-medium ${
-                                                theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                                                theme === "light" ? "text-gray-900" : "text-[#F5F8FC]"
                                             }`}>{bounty.title}</td>
                                             <td className="px-6 py-4">
                                                 <div className={`w-full max-w-[100px] h-2 rounded-full overflow-hidden ${
-                                                    theme === "light" ? "bg-gray-200" : "bg-[#010A12]"
+                                                    theme === "light" ? "bg-gray-200" : "bg-[#0A0F17]"
                                                 }`}>
                                                     <div className={`h-full ${
-                                                        theme === "light" ? "bg-[#1F2937]" : "bg-[#10B981]"
+                                                        theme === "light" ? "bg-[#1F2937]" : "bg-[#60A5FA]"
                                                     }`} style={{ width: `${(bounty.budgetSpent / bounty.budgetTotal) * 100}%` }}></div>
                                                 </div>
                                                 <span className={`text-xs mt-1 block ${
-                                                    theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                                    theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                                 }`}>${bounty.budgetSpent} / ${bounty.budgetTotal}</span>
                                             </td>
                                             <td className={`px-6 py-4 text-center ${
-                                                theme === "light" ? "text-gray-900" : "text-[#FFFFFF]"
+                                                theme === "light" ? "text-gray-900" : "text-[#F5F8FC]"
                                             }`}>{bounty.submissionCount}</td>
                                             <td className="px-6 py-4 text-right">
                                                 <Link href={`/bounty/${bounty.id}`}>
@@ -377,11 +377,11 @@ export default function Dashboard() {
                                 ) : (
                                     <tr>
                                         <td colSpan={4} className={`px-6 py-12 text-center ${
-                                            theme === "light" ? "text-gray-600" : "text-[#CFCFCF]"
+                                            theme === "light" ? "text-gray-600" : "text-[#B8C5D6]"
                                         }`}>
                                             <div className="flex flex-col items-center justify-center gap-2">
                                                 <Briefcase className={`h-8 w-8 ${
-                                                    theme === "light" ? "text-gray-400" : "text-[#CFCFCF]"
+                                                    theme === "light" ? "text-gray-400" : "text-[#B8C5D6]"
                                                 }`} />
                                                 <p>You haven't created any campaigns.</p>
                                                 <Button 

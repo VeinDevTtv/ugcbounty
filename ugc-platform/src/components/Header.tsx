@@ -146,7 +146,7 @@ export default function Header() {
       <nav className={`sticky top-0 z-50 w-full backdrop-blur-md shadow-sm transition-colors ${
         theme === "light" 
           ? "border-b border-[#C8D1E0] bg-[#E8ECF3]" 
-          : "border-b border-[#1F2937] bg-[#1F2937]"
+          : "border-b border-[#1A2332] bg-[#0D1419]"
       }`}>
         <div className="container mx-auto flex min-h-24 items-center justify-between px-4 py-3 font-sans">
           {/* LOGO */}
@@ -166,7 +166,7 @@ export default function Header() {
           <div className={`hidden md:flex items-center gap-3 px-3 py-1 rounded-full shadow-sm ${
             theme === "light" 
               ? "bg-white/60 border border-[#D9E1EF]" 
-              : "bg-[#1F2937]/60"
+              : "bg-[#141B23]/60"
           }`}>
             {navItems.map((item) => {
               const isActive =
@@ -182,10 +182,10 @@ export default function Header() {
                     isActive
                       ? theme === "light"
                         ? "bg-[#1B3C73] text-white shadow border border-[#102B52]"
-                        : "bg-[#1F2937] text-white shadow-sm"
+                        : "bg-[#141B23] text-[#F5F8FC] shadow-sm"
                       : theme === "light"
                       ? "text-[#2E3A47] hover:text-[#4F6FA8] hover:bg-[#DDE5F2]"
-                      : "text-[#FFFFFF] hover:text-[#10B981] hover:bg-[#1F2937]"
+                      : "text-[#F5F8FC] hover:text-[#60A5FA] hover:bg-[#141B23]"
                   }`}
                 >
                   {item.label}
@@ -215,7 +215,7 @@ export default function Header() {
                     className={`rounded-full px-6 py-2 text-sm font-semibold shadow-sm ${
                       theme === "light"
                         ? "bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
-                        : "bg-[#1F2937] text-white hover:bg-[#2A3441]"
+                        : "bg-[#141B23] text-white hover:bg-[#1F2937]"
                     }`}
                   >
                     Create Bounty
@@ -231,7 +231,7 @@ export default function Header() {
                       className={`rounded-full ${
                         theme === "light"
                           ? "text-[#2E3A47] hover:text-[#1B3C73] hover:bg-[#DDE5F2]"
-                          : "text-[#FFFFFF] hover:bg-[#1F2937]"
+                          : "text-[#F5F8FC] hover:bg-[#141B23]"
                       }`}
                     >
                       Sign In
@@ -244,7 +244,7 @@ export default function Header() {
                       className={`rounded-full ${
                         theme === "light"
                           ? "bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
-                          : "bg-[#1F2937] text-white border border-[#1F2937] hover:bg-[#2A3441]"
+                          : "bg-[#141B23] text-white border border-[#1A2332] hover:bg-[#1F2937]"
                       }`}
                     >
                       Sign Up
@@ -267,14 +267,14 @@ export default function Header() {
                           className={`h-9 w-9 rounded-full border-2 ${
                             theme === "light"
                               ? "border-[#C8D1E0] bg-white"
-                              : "border-[#1F2937] bg-[#1F2937]"
+                              : "border-[#1A2332] bg-[#141B23]"
                           }`}
                         />
                       ) : (
                         <div className={`h-9 w-9 rounded-full flex items-center justify-center text-white font-semibold text-sm border-2 ${
                           theme === "light"
                             ? "bg-[#1B3C73] border-[#C8D1E0]"
-                            : "bg-[#1F2937] border-[#1F2937]"
+                            : "bg-[#141B23] border-[#1A2332]"
                         }`}>
                           {user?.username?.[0]?.toUpperCase() ||
                             user?.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ||
@@ -304,24 +304,24 @@ export default function Header() {
             className={`shadow-2xl max-w-lg w-full rounded-lg border ${
               theme === "light"
                 ? "bg-white border-[#C8D1E0]"
-                : "bg-[#1F2937] border-[#1F2937]"
+                : "bg-[#141B23] border-[#1A2332]"
             }`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className={`flex justify-between items-start p-6 border-b ${
-              theme === "light" ? "border-[#C8D1E0]" : "border-[#1F2937]"
+              theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
             }`}>
               <h2 className={`text-2xl font-bold ${
-                theme === "light" ? "text-[#2E3A47]" : "text-[#FFFFFF]"
+                theme === "light" ? "text-[#2E3A47]" : "text-[#F5F8FC]"
               }`}>
                 Create New Bounty
               </h2>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className={`transition-colors ${
-                  theme === "light"
-                    ? "text-[#52677C] hover:text-[#2E3A47]"
-                    : "text-[#CFCFCF] hover:text-[#FFFFFF]"
+                    theme === "light"
+                      ? "text-[#52677C] hover:text-[#2E3A47]"
+                      : "text-[#B8C5D6] hover:text-[#F5F8FC]"
                 }`}
               >
                 <X className="h-5 w-5" />
@@ -342,7 +342,7 @@ export default function Header() {
               {/* Bounty Name */}
               <div>
                 <label className={`block text-sm font-medium mb-2 ${
-                  theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
+                      theme === "light" ? "text-[#52677C]" : "text-[#F5F8FC]"
                 }`}>
                   Bounty Name *
                 </label>
@@ -363,7 +363,7 @@ export default function Header() {
               {/* Description */}
               <div>
                 <label className={`block text-sm font-medium mb-2 ${
-                  theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
+                      theme === "light" ? "text-[#52677C]" : "text-[#F5F8FC]"
                 }`}>
                   Description *
                 </label>
@@ -384,7 +384,7 @@ export default function Header() {
               {/* Instructions */}
               <div>
                 <label className={`block text-sm font-medium mb-2 ${
-                  theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
+                      theme === "light" ? "text-[#52677C]" : "text-[#F5F8FC]"
                 }`}>
                   Instructions (Optional)
                 </label>
@@ -400,7 +400,7 @@ export default function Header() {
                   placeholder="Exact requirements that submitted videos must meet to be accepted..."
                 />
                 <p className={`text-xs mt-1 ${
-                  theme === "light" ? "text-[#6B7A8F]" : "text-[#CFCFCF]"
+                      theme === "light" ? "text-[#6B7A8F]" : "text-[#B8C5D6]"
                 }`}>
                   These instructions will be used for video validation. If left empty, the description will be used.
                 </p>
@@ -410,7 +410,7 @@ export default function Header() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${
-                    theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
+                      theme === "light" ? "text-[#52677C]" : "text-[#F5F8FC]"
                   }`}>
                     Total Bounty ($) *
                   </label>
@@ -424,14 +424,14 @@ export default function Header() {
                     className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                       theme === "light"
                         ? "border-[#C8D1E0] bg-white text-[#2E3A47] placeholder:text-[#6B7A8F] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
-                        : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF] focus:ring-[#1F2937]/20 focus:border-[#1F2937]"
+                        : "border-[#1A2332] bg-[#141B23] text-[#F5F8FC] placeholder:text-[#B8C5D6] focus:ring-[#60A5FA]/20 focus:border-[#60A5FA]"
                     }`}
                     placeholder="10000"
                   />
                 </div>
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${
-                    theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
+                      theme === "light" ? "text-[#52677C]" : "text-[#F5F8FC]"
                   }`}>
                     Rate per 1k Views ($) *
                   </label>
@@ -445,7 +445,7 @@ export default function Header() {
                     className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                       theme === "light"
                         ? "border-[#C8D1E0] bg-white text-[#2E3A47] placeholder:text-[#6B7A8F] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
-                        : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] placeholder:text-[#CFCFCF] focus:ring-[#1F2937]/20 focus:border-[#1F2937]"
+                        : "border-[#1A2332] bg-[#141B23] text-[#F5F8FC] placeholder:text-[#B8C5D6] focus:ring-[#60A5FA]/20 focus:border-[#60A5FA]"
                     }`}
                     placeholder="25.00"
                   />
@@ -455,7 +455,7 @@ export default function Header() {
               {/* Company Name */}
               <div>
                 <label className={`block text-sm font-medium mb-2 ${
-                  theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
+                      theme === "light" ? "text-[#52677C]" : "text-[#F5F8FC]"
                 }`}>
                   Company Name (Optional)
                 </label>
@@ -475,7 +475,7 @@ export default function Header() {
               {/* Logo Upload */}
               <div>
                 <label className={`block text-sm font-medium mb-2 ${
-                  theme === "light" ? "text-[#52677C]" : "text-[#FFFFFF]"
+                      theme === "light" ? "text-[#52677C]" : "text-[#F5F8FC]"
                 }`}>
                   Logo (Optional, max 5MB)
                 </label>
@@ -487,12 +487,12 @@ export default function Header() {
                     className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold ${
                       theme === "light"
                         ? "border-[#C8D1E0] bg-white text-[#2E3A47] file:bg-[#7A8CB3] file:text-white hover:file:bg-[#6A7AA0] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
-                        : "border-[#1F2937] bg-[#1F2937] text-[#FFFFFF] file:bg-[#1F2937] file:text-white hover:file:bg-[#2A3441] focus:ring-[#1F2937]/20 focus:border-[#1F2937]"
+                        : "border-[#1A2332] bg-[#141B23] text-[#F5F8FC] file:bg-[#141B23] file:text-white hover:file:bg-[#1F2937] focus:ring-[#60A5FA]/20 focus:border-[#60A5FA]"
                     }`}
                   />
                   {logoPreview && (
                     <div className={`relative w-32 h-32 border rounded-lg overflow-hidden ${
-                      theme === "light" ? "border-[#C8D1E0]" : "border-[#1F2937]"
+                      theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
                     }`}>
                       <img
                         src={logoPreview}
@@ -516,7 +516,7 @@ export default function Header() {
 
               {/* Footer buttons */}
               <div className={`flex items-center justify-end gap-2 pt-4 border-t ${
-                theme === "light" ? "border-[#C8D1E0]" : "border-[#1F2937]"
+                theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
               }`}>
                 <Button
                   type="button"
@@ -537,7 +537,7 @@ export default function Header() {
                   className={`rounded-full ${
                     theme === "light"
                       ? "border-[#C8D1E0] text-[#2E3A47] hover:bg-[#DDE5F2]"
-                      : "border-[#1F2937] text-[#FFFFFF] hover:bg-[#1F2937]"
+                      : "border-[#1A2332] text-[#F5F8FC] hover:bg-[#141B23]"
                   }`}
                 >
                   Cancel
@@ -556,7 +556,7 @@ export default function Header() {
                   className={`rounded-full px-6 ${
                     theme === "light"
                       ? "bg-[#7A8CB3] text-white hover:bg-[#6A7AA0]"
-                      : "bg-[#1F2937] text-white hover:bg-[#2A3441]"
+                      : "bg-[#60A5FA] text-white hover:bg-[#3B82F6]"
                   }`}
                 >
                   {isCreating ? "Creating..." : "Create Bounty"}

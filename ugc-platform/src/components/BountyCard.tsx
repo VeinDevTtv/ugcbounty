@@ -31,8 +31,8 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                     ? `bg-white border-[#C8D1E0] shadow-sm hover:shadow-md ${
                         isCompleted ? 'opacity-60 grayscale-[0.5]' : 'hover:border-[#1B3C73]'
                       }`
-                    : `border-[#010A12] bg-[#1F2937] shadow-[0_12px_30px_rgba(15,23,42,0.6)] hover:shadow-[0_16px_40px_rgba(15,23,42,0.8)] ${
-                        isCompleted ? 'opacity-60 grayscale-[0.5]' : 'hover:border-[#10B981]/30'
+                    : `border-[#1A2332] bg-[#141B23] shadow-[0_12px_30px_rgba(0,0,0,0.4)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)] ${
+                        isCompleted ? 'opacity-60 grayscale-[0.5]' : 'hover:border-[#60A5FA]/30'
                       }`
             }`}
         >
@@ -48,7 +48,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                             <div className={`h-10 w-10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 ${
                                 theme === "light"
                                     ? "bg-white border border-[#D9E2EC]"
-                                    : "bg-[#010A12] border border-[#010A12]"
+                                    : "bg-[#0A0F17] border border-[#1A2332]"
                             }`}>
                                 <img
                                     src={data.logoUrl}
@@ -63,7 +63,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                                             parent.className = `h-10 w-10 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
                                                 theme === "light"
                                                     ? "bg-[#DDE5F2] text-[#2E3A47]"
-                                                    : "bg-[#010A12] text-[#FFFFFF]"
+                                                    : "bg-[#0A0F17] text-[#F5F8FC]"
                                             }`;
                                             parent.textContent = data.brand.substring(0, 2).toUpperCase();
                                         }
@@ -74,7 +74,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                             <div className={`h-10 w-10 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
                                 theme === "light"
                                     ? "bg-[#DDE5F2] text-[#2E3A47]"
-                                    : "bg-[#010A12] text-[#FFFFFF]"
+                                    : "bg-[#0A0F17] text-[#F5F8FC]"
                             }`}>
                                 {data.brand.substring(0, 2).toUpperCase()}
                             </div>
@@ -84,18 +84,18 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                             <h3 className={`text-lg font-semibold line-clamp-1 transition-colors ${
                                 theme === "light"
                                     ? "text-[#2E3A47] group-hover:text-[#1B3C73]"
-                                    : "text-[#FFFFFF] group-hover:text-[#10B981]"
+                                    : "text-[#F5F8FC] group-hover:text-[#60A5FA]"
                             }`}>
                                 {data.title}
                             </h3>
                             {/* User Info: Avatar + Name + Time */}
                             <div className="flex items-center gap-2 mt-1">
                                 <span className={`text-xs font-medium ${
-                                    theme === "light" ? "text-[#52677C]" : "text-[#CFCFCF]"
+                                    theme === "light" ? "text-[#52677C]" : "text-[#B8C5D6]"
                                 }`}>{data.brand}</span>
-                                <span className={theme === "light" ? "text-[#C1CCD9]" : "text-[#010A12]"}>•</span>
+                                <span className={theme === "light" ? "text-[#C1CCD9]" : "text-[#1A2332]"}>•</span>
                                 <span className={`text-xs flex items-center gap-1 ${
-                                    theme === "light" ? "text-[#52677C]" : "text-[#CFCFCF]"
+                                    theme === "light" ? "text-[#52677C]" : "text-[#B8C5D6]"
                                 }`}>
                                     <Clock className="h-3 w-3" />
                                     {data.deadline}
@@ -109,7 +109,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                             ? 'dark:bg-red-900/30 dark:text-red-400 bg-red-100 text-red-500 border border-red-300' 
                             : theme === "light"
                             ? 'bg-[#1B3C73] text-white'
-                            : 'bg-[rgba(16,185,129,0.12)] text-[#FFFFFF] border border-[#10B981]'
+                            : 'bg-[rgba(96,165,250,0.12)] text-[#F5F8FC] border border-[#60A5FA]'
                     }`}>
                         {isCompleted ? "SOLD OUT" : `$${data.payout} / 1k`}
                     </div>
@@ -117,7 +117,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
 
                 {/* Platforms */}
                 <div className={`flex items-center gap-2 mb-4 ${
-                    theme === "light" ? "text-[#52677C]" : "text-[#CFCFCF]"
+                                    theme === "light" ? "text-[#52677C]" : "text-[#B8C5D6]"
                 }`}>
                     {data.platforms.includes("instagram") && <Instagram className="h-4 w-4" />}
                     {data.platforms.includes("youtube") && <Youtube className="h-4 w-4" />}
@@ -135,24 +135,24 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                 <div className="mb-5">
                     <div className="flex justify-between text-xs mb-1.5">
                         <span className={`font-medium ${
-                            theme === "light" ? "text-[#52677C]" : "text-[#CFCFCF]"
+                                    theme === "light" ? "text-[#52677C]" : "text-[#B8C5D6]"
                         }`}>Budget Used</span>
                         <span className={`font-bold ${
                             isCompleted 
                                 ? 'text-red-400' 
                                 : theme === "light" 
                                 ? 'text-[#2E3A47]' 
-                                : 'text-[#FFFFFF]'
+                                : 'text-[#F5F8FC]'
                         }`}>
                             {isCompleted ? '100%' : `${data.filled}%`}
                         </span>
                     </div>
                     <div className={`w-full h-2 rounded-full overflow-hidden ${
-                        theme === "light" ? "bg-[#E1E8F0]" : "bg-[#010A12]"
+                        theme === "light" ? "bg-[#E1E8F0]" : "bg-[#0A0F17]"
                     }`}>
                         <div 
                             className={`h-full rounded-full transition-all duration-500 ${
-                                isCompleted ? 'bg-red-500' : theme === "light" ? 'bg-[#1B3C73]' : 'bg-[#1F2937]'
+                                isCompleted ? 'bg-red-500' : theme === "light" ? 'bg-[#1B3C73]' : 'bg-[#60A5FA]'
                             }`} 
                             style={{ width: `${data.filled}%` }}
                         ></div>
@@ -161,10 +161,10 @@ export default function BountyCard({ data }: { data: BountyProps }) {
 
                 {/* Footer */}
                 <div className={`flex items-center justify-between border-t pt-4 mt-auto ${
-                    theme === "light" ? "border-[#C8D1E0]" : "border-[#010A12]"
+                    theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
                 }`}>
                     <div className={`flex gap-4 text-xs font-medium ${
-                        theme === "light" ? "text-[#52677C]" : "text-[#CFCFCF]"
+                                    theme === "light" ? "text-[#52677C]" : "text-[#B8C5D6]"
                     }`}>
                         <span className="flex items-center gap-1">
                             <DollarSign className="h-3 w-3" /> Budget: {data.budget}
@@ -174,7 +174,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                         <ArrowRight className={`h-4 w-4 group-hover:translate-x-1 transition-all ${
                             theme === "light"
                                 ? "text-[#52677C] group-hover:text-[#1B3C73]"
-                                : "text-[#010A12] group-hover:text-[#10B981]"
+                                : "text-[#64748B] group-hover:text-[#60A5FA]"
                         }`} />
                     )}
                 </div>
@@ -183,7 +183,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
             {/* Claim Button / Owner State */}
             {!isCompleted && (
                 <div className={`mt-4 pt-4 border-t ${
-                    theme === "light" ? "border-[#C8D1E0]" : "border-[#010A12]"
+                    theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
                 }`}>
                     {isOwner ? (
                         <button
@@ -194,7 +194,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                             className={`w-full py-2.5 px-4 rounded-lg transition-colors text-sm font-medium ${
                                 theme === "light"
                                     ? "bg-[#DDE5F2] text-[#2E3A47] hover:bg-[#C7D3E0]"
-                                    : "bg-[#010A12] text-[#FFFFFF] hover:bg-[#020A1A]"
+                                    : "bg-[#1A2332] text-[#F5F8FC] hover:bg-[#252F3F]"
                             }`}
                         >
                             Manage Bounty
@@ -209,7 +209,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                             className={`w-full py-2.5 px-4 rounded-full transition-colors text-sm font-semibold focus:outline-none focus:ring-2 ${
                                 theme === "light"
                                     ? "bg-[#1B3C73] text-white hover:bg-[#102B52] focus:ring-[#1B3C73]/50"
-                                    : "bg-[#1F2937] text-[#FFFFFF] hover:bg-[#2A3441] focus:ring-[#1F2937]/50"
+                                    : "bg-[#60A5FA] text-[#FFFFFF] hover:bg-[#3B82F6] focus:ring-[#60A5FA]/50"
                             }`}
                         >
                             Submit for this Bounty
@@ -220,7 +220,7 @@ export default function BountyCard({ data }: { data: BountyProps }) {
                             className={`block w-full py-2.5 px-4 rounded-full transition-colors text-sm font-semibold text-center focus:outline-none focus:ring-2 ${
                                 theme === "light"
                                     ? "bg-[#1B3C73] text-white hover:bg-[#102B52] focus:ring-[#1B3C73]/50"
-                                    : "bg-[#1F2937] text-[#FFFFFF] hover:bg-[#2A3441] focus:ring-[#1F2937]/50"
+                                    : "bg-[#60A5FA] text-[#FFFFFF] hover:bg-[#3B82F6] focus:ring-[#60A5FA]/50"
                             }`}
                         >
                             View Details
@@ -231,12 +231,12 @@ export default function BountyCard({ data }: { data: BountyProps }) {
 
             {isCompleted && (
                 <div className={`mt-4 pt-4 border-t ${
-                    theme === "light" ? "border-[#C8D1E0]" : "border-[#010A12]"
+                    theme === "light" ? "border-[#C8D1E0]" : "border-[#1A2332]"
                 }`}>
                     <div className={`text-center py-2.5 px-4 rounded-lg border ${
                         theme === "light"
                             ? "bg-[#F7FAFC] border-[#C8D1E0]"
-                            : "bg-[rgba(16,185,129,0.12)] border-[#10B981]"
+                            : "bg-[rgba(96,165,250,0.12)] border-[#60A5FA]"
                     }`}>
                         <span className={`text-sm font-medium ${
                             theme === "light" ? "text-[#2E3A47]" : "text-[#FFFFFF]"

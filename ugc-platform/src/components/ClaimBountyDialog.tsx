@@ -310,32 +310,32 @@ export default function ClaimBountyDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl p-6 shadow-lg border dark:bg-[#020617] dark:border-[#010A12] bg-white border-[#C8D1E0]">
+      <div className="w-full max-w-md rounded-2xl p-6 shadow-lg border dark:bg-[#141B23] dark:border-[#1A2332] bg-white border-[#C8D1E0]">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h2 className="text-lg font-semibold dark:text-[#FFFFFF] text-[#2E3A47]">
+            <h2 className="text-lg font-semibold dark:text-[#F5F8FC] text-[#2E3A47]">
               Claim &quot;{bounty.title}&quot;
             </h2>
-            <p className="mt-1 text-sm dark:text-[#CFCFCF] text-[#52677C]">
+            <p className="mt-1 text-sm dark:text-[#B8C5D6] text-[#52677C]">
               Brand: {bounty.brand} · Payout: ${bounty.payout}
             </p>
           </div>
           <button
             onClick={handleClose}
-            className="dark:text-[#CFCFCF] dark:hover:text-[#FFFFFF] text-[#52677C] hover:text-[#2E3A47] transition-colors"
+            className="dark:text-[#B8C5D6] dark:hover:text-[#F5F8FC] text-[#52677C] hover:text-[#2E3A47] transition-colors"
           >
             <XCircle className="h-5 w-5" />
           </button>
         </div>
 
         {isCompleted && (
-          <div className="mt-3 rounded-md dark:bg-[#010A12] dark:text-[#CFCFCF] bg-[#DDE5F2] px-3 py-2 text-xs text-[#52677C]">
+          <div className="mt-3 rounded-md dark:bg-[#0A0F17] dark:text-[#B8C5D6] bg-[#DDE5F2] px-3 py-2 text-xs text-[#52677C]">
             This bounty has been marked as completed. New submissions are disabled.
           </div>
         )}
 
         {submitSuccess && (
-          <div className="mt-3 rounded-md dark:bg-[rgba(16,185,129,0.12)] dark:text-[#FFFFFF] dark:border-[#10B981] bg-green-50 px-3 py-2 text-xs text-green-700 flex items-center gap-2 border border-green-200">
+          <div className="mt-3 rounded-md dark:bg-[rgba(96,165,250,0.12)] dark:text-[#F5F8FC] dark:border-[#60A5FA] bg-green-50 px-3 py-2 text-xs text-green-700 flex items-center gap-2 border border-green-200">
             <CheckCircle className="h-4 w-4" />
             Submission successful! Redirecting...
           </div>
@@ -349,7 +349,7 @@ export default function ClaimBountyDialog({
 
         <div className="mt-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium dark:text-[#FFFFFF] text-[#2E3A47] mb-2">
+            <label className="block text-sm font-medium dark:text-[#F5F8FC] text-[#2E3A47] mb-2">
               Content URL (YouTube, Instagram, or TikTok)
             </label>
             <input
@@ -357,14 +357,14 @@ export default function ClaimBountyDialog({
               value={url}
               onChange={(e) => handleUrlChange(e.target.value)}
               placeholder="https://youtube.com/watch?v=... or https://tiktok.com/@user/video/..."
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 disabled:cursor-not-allowed dark:border-[#010A12] dark:bg-[#020617] dark:text-[#FFFFFF] dark:focus:ring-[#10B981]/20 dark:focus:border-[#10B981] dark:disabled:bg-[#010A12] dark:placeholder:text-[#CFCFCF] border-[#C8D1E0] bg-white text-[#2E3A47] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3] disabled:bg-[#D9E1EF] placeholder:text-[#6B7A8F]"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 disabled:cursor-not-allowed dark:border-[#1A2332] dark:bg-[#141B23] dark:text-[#F5F8FC] dark:focus:ring-[#60A5FA]/20 dark:focus:border-[#60A5FA] dark:disabled:bg-[#0A0F17] dark:placeholder:text-[#B8C5D6] border-[#C8D1E0] bg-white text-[#2E3A47] focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3] disabled:bg-[#D9E1EF] placeholder:text-[#6B7A8F]"
               disabled={isCompleted || isSubmitting}
             />
             {urlError && (
               <p className="mt-1 text-xs text-red-600">{urlError}</p>
             )}
             {platform && platform !== 'other' && !urlError && (
-              <p className="mt-1 text-xs dark:text-[#10B981] text-[#4F6FA8] flex items-center gap-1">
+              <p className="mt-1 text-xs dark:text-[#60A5FA] text-[#4F6FA8] flex items-center gap-1">
                 <CheckCircle className="h-3 w-3" />
                 {platform.charAt(0).toUpperCase() + platform.slice(1)} URL detected
               </p>
@@ -373,7 +373,7 @@ export default function ClaimBountyDialog({
 
           {/* Preview Loading */}
           {isLoadingPreview && (
-            <div className="flex items-center gap-2 text-sm dark:text-[#CFCFCF] text-[#52677C]">
+            <div className="flex items-center gap-2 text-sm dark:text-[#B8C5D6] text-[#52677C]">
               <Loader2 className="h-4 w-4 animate-spin" />
               Loading preview...
             </div>
@@ -388,7 +388,7 @@ export default function ClaimBountyDialog({
 
           {/* Preview Card */}
           {previewData && !previewError && (
-            <div className="border rounded-lg p-4 dark:border-[#010A12] dark:bg-[#020617] border-[#C8D1E0] bg-[#F7FAFC]">
+            <div className="border rounded-lg p-4 dark:border-[#1A2332] dark:bg-[#141B23] border-[#C8D1E0] bg-[#F7FAFC]">
               {previewData.image && (
                 <img
                   src={previewData.image}
@@ -396,11 +396,11 @@ export default function ClaimBountyDialog({
                   className="w-full h-32 object-cover rounded mb-3"
                 />
               )}
-              <h4 className="font-semibold text-sm dark:text-[#FFFFFF] text-[#2E3A47] mb-1 line-clamp-2">
+              <h4 className="font-semibold text-sm dark:text-[#F5F8FC] text-[#2E3A47] mb-1 line-clamp-2">
                 {previewData.title}
               </h4>
               {previewData.description && (
-                <p className="text-xs dark:text-[#CFCFCF] text-[#52677C] line-clamp-2 mb-2">
+                <p className="text-xs dark:text-[#B8C5D6] text-[#52677C] line-clamp-2 mb-2">
                   {previewData.description}
                 </p>
               )}
@@ -408,7 +408,7 @@ export default function ClaimBountyDialog({
                 href={previewData.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs dark:text-[#10B981] dark:hover:text-[#059669] text-[#4F6FA8] hover:text-[#1B3C73] inline-flex items-center gap-1"
+                className="text-xs dark:text-[#60A5FA] dark:hover:text-[#3B82F6] text-[#4F6FA8] hover:text-[#1B3C73] inline-flex items-center gap-1"
               >
                 {previewData.url}
                 <ExternalLink className="h-3 w-3" />
@@ -420,7 +420,7 @@ export default function ClaimBountyDialog({
           {validationResult && (
             <div className={`rounded-md px-3 py-2 text-xs ${
               validationResult.valid
-                ? 'dark:bg-[rgba(16,185,129,0.12)] dark:text-[#FFFFFF] dark:border-[#10B981] bg-green-50 text-green-700 border border-green-200'
+                ? 'dark:bg-[rgba(96,165,250,0.12)] dark:text-[#F5F8FC] dark:border-[#60A5FA] bg-green-50 text-green-700 border border-green-200'
                 : 'dark:bg-red-900/30 dark:text-red-400 bg-red-50 text-red-600 border border-red-200'
             }`}>
               <div className="font-semibold mb-1">

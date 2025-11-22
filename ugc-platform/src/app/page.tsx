@@ -95,14 +95,14 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen transition-colors ${
-      theme === "light" ? "bg-[#E8ECF3]" : "bg-[#1F2937]"
+      theme === "light" ? "bg-[#E8ECF3]" : "bg-[#0A0F17]"
     }`}>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${
-              theme === "light" ? "border-[#1B3C73]" : "border-[#10B981]"
+              theme === "light" ? "border-[#1B3C73]" : "border-[#60A5FA]"
             }`}></div>
           </div>
         ) : bounties.length === 0 ? (
