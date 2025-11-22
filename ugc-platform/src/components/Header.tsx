@@ -110,7 +110,7 @@ export default function Header() {
 
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3">
-            <div className="relative h-16 w-44 md:h-20 md:w-52">
+            <div className="relative h-20 w-48 md:h-24 md:w-56">
               <Image
                 src="/bountea.png" 
                 alt="Bountea Logo"
@@ -223,16 +223,16 @@ export default function Header() {
           }}
         >
           <div 
-            className="bg-[#25160F] shadow-2xl max-w-lg w-full p-6 rounded-lg border border-[#3A2518]"
+            className="bg-white shadow-2xl max-w-lg w-full p-6 rounded-lg border border-[#C8D1E0]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-start mb-6">
-              <h2 className="text-2xl font-bold text-[#F7F1E8]">
+              <h2 className="text-2xl font-bold text-[#2E3A47]">
                 Create New Bounty
               </h2>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-[#CBB8A4] hover:text-[#F7F1E8] text-2xl transition-colors"
+                className="text-[#52677C] hover:text-[#2E3A47] text-2xl transition-colors"
               >
                 <X size={24} />
               </button>
@@ -240,7 +240,7 @@ export default function Header() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                <label className="block text-sm font-medium text-[#52677C] mb-2">
                   Bounty Name
                 </label>
                 <input
@@ -248,12 +248,12 @@ export default function Header() {
                   value={bountyName}
                   onChange={(e) => setBountyName(e.target.value)}
                   placeholder="e.g., Sushi Hat Challenge"
-                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] placeholder-[#A38E7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C47A53]/20 focus:border-[#C47A53]"
+                  className="w-full px-4 py-2 border border-[#C8D1E0] bg-white text-[#2E3A47] placeholder-[#6B7A8F] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                <label className="block text-sm font-medium text-[#52677C] mb-2">
                   Company Name
                 </label>
                 <input
@@ -261,33 +261,33 @@ export default function Header() {
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="e.g., Acme Corp"
-                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] placeholder-[#A38E7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C47A53]/20 focus:border-[#C47A53]"
+                  className="w-full px-4 py-2 border border-[#C8D1E0] bg-white text-[#2E3A47] placeholder-[#6B7A8F] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                <label className="block text-sm font-medium text-[#52677C] mb-2">
                   Company Logo
                 </label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleLogoChange}
-                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] rounded-lg file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-[#C47A53] file:text-[#F7F1E8] file:font-semibold file:rounded-lg hover:file:bg-[#B86942] file:cursor-pointer cursor-pointer"
+                  className="w-full px-4 py-2 border border-[#C8D1E0] bg-white text-[#2E3A47] rounded-lg file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-[#7A8CB3] file:text-white file:font-semibold file:rounded-lg hover:file:bg-[#6A7AA0] file:cursor-pointer cursor-pointer"
                 />
                 {logoPreview && (
                   <div className="mt-2">
                     <img
                       src={logoPreview}
                       alt="Logo preview"
-                      className="h-20 w-20 object-contain border border-[#3A2518] rounded-lg"
+                      className="h-20 w-20 object-contain border border-[#C8D1E0] rounded-lg"
                     />
                   </div>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                <label className="block text-sm font-medium text-[#52677C] mb-2">
                   Description
                 </label>
                 <textarea
@@ -295,12 +295,12 @@ export default function Header() {
                   onChange={(e) => setBountyDescription(e.target.value)}
                   placeholder="Describe what creators should do..."
                   rows={3}
-                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] placeholder-[#A38E7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C47A53]/20 focus:border-[#C47A53] resize-none"
+                  className="w-full px-4 py-2 border border-[#C8D1E0] bg-white text-[#2E3A47] placeholder-[#6B7A8F] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3] resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                <label className="block text-sm font-medium text-[#52677C] mb-2">
                   Total Bounty ($)
                 </label>
                 <input
@@ -310,12 +310,12 @@ export default function Header() {
                   placeholder="5000"
                   min="0"
                   step="0.01"
-                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] placeholder-[#A38E7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C47A53]/20 focus:border-[#C47A53]"
+                  className="w-full px-4 py-2 border border-[#C8D1E0] bg-white text-[#2E3A47] placeholder-[#6B7A8F] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#CBB8A4] mb-2">
+                <label className="block text-sm font-medium text-[#52677C] mb-2">
                   Rate per 1k Views ($)
                 </label>
                 <input
@@ -325,7 +325,7 @@ export default function Header() {
                   placeholder="8"
                   min="0"
                   step="0.01"
-                  className="w-full px-4 py-2 border border-[#3A2518] bg-[#140E0B] text-[#F7F1E8] placeholder-[#A38E7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C47A53]/20 focus:border-[#C47A53]"
+                  className="w-full px-4 py-2 border border-[#C8D1E0] bg-white text-[#2E3A47] placeholder-[#6B7A8F] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A8CB3]/20 focus:border-[#7A8CB3]"
                 />
               </div>
 
@@ -339,7 +339,7 @@ export default function Header() {
                     !ratePer1k ||
                     isCreating
                   }
-                  className="w-full bg-[#C47A53] text-[#F7F1E8] font-semibold py-3 px-6 rounded-lg hover:bg-[#B86942] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#C47A53]"
+                  className="w-full bg-[#7A8CB3] text-white font-semibold py-3 px-6 rounded-lg hover:bg-[#6A7AA0] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#7A8CB3]"
                 >
                   {isCreating ? "Creating..." : "Create Bounty"}
                 </button>

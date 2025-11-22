@@ -206,27 +206,27 @@ export default function BountyDetailPage({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F5F1E8] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      <div className="min-h-screen bg-[#E8ECF3] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B3C73]"></div>
       </div>
     );
   }
 
   if (notFound || !bounty) {
     return (
-      <div className="min-h-screen bg-[#F5F1E8]">
+      <div className="min-h-screen bg-[#E8ECF3]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Link
             href="/"
-            className="inline-flex items-center text-zinc-500 hover:text-zinc-900 mb-6 transition-colors"
+            className="inline-flex items-center text-[#6B7A8F] hover:text-[#2E3A47] mb-6 transition-colors"
           >
             <ArrowLeft className="h-4 w-4 mr-2" /> Back to Bounties
           </Link>
           <div className="text-center py-20">
-            <h1 className="text-2xl font-bold text-zinc-900 mb-4">
+            <h1 className="text-2xl font-bold text-[#2E3A47] mb-4">
               Bounty Not Found
             </h1>
-            <p className="text-zinc-600">
+            <p className="text-[#52677C]">
               The bounty you're looking for doesn't exist or has been removed.
             </p>
           </div>
@@ -236,11 +236,11 @@ export default function BountyDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F1E8]">
+    <div className="min-h-screen bg-[#E8ECF3]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link
           href="/"
-          className="inline-flex items-center text-zinc-500 hover:text-zinc-900 mb-6 transition-colors"
+          className="inline-flex items-center text-[#6B7A8F] hover:text-[#2E3A47] mb-6 transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-2" /> Back to Bounties
         </Link>
@@ -248,7 +248,7 @@ export default function BountyDetailPage({
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Left Col: Content */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
+            <div className="rounded-2xl border border-[#C8D1E0] bg-white p-8 shadow-sm">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   {isCompleted && (
@@ -263,11 +263,11 @@ export default function BountyDetailPage({
                       {Math.round(calculatedProgress.progressPercentage)}% Filled
                     </Badge>
                   )}
-                  <h1 className="mt-4 text-3xl md:text-4xl font-black text-zinc-900 leading-tight">
+                  <h1 className="mt-4 text-3xl md:text-4xl font-black text-[#2E3A47] leading-tight">
                     {bounty.name}
                   </h1>
-                  <div className="mt-3 flex items-center gap-2 text-zinc-500 text-sm">
-                    <span className="font-bold text-zinc-900">
+                  <div className="mt-3 flex items-center gap-2 text-[#6B7A8F] text-sm">
+                    <span className="font-bold text-[#2E3A47]">
                       {bounty.companyName || "Unknown Brand"}
                     </span>
                     <span>•</span>
@@ -277,7 +277,7 @@ export default function BountyDetailPage({
                   </div>
                 </div>
                 {bounty.logoUrl && (
-                  <div className="h-20 w-20 shrink-0 rounded-2xl bg-white border border-zinc-100 shadow-sm p-3 flex items-center justify-center">
+                  <div className="h-20 w-20 shrink-0 rounded-2xl bg-white border border-[#C8D1E0] shadow-sm p-3 flex items-center justify-center">
                     <img
                       src={bounty.logoUrl}
                       alt="Brand Logo"
@@ -287,26 +287,26 @@ export default function BountyDetailPage({
                 )}
               </div>
 
-              <hr className="my-8 border-zinc-100" />
+              <hr className="my-8 border-[#C8D1E0]" />
 
               <section className="space-y-4">
-                <h3 className="text-lg font-bold text-zinc-900">
+                <h3 className="text-lg font-bold text-[#2E3A47]">
                   Campaign Brief
                 </h3>
-                <p className="text-zinc-600 leading-relaxed text-lg whitespace-pre-wrap">
+                <p className="text-[#52677C] leading-relaxed text-lg whitespace-pre-wrap">
                   {bounty.description}
                 </p>
               </section>
 
               {/* Progress Bar */}
               <section className="mt-8 space-y-4">
-                <h3 className="text-lg font-bold text-zinc-900">Progress</h3>
+                <h3 className="text-lg font-bold text-[#2E3A47]">Progress</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-zinc-600">
+                    <span className="text-[#52677C]">
                       ${calculatedProgress.usedBounty.toFixed(2)} / ${bounty.totalBounty.toFixed(2)} used
                     </span>
-                    <span className="text-zinc-600">
+                    <span className="text-[#52677C]">
                       {Math.round(calculatedProgress.progressPercentage)}%
                     </span>
                   </div>
@@ -323,12 +323,12 @@ export default function BountyDetailPage({
 
               {/* Submissions List */}
               <section className="mt-8 space-y-4">
-                <h3 className="text-lg font-bold text-zinc-900">
+                <h3 className="text-lg font-bold text-[#2E3A47]">
                   Submissions ({submissions.length})
                 </h3>
                 {submissions.length === 0 ? (
-                  <div className="text-center py-12 bg-zinc-50 rounded-xl border border-zinc-100">
-                    <p className="text-zinc-600 text-lg">
+                  <div className="text-center py-12 bg-[#F7FAFC] rounded-xl border border-[#C8D1E0]">
+                    <p className="text-[#52677C] text-lg">
                       No submissions yet. Be the first to submit!
                     </p>
                   </div>
@@ -337,7 +337,7 @@ export default function BountyDetailPage({
                     {submissions.map((submission) => (
                       <div
                         key={submission.id}
-                        className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
+                        className="rounded-xl border border-[#C8D1E0] bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
                       >
                         <div className="flex items-start justify-between gap-4">
                           {/* Thumbnail */}
@@ -346,7 +346,7 @@ export default function BountyDetailPage({
                               <img
                                 src={submission.cover_image_url}
                                 alt={submission.title || "Video thumbnail"}
-                                className="w-32 h-24 object-cover border border-zinc-200 rounded-lg"
+                                className="w-32 h-24 object-cover border border-[#C8D1E0] rounded-lg"
                                 onError={(e) => {
                                   e.currentTarget.style.display = "none";
                                 }}
@@ -359,7 +359,7 @@ export default function BountyDetailPage({
                                 {submission.status}
                               </Badge>
                               {submission.user_profiles && (
-                                <div className="flex items-center gap-2 text-sm text-zinc-600">
+                                <div className="flex items-center gap-2 text-sm text-[#52677C]">
                                   <User className="h-4 w-4" />
                                   <span className="font-medium">
                                     {submission.user_profiles.username ||
@@ -367,7 +367,7 @@ export default function BountyDetailPage({
                                   </span>
                                 </div>
                               )}
-                              <span className="text-xs text-zinc-500">
+                              <span className="text-xs text-[#6B7A8F]">
                                 {formatDate(submission.created_at)}
                               </span>
                             </div>
@@ -384,13 +384,13 @@ export default function BountyDetailPage({
                             </div>
 
                             <div className="flex items-center gap-6 text-sm">
-                              <div className="flex items-center gap-2 text-zinc-600">
+                              <div className="flex items-center gap-2 text-[#52677C]">
                                 <Eye className="h-4 w-4" />
                                 <span>
                                   {submission.view_count.toLocaleString()} views
                                 </span>
                               </div>
-                              <div className="flex items-center gap-2 text-zinc-600">
+                              <div className="flex items-center gap-2 text-[#52677C]">
                                 <DollarSign className="h-4 w-4" />
                                 <span>
                                   ${submission.earned_amount.toFixed(2)} earned
@@ -399,8 +399,8 @@ export default function BountyDetailPage({
                             </div>
 
                             {submission.validation_explanation && (
-                              <div className="mt-3 p-3 bg-zinc-50 rounded-lg border border-zinc-100">
-                                <p className="text-xs text-zinc-600">
+                              <div className="mt-3 p-3 bg-[#F7FAFC] rounded-lg border border-[#C8D1E0]">
+                                <p className="text-xs text-[#52677C]">
                                   <span className="font-semibold">Note: </span>
                                   {submission.validation_explanation}
                                 </p>
@@ -418,34 +418,34 @@ export default function BountyDetailPage({
 
           {/* Right Col: Action Sidebar */}
           <div className="space-y-6">
-            <div className="rounded-2xl border border-zinc-200 bg-white p-6 sticky top-24 shadow-lg shadow-zinc-100">
+            <div className="rounded-2xl border border-[#C8D1E0] bg-white p-6 sticky top-24 shadow-lg shadow-[#C8D1E0]/20">
               <div className="mb-8 text-center">
-                <p className="text-sm font-medium text-zinc-500 uppercase tracking-wider mb-1">
+                <p className="text-sm font-medium text-[#6B7A8F] uppercase tracking-wider mb-1">
                   Payout Rate
                 </p>
-                <div className="text-5xl font-black text-zinc-900 tracking-tight">
+                <div className="text-5xl font-black text-[#2E3A47] tracking-tight">
                   ${bounty.ratePer1kViews.toFixed(2)}
                 </div>
-                <p className="text-xs font-medium text-zinc-400 mt-2">
+                <p className="text-xs font-medium text-[#6B7A8F] mt-2">
                   per 1,000 qualified views
                 </p>
               </div>
 
-              <div className="space-y-4 mb-8 bg-zinc-50 p-4 rounded-xl border border-zinc-100">
+              <div className="space-y-4 mb-8 bg-[#F7FAFC] p-4 rounded-xl border border-[#C8D1E0]">
                 <div className="flex flex-col gap-1 text-sm mb-3">
-                  <span className="flex items-center gap-2 text-zinc-500 font-medium">
+                  <span className="flex items-center gap-2 text-[#6B7A8F] font-medium">
                     <DollarSign className="h-4 w-4" /> Total Budget
                   </span>
-                  <span className="font-bold text-zinc-900">
+                  <span className="font-bold text-[#2E3A47]">
                     ${bounty.totalBounty.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="flex flex-col gap-1 text-sm border-t border-zinc-200 pt-3">
-                  <span className="flex items-center gap-2 text-zinc-500 font-medium">
+                <div className="flex flex-col gap-1 text-sm border-t border-[#C8D1E0] pt-3">
+                  <span className="flex items-center gap-2 text-[#6B7A8F] font-medium">
                     <FileText className="h-4 w-4" /> Status
                   </span>
-                  <span className="font-bold text-zinc-900">
+                  <span className="font-bold text-[#2E3A47]">
                     {isCompleted ? "Completed" : "Active"}
                   </span>
                 </div>

@@ -1,21 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  /* Espresso / Coffee theme color palette */
-  --background: #140E0B;
-  --header-background: #1B120D;
-  --card-background: #25160F;
-  --card-border: #3A2518;
-  --primary-text: #F7F1E8;
-  --secondary-text: #CBB8A4;
-  --helper-text: #A38E7A;
-  --primary-accent: #C47A53;
-  --accent-soft-bg: #341B11;
-  --button-primary: #E7D0B0;
-  --button-primary-hover: #D4BA96;
-  --button-primary-text: #3B2415;
-  --button-disabled-bg: #3A2518;
-  --button-disabled-text: #8F7A65;
+  /* Blue-gray theme color palette - matching header */
+  --background: #E8ECF3;
+  --header-background: #E8ECF3;
+  --card-background: #FFFFFF;
+  --card-border: #C8D1E0;
+  --primary-text: #2E3A47;
+  --secondary-text: #52677C;
+  --helper-text: #6B7A8F;
+  --primary-accent: #1B3C73;
+  --primary-accent-hover: #102B52;
+  --accent-soft-bg: #DDE5F2;
+  --button-primary: #7A8CB3;
+  --button-primary-hover: #6A7AA0;
+  --button-primary-text: #FFFFFF;
+  --button-secondary: #4F6FA8;
+  --button-secondary-hover: #3D5A8A;
+  --button-disabled-bg: #D9E1EF;
+  --button-disabled-text: #8B9BB0;
+  --nav-active-bg: #1B3C73;
+  --nav-active-text: #FFFFFF;
+  --nav-inactive-text: #2E3A47;
+  --nav-hover-bg: #DDE5F2;
+  --nav-hover-text: #4F6FA8;
   
   /* Legacy support */
   --foreground: var(--primary-text);
@@ -30,12 +38,20 @@
   --color-secondary-text: var(--secondary-text);
   --color-helper-text: var(--helper-text);
   --color-primary-accent: var(--primary-accent);
+  --color-primary-accent-hover: var(--primary-accent-hover);
   --color-accent-soft-bg: var(--accent-soft-bg);
   --color-button-primary: var(--button-primary);
   --color-button-primary-hover: var(--button-primary-hover);
   --color-button-primary-text: var(--button-primary-text);
+  --color-button-secondary: var(--button-secondary);
+  --color-button-secondary-hover: var(--button-secondary-hover);
   --color-button-disabled-bg: var(--button-disabled-bg);
   --color-button-disabled-text: var(--button-disabled-text);
+  --color-nav-active-bg: var(--nav-active-bg);
+  --color-nav-active-text: var(--nav-active-text);
+  --color-nav-inactive-text: var(--nav-inactive-text);
+  --color-nav-hover-bg: var(--nav-hover-bg);
+  --color-nav-hover-text: var(--nav-hover-text);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
