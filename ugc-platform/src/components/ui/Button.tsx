@@ -8,10 +8,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = ({ className, variant = "primary", size = "md", ...props }: ButtonProps) => {
     const variants = {
-        primary: "bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm",
-        secondary: "bg-zinc-800 text-white hover:bg-zinc-900",
-        outline: "border border-zinc-200 bg-transparent hover:bg-zinc-50 text-zinc-900",
-        ghost: "bg-transparent hover:bg-zinc-100 text-zinc-600",
+        primary: "bg-[#E7D0B0] text-[#3B2415] hover:bg-[#D4BA96] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#F7F1E8]",
+        secondary: "bg-[#3A2518] text-[#F7F1E8] hover:bg-[#4A3528]",
+        outline: "border border-[#3A2518] bg-transparent hover:bg-[#25160F] text-[#F7F1E8]",
+        ghost: "bg-transparent hover:bg-[#25160F] text-[#CBB8A4]",
     };
 
     const sizes = {
@@ -23,7 +23,7 @@ export const Button = ({ className, variant = "primary", size = "md", ...props }
     return (
         <button
             className={cn(
-                "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-50",
+                "inline-flex items-center justify-center rounded-lg font-medium transition-colors disabled:opacity-50 disabled:bg-[#3A2518] disabled:text-[#8F7A65]",
                 variants[variant],
                 sizes[size],
                 className

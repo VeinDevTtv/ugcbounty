@@ -1,22 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Espresso / Coffee theme color palette */
+  --background: #140E0B;
+  --header-background: #1B120D;
+  --card-background: #25160F;
+  --card-border: #3A2518;
+  --primary-text: #F7F1E8;
+  --secondary-text: #CBB8A4;
+  --helper-text: #A38E7A;
+  --primary-accent: #C47A53;
+  --accent-soft-bg: #341B11;
+  --button-primary: #E7D0B0;
+  --button-primary-hover: #D4BA96;
+  --button-primary-text: #3B2415;
+  --button-disabled-bg: #3A2518;
+  --button-disabled-text: #8F7A65;
+  
+  /* Legacy support */
+  --foreground: var(--primary-text);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-header: var(--header-background);
+  --color-card: var(--card-background);
+  --color-card-border: var(--card-border);
+  --color-primary-text: var(--primary-text);
+  --color-secondary-text: var(--secondary-text);
+  --color-helper-text: var(--helper-text);
+  --color-primary-accent: var(--primary-accent);
+  --color-accent-soft-bg: var(--accent-soft-bg);
+  --color-button-primary: var(--button-primary);
+  --color-button-primary-hover: var(--button-primary-hover);
+  --color-button-primary-text: var(--button-primary-text);
+  --color-button-disabled-bg: var(--button-disabled-bg);
+  --color-button-disabled-text: var(--button-disabled-text);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
