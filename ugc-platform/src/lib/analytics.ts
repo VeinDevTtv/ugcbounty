@@ -1,4 +1,4 @@
-import type { DateRange, TimeSeriesDataPoint } from '@/types/analytics';
+import type { DateRange, TimeSeriesDataPoint, PlatformBreakdown, StatusBreakdown } from '@/types/analytics';
 
 /**
  * Get date range boundaries based on date range type
@@ -181,14 +181,26 @@ export function createCumulativeTimeSeries(
 }
 
 /**
+ * Normalize platform string to valid platform type
+ */
+function normalizePlatform(platform: string | null): 'youtube' | 'tiktok' | 'instagram' | 'other' {
+  if (!platform) return 'other';
+  const normalized = platform.toLowerCase();
+  if (normalized === 'youtube' || normalized === 'tiktok' || normalized === 'instagram') {
+    return normalized;
+  }
+  return 'other';
+}
+
+/**
  * Aggregate by platform
  */
 export function aggregateByPlatform<T extends { platform: string | null; earned_amount: number; view_count: number }>(
   data: T[]
-): Array<{ platform: string; count: number; earnings: number; views: number; percentage: number }> {
+): PlatformBreakdown[] {
   const totals = data.reduce(
     (acc, item) => {
-      const platform = item.platform || 'other';
+      const platform = normalizePlatform(item.platform);
       if (!acc[platform]) {
         acc[platform] = { count: 0, earnings: 0, views: 0 };
       }
@@ -197,7 +209,7 @@ export function aggregateByPlatform<T extends { platform: string | null; earned_
       acc[platform].views += Number(item.view_count) || 0;
       return acc;
     },
-    {} as Record<string, { count: number; earnings: number; views: number }>
+    {} as Record<'youtube' | 'tiktok' | 'instagram' | 'other', { count: number; earnings: number; views: number }>
   );
 
   const totalCount = data.length;
@@ -211,18 +223,28 @@ export function aggregateByPlatform<T extends { platform: string | null; earned_
 }
 
 /**
+ * Normalize status string to valid status type
+ */
+function normalizeStatus(status: string): 'pending' | 'approved' | 'rejected' {
+  if (status === 'approved' || status === 'rejected' || status === 'pending') {
+    return status;
+  }
+  return 'pending';
+}
+
+/**
  * Aggregate by status
  */
 export function aggregateByStatus<T extends { status: string }>(
   data: T[]
-): Array<{ status: string; count: number; percentage: number }> {
+): StatusBreakdown[] {
   const totals = data.reduce(
     (acc, item) => {
-      const status = item.status || 'pending';
+      const status = normalizeStatus(item.status || 'pending');
       acc[status] = (acc[status] || 0) + 1;
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<'pending' | 'approved' | 'rejected', number>
   );
 
   const totalCount = data.length;
