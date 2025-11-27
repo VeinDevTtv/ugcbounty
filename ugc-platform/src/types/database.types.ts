@@ -247,6 +247,55 @@ export interface Database {
           }
         ]
       }
+      bounty_recommendations: {
+        Row: {
+          id: string
+          user_id: string
+          bounty_id: string
+          match_score: number
+          match_reasons: Json
+          platform_match: boolean
+          content_style_match: boolean
+          created_at: string
+          last_calculated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          bounty_id: string
+          match_score: number
+          match_reasons?: Json
+          platform_match?: boolean
+          content_style_match?: boolean
+          created_at?: string
+          last_calculated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          bounty_id?: string
+          match_score?: number
+          match_reasons?: Json
+          platform_match?: boolean
+          content_style_match?: boolean
+          created_at?: string
+          last_calculated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bounty_recommendations_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "bounty_recommendations_bounty_id_fkey"
+            columns: ["bounty_id"]
+            referencedRelation: "bounties"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

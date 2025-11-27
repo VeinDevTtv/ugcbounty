@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import BountyCard from "@/components/BountyCard";
 import ClaimBountyDialog from "@/components/ClaimBountyDialog";
+import RecommendedBounties from "@/components/RecommendedBounties";
 import { useUser } from "@clerk/nextjs";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -99,6 +99,10 @@ export default function FeedPage() {
     }`}>
       {/* Main Content */}
       <div className="px-4 md:px-6 lg:px-6 py-6">
+        {/* Recommended Bounties Section */}
+        <RecommendedBounties maxItems={6} showTitle={true} />
+        
+        {/* All Bounties Section */}
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${

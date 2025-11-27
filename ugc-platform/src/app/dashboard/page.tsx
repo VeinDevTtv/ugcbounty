@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import StatsWidget from "@/components/StatsWidget";
+import RecommendedBounties from "@/components/RecommendedBounties";
 import { BarChart3, DollarSign, Eye, ListVideo, Briefcase, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -752,6 +753,11 @@ export default function Dashboard() {
                         </>
                     ) : null}
                 </div>
+            )}
+
+            {/* Recommended Bounties for Creators */}
+            {viewMode === "overview" && (activeTab === "submissions" && (userRole === 'creator' || userRole === null)) && (
+                <RecommendedBounties maxItems={3} showTitle={true} />
             )}
 
             {/* Overview Mode - Content Table */}
