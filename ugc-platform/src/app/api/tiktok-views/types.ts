@@ -1,4 +1,63 @@
-// Peekalink API Response Types
+// TikTok Direct API Response Types
+
+export interface TikTokVideoObject {
+  id: string;
+  create_time: number;
+  cover_image_url?: string;
+  share_url?: string;
+  video_description?: string;
+  duration?: number;
+  height?: number;
+  width?: number;
+  title?: string;
+  embed_html?: string;
+  embed_link?: string;
+  like_count?: number;
+  comment_count?: number;
+  share_count?: number;
+  view_count?: number;
+}
+
+export interface TikTokVideoQueryResponse {
+  data: {
+    videos: TikTokVideoObject[];
+  };
+  error: {
+    code: number;
+    message: string;
+    log_id: string;
+  };
+}
+
+export interface TikTokResearchVideo {
+  id: string | number;
+  create_time: number;
+  username?: string;
+  region_code?: string;
+  video_description?: string;
+  music_id?: number;
+  like_count?: number;
+  comment_count?: number;
+  share_count?: number;
+  view_count?: number;
+  hashtag_names?: string[];
+}
+
+export interface TikTokResearchResponse {
+  data: {
+    videos: TikTokResearchVideo[];
+    cursor?: number;
+    has_more?: boolean;
+    search_id?: string;
+  };
+  error: {
+    code: string;
+    message: string;
+    log_id: string;
+  } | null;
+}
+
+// Peekalink API Response Types (Fallback)
 
 export interface PeekalinkImage {
   thumbnail: ImageSize;

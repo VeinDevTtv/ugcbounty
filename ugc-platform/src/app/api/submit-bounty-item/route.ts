@@ -189,6 +189,36 @@ export async function POST(
         console.error('[Submit Bounty] Failed to fetch TikTok data:', error)
         // Continue with link preview data if TikTok API fails
       }
+    } else if (platform === 'instagram') {
+      try {
+        console.log(`[Submit Bounty] Fetching Instagram data for URL: ${body.url}`)
+        
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+        const instagramResponse = await fetch(`${baseUrl}/api/instagram-views`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ urls: [body.url] }),
+        })
+
+        if (instagramResponse.ok) {
+          const instagramData = await instagramResponse.json()
+          const result = instagramData.results?.[0]
+          
+          if (result?.success && result.metadata) {
+            title = result.metadata.title || result.metadata.caption || title
+            author = result.metadata.username
+            viewCount = result.viewCount
+            coverImage = result.metadata.thumbnail || coverImage
+            
+            console.log(`[Submit Bounty] Instagram data extracted - Title: ${title}, Author: ${author}, Views: ${viewCount}`)
+          }
+        }
+      } catch (error) {
+        console.error('[Submit Bounty] Failed to fetch Instagram data:', error)
+        // Continue with link preview data if Instagram API fails
+      }
     }
 
     // Prepare submission data
