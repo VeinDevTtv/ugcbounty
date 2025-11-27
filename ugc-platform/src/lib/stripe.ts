@@ -29,7 +29,7 @@ function getStripeClient() {
 
   if (!_stripe) {
     _stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2024-12-18.acacia',
+      apiVersion: '2025-11-17.clover',
       typescript: true,
     })
   }
@@ -63,7 +63,7 @@ function getStripeClient() {
 export const stripe = new Proxy({} as Stripe, {
   get(_target, prop) {
     const client = getStripeClient()
-    const value = (client as any)[prop]
+    const value = client[prop as keyof Stripe]
     return typeof value === 'function' ? value.bind(client) : value
   },
 })
