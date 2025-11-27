@@ -753,7 +753,7 @@ export default function Dashboard() {
                         </>
                     ) : null}
                 </div>
-            )}
+            ))}
 
             {/* Recommended Bounties for Creators */}
             {viewMode === "overview" && (activeTab === "submissions" && (userRole === 'creator' || userRole === null)) && (
