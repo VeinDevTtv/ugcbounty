@@ -29,7 +29,7 @@ function getStripeClient() {
 
   if (!_stripe) {
     _stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2025-11-17.clover',
+      apiVersion: '2025-11-17.clover' as Stripe.StripeConfig['apiVersion'],
       typescript: true,
     })
   }
