@@ -51,13 +51,17 @@ export interface CreatePaymentIntentRequest {
 /**
  * Response from payment intent creation API
  */
-export interface CreatePaymentIntentResponse {
-  success: boolean
-  client_secret: string
-  payment_intent_id: string
-  transaction_id: string
-  error?: string
-}
+export type CreatePaymentIntentResponse =
+  | {
+      success: true
+      client_secret: string
+      payment_intent_id: string
+      transaction_id: string
+    }
+  | {
+      success: false
+      error: string
+    }
 
 /**
  * Request body for creating a payout
@@ -70,13 +74,17 @@ export interface CreatePayoutRequest {
 /**
  * Response from payout creation API
  */
-export interface CreatePayoutResponse {
-  success: boolean
-  payout_id: string
-  amount: number
-  status: PayoutStatus
-  error?: string
-}
+export type CreatePayoutResponse =
+  | {
+      success: true
+      payout_id: string
+      amount: number
+      status: PayoutStatus
+    }
+  | {
+      success: false
+      error: string
+    }
 
 /**
  * Wallet balance response
