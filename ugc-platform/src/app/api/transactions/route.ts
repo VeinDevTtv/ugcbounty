@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { getUserTransactions } from '@/lib/payment-utils'
-import type { TransactionsResponse } from '@/types/stripe.types'
+import type { TransactionsResponse, Transaction } from '@/types/stripe.types'
 
 /**
  * GET /api/transactions
@@ -61,10 +61,21 @@ export async function GET(
       )
     }
 
+    // Transform transactions to ensure metadata is always Record<string, any>
+    const transformedTransactions: Transaction[] = transactions.map((tx) => ({
+      ...tx,
+      metadata:
+        tx.metadata &&
+        typeof tx.metadata === 'object' &&
+        !Array.isArray(tx.metadata)
+          ? (tx.metadata as Record<string, any>)
+          : {},
+    }))
+
     return NextResponse.json(
       {
-        transactions,
-        total: transactions.length,
+        transactions: transformedTransactions,
+        total: transformedTransactions.length,
         page: offset > 0 ? Math.floor(offset / limit) + 1 : 1,
         limit,
       },
