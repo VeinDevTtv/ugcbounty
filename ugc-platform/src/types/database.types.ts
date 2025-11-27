@@ -15,6 +15,7 @@ export interface Database {
           email: string
           username: string
           total_earnings: number
+          wallet_balance: number
           role: 'creator' | 'business' | null
           created_at: string
           updated_at: string
@@ -24,6 +25,7 @@ export interface Database {
           email: string
           username: string
           total_earnings?: number
+          wallet_balance?: number
           role?: 'creator' | 'business' | null
           created_at?: string
           updated_at?: string
@@ -33,6 +35,7 @@ export interface Database {
           email?: string
           username?: string
           total_earnings?: number
+          wallet_balance?: number
           role?: 'creator' | 'business' | null
           created_at?: string
           updated_at?: string
@@ -152,6 +155,92 @@ export interface Database {
           },
           {
             foreignKeyName: "submissions_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          }
+        ]
+      }
+      transactions: {
+        Row: {
+          id: string
+          user_id: string
+          type: 'deposit' | 'withdrawal' | 'payout' | 'bounty_charge'
+          amount: number
+          status: 'pending' | 'completed' | 'failed' | 'refunded'
+          stripe_payment_intent_id: string | null
+          stripe_transfer_id: string | null
+          metadata: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: 'deposit' | 'withdrawal' | 'payout' | 'bounty_charge'
+          amount: number
+          status?: 'pending' | 'completed' | 'failed' | 'refunded'
+          stripe_payment_intent_id?: string | null
+          stripe_transfer_id?: string | null
+          metadata?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: 'deposit' | 'withdrawal' | 'payout' | 'bounty_charge'
+          amount?: number
+          status?: 'pending' | 'completed' | 'failed' | 'refunded'
+          stripe_payment_intent_id?: string | null
+          stripe_transfer_id?: string | null
+          metadata?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          }
+        ]
+      }
+      payouts: {
+        Row: {
+          id: string
+          user_id: string
+          amount: number
+          status: 'pending' | 'processing' | 'completed' | 'failed'
+          stripe_transfer_id: string | null
+          payout_method: 'stripe' | 'bank' | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          amount: number
+          status?: 'pending' | 'processing' | 'completed' | 'failed'
+          stripe_transfer_id?: string | null
+          payout_method?: 'stripe' | 'bank' | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          amount?: number
+          status?: 'pending' | 'processing' | 'completed' | 'failed'
+          stripe_transfer_id?: string | null
+          payout_method?: 'stripe' | 'bank' | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payouts_user_id_fkey"
             columns: ["user_id"]
             referencedRelation: "user_profiles"
             referencedColumns: ["user_id"]

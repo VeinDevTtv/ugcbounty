@@ -133,6 +133,11 @@ PEEKALINK_API_KEY=your_peekalink_api_key
 
 # Clerk Webhook (for production)
 CLERK_WEBHOOK_SECRET=your_webhook_secret
+
+# Stripe Payment Processing
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_signing_secret
 ```
 
 ### Installation Steps
@@ -221,6 +226,14 @@ ugc-platform/
 - `GET /api/youtube-views?url=...` - Get YouTube video views
 - `GET /api/tiktok-views?url=...` - Get TikTok video views
 
+### Payments & Wallet
+- `POST /api/payments/create-intent` - Create Stripe payment intent for adding funds
+- `GET /api/wallet/balance` - Get current wallet balance
+- `GET /api/transactions` - Get transaction history
+- `POST /api/payouts/create` - Create payout request (creators)
+- `GET /api/payouts` - Get payout history
+- `POST /api/webhooks/stripe` - Stripe webhook handler for payment events
+
 ---
 
 ## 🎨 UI/UX Highlights
@@ -303,14 +316,29 @@ Built with ❤️ for DAHACKS 4.0
 
 ## 🎯 Future Enhancements
 
-- [ ] TikTok and Instagram direct API integration
-- [ ] Advanced analytics dashboard
-- [ ] Payment gateway integration (Stripe)
-- [ ] Email notifications
-- [ ] Creator reputation system
-- [ ] Bounty recommendation engine
-- [ ] Mobile app (React Native)
-- [ ] Real-time chat system
+### ✅ Completed Features
+- [x] **TikTok and Instagram direct API integration** - Full API integration with TikTok (Direct API, Research API, Peekalink fallback) and Instagram (Graph API, oEmbed fallback)
+- [x] **Advanced analytics dashboard** - Comprehensive analytics with time series charts, platform breakdowns, earnings tracking, and trend analysis for both creators and businesses
+
+### 🚧 In Progress / Planned
+- [ ] **Payment gateway integration (Clerk)** - UI components ready, needs full payment processing implementation
+- [ ] **Email notifications** - Automated emails for submission approvals/rejections, bounty completions, and earnings updates
+- [ ] **Creator reputation system** - Rating and review system based on submission quality, approval rates, and performance metrics
+- [ ] **Bounty recommendation engine** - AI-powered matching system to suggest relevant bounties to creators based on their content style and past performance
+- [ ] **Real-time chat system** - Direct messaging between creators and businesses for collaboration and feedback
+- [ ] **Mobile app (React Native)** - Native mobile application for iOS and Android
+
+### 💡 Additional Enhancement Ideas
+- [ ] **Advanced search and filtering** - Enhanced bounty discovery with tags, categories, and smart filters
+- [ ] **Bulk submission management** - Tools for creators to submit multiple videos at once
+- [ ] **Content scheduling** - Schedule submissions for optimal timing
+- [ ] **Performance insights** - Detailed analytics on video performance, engagement rates, and ROI
+- [ ] **Multi-language support** - Internationalization for global user base
+- [ ] **API for third-party integrations** - Public API for external tools and integrations
+- [ ] **Webhook system** - Real-time webhooks for submission status changes and bounty updates
+- [ ] **Advanced moderation tools** - Enhanced AI validation with custom rules and thresholds
+- [ ] **Creator portfolio showcase** - Public profiles showcasing creator's best work and statistics
+- [ ] **Bounty templates** - Pre-built templates for common campaign types
 
 ---
 
