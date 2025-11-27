@@ -130,6 +130,25 @@ export async function POST(
       )
     }
 
+    // Validate that client_secret exists (required for frontend)
+    if (!paymentIntent.client_secret) {
+      console.error('PaymentIntent created without client_secret:', paymentIntent.id)
+      // Cancel the payment intent if client_secret is missing
+      try {
+        await stripe.paymentIntents.cancel(paymentIntent.id)
+      } catch (cancelError) {
+        console.error('Error canceling payment intent:', cancelError)
+      }
+
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Failed to create payment intent. Please try again.',
+        },
+        { status: 500 }
+      )
+    }
+
     // Return client secret for frontend
     return NextResponse.json(
       {
